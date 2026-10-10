@@ -1,287 +1,114 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
-    Animated,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Animated,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import { COLORS, WelcomeStyles as styles } from '../constants/theme';
 
-import { supabase } from '../src/services/supabase';
-
-const COLORS = {
-  background: '#F5F7FA',
-  primaryBlue: '#319EFE',
-  darkNavy: '#223354',
-  textDark: '#1A202C',
-  textMuted: '#718096',
-  white: '#FFFFFF',
-  inputBg: '#FFFFFF',
-};
-
-export default function LoginScreen() {
+export default function WelcomeScreen() {
   const router = useRouter();
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideUpAnim = useRef(new Animated.Value(30)).current;
-  const [error, setError] = useState('');
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.spring(slideUpAnim, {
-        toValue: 0,
-        friction: 6,
-        useNativeDriver: true,
-      }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+      Animated.spring(slideUpAnim, { toValue: 0, friction: 8, useNativeDriver: true }),
     ]).start();
   }, []);
-
-  const handleLogin = async () => {
-    try {
-      if (!email.trim() || !password.trim()) {
-        setError('Please enter your email and password');
-        return;
-      }
-
-      setLoading(true);
-      setError('');
-
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
-
-      if (error) {
-        setError(error.message);
-        return;
-      }
-      // BASTA PAG SUCCESSFUL PUNTA HOME
-      router.replace('/home');
-
-    } catch (err) {
-      console.log('Catch Error:', err);
-      setError('Something went wrong');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-        <Animated.View
-          style={[
-            styles.innerContainer,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideUpAnim }],
-            },
-          ]}
-        >
-          {/* Icon */}
-          <View style={styles.logoContainer}>
-            <View style={styles.iconCircle}>
-              <Feather name="shield" size={40} color={COLORS.primaryBlue} />
+      
+      <Animated.View style={{ flex: 1, opacity: fadeAnim, transform: [{ translateY: slideUpAnim }] }}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          
+          {/* --- Hero Branding Section --- */}
+          <View style={styles.heroSection}>
+            <View style={styles.logoContainer}>
+              <Feather name="shield" color={COLORS.white} size={48} />
             </View>
+            <Text style={styles.appName}>TaliResQ</Text>
+            <Text style={styles.tagline}>Be Prepared. Stay Safe. Respond.</Text>
           </View>
 
-          {/* Header */}
-          <View style={styles.headerContainer}>
-            <Text style={styles.welcomeText}>Welcome Back 👋</Text>
-            <Text style={styles.subText}>
-              Log in to receive real-time disaster alerts and stay safe.
+          {/* --- Account & Authentication Section --- */}
+          <View style={styles.authContainer}>
+            <Text style={styles.unlockText}>
+              Log in to unlock personalized features like <Text style={styles.highlightText}>Incident Reporting, Emergency SOS, Evacuation Routing,</Text> and <Text style={styles.highlightText}>Recovery Assistance.</Text>
             </Text>
-          </View>
-
-          {/* Form */}
-          <View style={styles.formContainer}>
-            {/* Email */}
-            <View style={styles.inputWrapper}>
-              <Feather name="mail" size={20} color={COLORS.textMuted} />
-              <TextInput
-                style={styles.input}
-                placeholder="Email address"
-                placeholderTextColor={COLORS.textMuted}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
-              />
-            </View>
-
-            {/* Password */}
-            <View style={styles.inputWrapper}>
-              <Feather name="lock" size={20} color={COLORS.textMuted} />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor={COLORS.textMuted}
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
-                autoCapitalize="none"
-              />
-
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Feather
-                  name={showPassword ? 'eye' : 'eye-off'}
-                  size={20}
-                  color={COLORS.textMuted}
-                />
+            
+            <View style={styles.buttonRow}>
+              <TouchableOpacity 
+                style={styles.loginBtn}
+                onPress={() => router.push('/login')}
+              >
+                <Text style={styles.loginBtnText}>Log In</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.signUpBtn}
+                onPress={() => router.push('/signup')}
+              >
+                <Text style={styles.signUpBtnText}>Sign Up</Text>
               </TouchableOpacity>
             </View>
-
-            {/* Forgot */}
-            <TouchableOpacity style={styles.forgotPasswordBtn}>
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-            </TouchableOpacity>
-
-            {error ? (
-              <Text style={styles.errorText}>{error}</Text>
-            ) : null}
-
-            {/* Login */}
-            <TouchableOpacity
-              style={styles.loginBtn}
-              onPress={handleLogin}
-              activeOpacity={0.8}
-              disabled={loading}
-            >
-              <Text style={styles.loginBtnText}>
-                {loading ? 'Logging in...' : 'Log In'}
-              </Text>
-            </TouchableOpacity>
           </View>
 
-          {/* Signup */}
-          <View style={styles.footerContainer}>
-            <Text style={styles.footerText}>Don't have an account? </Text>
-
-            <TouchableOpacity onPress={() => router.push('/signup')}>
-              <Text style={styles.signUpText}>Sign up</Text>
-            </TouchableOpacity>
+          {/* --- Public Resources Section (No Login Required) --- */}
+          <View style={styles.publicResourcesHeader}>
+            <Text style={styles.sectionTitle}>PUBLIC RESOURCES</Text>
+            <Text style={styles.sectionSub}>Available without an account</Text>
           </View>
-        </Animated.View>
-      </KeyboardAvoidingView>
+
+          <View style={styles.resourcesContainer}>
+            
+            <TouchableOpacity style={styles.resourceCard} onPress={() => navigation.navigate('CommunityPreparedness')}>
+              <View style={[styles.resourceIconBox, { backgroundColor: '#E8F1FF' }]}>
+                <Feather name="users" color={COLORS.primaryBlue} size={24} />
+              </View>
+              <View style={styles.resourceTextContent}>
+                <Text style={styles.resourceTitle}>Community Preparedness</Text>
+                <Text style={styles.resourceDesc}>Local guides, hazard maps, and readiness protocols.</Text>
+              </View>
+              <Feather name="chevron-right" color={COLORS.textMuted} size={20} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.resourceCard} onPress={() => router.push('/FAQs')}>
+              <View style={[styles.resourceIconBox, { backgroundColor: '#FFF4E5' }]}>
+                <Feather name="info" color="#F59E0B" size={24} />
+              </View>
+              <View style={styles.resourceTextContent}>
+                <Text style={styles.resourceTitle}>Emergency Info & FAQs</Text>
+                <Text style={styles.resourceDesc}>Current disaster updates and frequently asked questions.</Text>
+              </View>
+              <Feather name="chevron-right" color={COLORS.textMuted} size={20} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.resourceCard} onPress={() => navigation.navigate('EmergencyContacts')}>
+              <View style={[styles.resourceIconBox, { backgroundColor: '#FEE2E2' }]}>
+                <Feather name="phone-call" color={COLORS.danger} size={24} />
+              </View>
+              <View style={styles.resourceTextContent}>
+                <Text style={styles.resourceTitle}>Emergency Contacts</Text>
+                <Text style={styles.resourceDesc}>Hotlines, local responders, and medical facilities.</Text>
+              </View>
+              <Feather name="chevron-right" color={COLORS.textMuted} size={20} />
+            </TouchableOpacity>
+
+          </View>
+          
+          <View style={{ height: 40 }} />
+        </ScrollView>
+      </Animated.View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-    marginBottom: 16,
-    fontSize: 14,
-  },
-  innerContainer: {
-    flex: 1,
-    paddingHorizontal: 24,
-    justifyContent: 'center',
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  iconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: COLORS.white,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  headerContainer: {
-    marginBottom: 40,
-  },
-  welcomeText: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: COLORS.textDark,
-  },
-  subText: {
-    fontSize: 15,
-    color: COLORS.textMuted,
-    marginTop: 8,
-  },
-  formContainer: {
-    marginBottom: 24,
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.inputBg,
-    borderRadius: 16,
-    marginBottom: 16,
-    paddingHorizontal: 16,
-    height: 60,
-    gap: 10,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    color: COLORS.textDark,
-  },
-  forgotPasswordBtn: {
-    alignSelf: 'flex-end',
-    marginBottom: 32,
-  },
-  forgotPasswordText: {
-    color: COLORS.primaryBlue,
-    fontWeight: '600',
-  },
-  loginBtn: {
-    backgroundColor: COLORS.primaryBlue,
-    borderRadius: 16,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loginBtnText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  footerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  footerText: {
-    color: COLORS.textMuted,
-  },
-  signUpText: {
-    color: COLORS.primaryBlue,
-    fontWeight: 'bold',
-  },
-});
