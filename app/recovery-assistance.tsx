@@ -344,11 +344,31 @@ export default function RecoveryAssistanceScreen() {
           <Feather name="chevron-right" size={22} color="#94A3B8" />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.optionCard}
-          onPress={() => handleOptionPress('request')}
-        >
+
+<TouchableOpacity
+  activeOpacity={0.8}
+  style={styles.optionCard}
+  onPress={() => {
+    const selectedLocation = getSelectedLocation();
+
+    if (!selectedLocation) {
+      Alert.alert(
+        'Location Needed',
+        'Please use your current location or enter a location before continuing.'
+      );
+      return;
+    }
+
+    router.push({
+      pathname: '/request-assistance',
+      params: {
+        location: selectedLocation,
+        area: locationArea,
+      },
+    });
+  }}
+>
+
           <View style={[styles.optionIcon, { backgroundColor: '#D1FAE5' }]}>
             <Feather name="clipboard" size={24} color="#047857" />
           </View>
