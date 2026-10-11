@@ -1,6 +1,6 @@
 import { supabase } from '@/src/services/supabase';
 import { Feather } from '@expo/vector-icons';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Animated,
@@ -15,11 +15,27 @@ import {
 import BottomNavbar from '../components/BottomNavbar';
 import { COLORS, IndexStyles as styles } from '../constants/theme';
 
-const RECENT_ACTIVITY_DATA = [
-  { id: '1', type: 'UPDATE', title: 'PHIVOLCS Bulletin #142', description: 'Sulfur dioxide emission averaged 1,432 tonnes/day.', time: '12m' },
-  { id: '2', type: 'REPORT', title: 'Ashfall observed in Agoncillo', description: 'Light ashfall reported by 4 residents within 1km.', time: '38m' },
-  { id: '3', type: 'SAFE', title: 'Evac center San Nicolas open', description: 'Capacity 240 · supplies stocked for 72hrs.', time: '1h' },
-];
+
+type CommunityActivity = {
+  id: string;
+  title: string;
+  activity_date: string;
+  description: string | null;
+  target_area: string;
+};
+
+const formatActivityDate = (dateString: string) => {
+  const [year, month, day] = dateString.split('-').map(Number);
+
+  const date = new Date(year, month - 1, day);
+
+  return date.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
+
 
 export default function DisasterAppUI() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -30,6 +46,11 @@ export default function DisasterAppUI() {
   const [isSosExpanded, setIsSosExpanded] = useState(false);
   const [holdProgress, setHoldProgress] = useState(5);
   const timerRef = useRef<any>(null);
+
+  const [activities, setActivities] = useState<CommunityActivity[]>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
+  const [activitiesError, setActivitiesError] = useState<string | null>(null);
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
@@ -59,6 +80,38 @@ export default function DisasterAppUI() {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
+
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchActivities = async () => {
+      setActivitiesLoading(true);
+      setActivitiesError(null);
+
+      const { data, error } = await supabase
+        .from('community_activities')
+        .select('id, title, activity_date, description, target_area')
+        .eq('is_published', true)
+        .order('activity_date', { ascending: true })
+        .limit(10);
+
+      if (error) {
+        console.error('Error fetching activities:', error.message);
+      } else {
+        setActivities(data ?? []);
+      }
+
+      setActivitiesLoading(false);
+    };
+
+    fetchActivities();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
 
   // --- SOS Button Logic ---
   const handlePressIn = () => {
@@ -182,41 +235,95 @@ export default function DisasterAppUI() {
             </View>
           </View>
 
-          {/* --- Recent Activity --- */}
+
+          {/* --- Recent Activities --- */}
           <View style={styles.activityHeader}>
-            <Text style={styles.sectionTitleDark}>Recent Activity</Text>
-            <TouchableOpacity>
-              <Text style={styles.seeAllText}>See all</Text>
-            </TouchableOpacity>
+            <Text style={styles.sectionTitleDark}>
+              Recent Activities
+            </Text>
           </View>
 
-          {RECENT_ACTIVITY_DATA.map((item) => (
-            <View key={item.id} style={styles.activityCard}>
-              <View style={styles.activityCardHeader}>
-                <View style={[
-                  styles.activityBadge,
-                  item.type === 'UPDATE' && { backgroundColor: COLORS.badgeUpdateBg },
-                  item.type === 'REPORT' && { backgroundColor: COLORS.badgeReportBg },
-                  item.type === 'SAFE' && { backgroundColor: COLORS.badgeSafeBg },
-                ]}>
-                  <Text style={[
-                    styles.activityBadgeText,
-                    item.type === 'UPDATE' && { color: COLORS.badgeUpdateText },
-                    item.type === 'REPORT' && { color: COLORS.badgeReportText },
-                    item.type === 'SAFE' && { color: COLORS.badgeSafeText },
-                  ]}>
-                    {item.type}
-                  </Text>
-                </View>
-                <View style={styles.timeContainer}>
-                  <Feather name="activity" color={COLORS.textMuted} size={14} style={{ marginRight: 4 }} />
-                  <Text style={styles.timeText}>{item.time}</Text>
-                </View>
-              </View>
-              <Text style={styles.activityTitle}>{item.title}</Text>
-              <Text style={styles.activityDesc}>{item.description}</Text>
+          {activitiesLoading ? (
+            <View style={styles.activityCard}>
+              <Text style={styles.activityDesc}>
+                Loading community activities...
+              </Text>
             </View>
-          ))}
+          ) : activitiesError ? (
+            <View style={styles.activityCard}>
+              <Text style={styles.activityDesc}>
+                {activitiesError}
+              </Text>
+              <TouchableOpacity
+                onPress={async () => {
+                  setActivitiesLoading(true);
+                  setActivitiesError(null);
+
+                  const { data, error } = await supabase
+                    .from('community_activities')
+                    .select('id, title, activity_date, description, target_area')
+                    .eq('is_published', true)
+                    .order('activity_date', { ascending: true })
+                    .limit(10);
+
+                  if (error) {
+                    setActivitiesError(
+                      'Unable to load community activities.'
+                    );
+                  } else {
+                    setActivities(data ?? []);
+                  }
+
+                  setActivitiesLoading(false);
+                }}
+              >
+                <Text style={styles.seeAllText}>Try again</Text>
+              </TouchableOpacity>
+            </View>
+          ) : activities.length === 0 ? (
+            <View style={styles.activityCard}>
+              <Feather
+                name="calendar"
+                size={24}
+                color={COLORS.primaryBlue}
+              />
+              <Text style={styles.activityTitle}>
+                No activities yet
+              </Text>
+              <Text style={styles.activityDesc}>
+                Community activities and preparedness events
+                will appear here when published.
+              </Text>
+            </View>
+          ) : (
+            activities.map((item) => (
+              <View key={item.id} style={styles.activityCard}>
+                <View style={styles.activityCardHeader}>
+                  <View style={styles.timeContainer}>
+                    <Feather
+                      name="calendar"
+                      color={COLORS.primaryBlue}
+                      size={16}
+                      style={{ marginRight: 6 }}
+                    />
+                    <Text style={styles.timeText}>
+                      {formatActivityDate(item.activity_date)}
+                    </Text>
+                  </View>
+                </View>
+
+                <Text style={styles.activityTitle}>
+                  {item.title}
+                </Text>
+
+                {!!item.description && (
+                  <Text style={styles.activityDesc}>
+                    {item.description}
+                  </Text>
+                )}
+              </View>
+            ))
+          )}
 
           <View style={{ height: 100 }} />
         </ScrollView>
