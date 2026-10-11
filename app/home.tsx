@@ -16,9 +16,7 @@ import {
 import BottomNavbar from '../components/BottomNavbar';
 import { COLORS, IndexStyles as styles } from '../constants/theme';
 
-// ========================================
 // TYPES
-// ========================================
 
 type CommunityActivity = {
   id: string;
@@ -36,9 +34,7 @@ type ActivityNotification = {
   created_at: string;
 };
 
-// ========================================
 // DATE FORMATTER
-// ========================================
 
 const formatActivityDate = (dateString: string) => {
   const [year, month, day] = dateString.split('-').map(Number);
@@ -52,9 +48,7 @@ const formatActivityDate = (dateString: string) => {
   });
 };
 
-// ========================================
 // MAIN SCREEN
-// ========================================
 
 export default function DisasterAppUI() {
   // Animations
@@ -94,9 +88,7 @@ export default function DisasterAppUI() {
     (item) => !readNotificationIds.includes(item.id)
   ).length;
 
-  // ========================================
   // FETCH USER INFORMATION
-  // ========================================
 
   const fetchUser = useCallback(async () => {
     const {
@@ -122,9 +114,7 @@ export default function DisasterAppUI() {
     );
   }, []);
 
-  // ========================================
   // FETCH COMMUNITY ACTIVITIES
-  // ========================================
 
   const fetchActivities = useCallback(async () => {
     setActivitiesLoading(true);
@@ -155,9 +145,7 @@ export default function DisasterAppUI() {
     }
   }, []);
 
-  // ========================================
   // FETCH NOTIFICATIONS
-  // ========================================
 
   const fetchNotifications = useCallback(async () => {
     setNotificationLoading(true);
@@ -230,9 +218,7 @@ export default function DisasterAppUI() {
     }
   }, []);
 
-  // ========================================
   // INITIAL SCREEN SETUP
-  // ========================================
 
   useEffect(() => {
     Animated.parallel([
@@ -266,9 +252,7 @@ export default function DisasterAppUI() {
     fetchNotifications,
   ]);
 
-  // ========================================
   // MARK NOTIFICATION AS READ
-  // ========================================
 
   const markNotificationAsRead = async (
     notificationId: string
@@ -324,9 +308,7 @@ export default function DisasterAppUI() {
     return true;
   };
 
-  // ========================================
   // SOS BUTTON LOGIC
-  // ========================================
 
   const handlePressIn = () => {
     let count = 5;
@@ -367,8 +349,6 @@ export default function DisasterAppUI() {
     setIsSosExpanded(false);
     setHoldProgress(5);
 
-    // Demo only: connect this to your SOS backend to send
-    // the user's location to emergency responders.
     Alert.alert(
       'SOS Button Triggered',
       'This is currently a demo confirmation. Your location has not been sent to emergency responders yet.',
@@ -386,9 +366,7 @@ export default function DisasterAppUI() {
     setHoldProgress(5);
   };
 
-  // ========================================
   // RENDER SCREEN
-  // ========================================
 
   return (
     <SafeAreaView style={styles.container}>
@@ -408,9 +386,7 @@ export default function DisasterAppUI() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* ================================== */}
           {/* HEADER */}
-          {/* ================================== */}
 
           <View style={styles.header}>
             <View>
@@ -461,9 +437,7 @@ export default function DisasterAppUI() {
             </TouchableOpacity>
           </View>
 
-          {/* ================================== */}
           {/* VOLCANO STATUS CARD */}
-          {/* ================================== */}
 
           <View style={styles.statusCard}>
             <View style={styles.statusHeader}>
@@ -502,9 +476,7 @@ export default function DisasterAppUI() {
             </View>
           </View>
 
-          {/* ================================== */}
           {/* QUICK ACTIONS */}
-          {/* ================================== */}
 
           <Text style={styles.sectionTitle}>QUICK ACTIONS</Text>
 
@@ -580,9 +552,7 @@ export default function DisasterAppUI() {
             </View>
           </View>
 
-          {/* ================================== */}
           {/* RECENT ACTIVITIES */}
-          {/* ================================== */}
 
           <View style={styles.activityHeader}>
             <Text style={styles.sectionTitleDark}>
@@ -697,15 +667,11 @@ export default function DisasterAppUI() {
         </ScrollView>
       </Animated.View>
 
-      {/* ================================== */}
       {/* BOTTOM NAVIGATION */}
-      {/* ================================== */}
 
       <BottomNavbar activeTab="home" />
 
-      {/* ================================== */}
       {/* NOTIFICATIONS MODAL */}
-      {/* ================================== */}
 
       <Modal
         visible={notificationsVisible}
@@ -898,9 +864,7 @@ export default function DisasterAppUI() {
         </View>
       </Modal>
 
-      {/* ================================== */}
       {/* SOS CONFIRMATION MODAL */}
-      {/* ================================== */}
 
       <Modal
         visible={isSosExpanded}
