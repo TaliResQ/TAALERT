@@ -47,31 +47,69 @@ if (
                 ]
             );
 
-            $stmt = $activityPdo->prepare("
-                INSERT INTO public.community_activities (
-                    title,
-                    description,
-                    activity_date,
-                    target_area,
-                    is_published
-                )
-                VALUES (
-                    :title,
-                    :description,
-                    :activity_date,
-                    :target_area,
-                    TRUE
-                )
-            ");
 
-            $stmt->execute([
-                ':title' => $title,
-                ':description' => $description,
-                ':activity_date' => $activityDate,
-                ':target_area' => $targetArea,
-            ]);
+$activityPdo->beginTransaction();
 
-            $activity_success = 'Activity published successfully!';
+try {
+    $stmt = $activityPdo->prepare("
+        INSERT INTO public.community_activities (
+            title,
+            description,
+            activity_date,
+            target_area,
+            is_published
+        )
+        VALUES (
+            :title,
+            :description,
+            :activity_date,
+            :target_area,
+            TRUE
+        )
+        RETURNING id
+    ");
+
+    $stmt->execute([
+        ':title' => $title,
+        ':description' => $description,
+        ':activity_date' => $activityDate,
+        ':target_area' => $targetArea,
+    ]);
+
+    $activityId = $stmt->fetchColumn();
+
+    $notification = $activityPdo->prepare("
+        INSERT INTO public.activity_notifications (
+            activity_id,
+            title,
+            message
+        )
+        VALUES (
+            :activity_id,
+            :title,
+            :message
+        )
+    ");
+
+    $notification->execute([
+        ':activity_id' => $activityId,
+        ':title' => 'New Activity Posted',
+        ':message' => $title . ' — ' . $targetArea,
+    ]);
+
+    $activityPdo->commit();
+
+    $activity_success =
+        'Activity and notification published successfully!';
+
+} catch (PDOException $e) {
+    if ($activityPdo->inTransaction()) {
+        $activityPdo->rollBack();
+    }
+
+    throw $e;
+}
+
 
         } catch (PDOException $e) {
             error_log(
