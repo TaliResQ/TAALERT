@@ -326,8 +326,25 @@ export default function RecoveryAssistanceScreen() {
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.optionCard}
-          onPress={() => handleOptionPress('nearby')}
-        >
+onPress={() => {
+  const selectedLocation = getSelectedLocation();
+
+  if (!selectedLocation) {
+    Alert.alert(
+      'Location Needed',
+      'Please enter your current location before continuing.'
+    );
+    return;
+  }
+
+  router.push({
+    pathname: '/nearby-assistance',
+    params: {
+      location: selectedLocation,
+      area: locationArea,
+    },
+  });
+}}        >
           <View style={[styles.optionIcon, { backgroundColor: '#DBEAFE' }]}>
             <Feather name="map-pin" size={24} color="#2563EB" />
           </View>
