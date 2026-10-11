@@ -66,6 +66,154 @@ function formatDate(value: string | null) {
   return date.toLocaleString();
 }
 
+
+type RequestStatus =
+  | 'pending'
+  | 'under_review'
+  | 'verified'
+  | 'assistance_coordinated'
+  | 'completed'
+  | 'rejected'
+  | 'needs_more_information';
+
+const STATUS_STEPS: {
+  key: RequestStatus;
+  title: string;
+  description: string;
+}[] = [
+  {
+    key: 'pending',
+    title: 'Pending',
+    description: 'Your request has been submitted.',
+  },
+  {
+    key: 'under_review',
+    title: 'Under Review',
+    description: 'The admin is reviewing your request.',
+  },
+  {
+    key: 'verified',
+    title: 'Verified',
+    description: 'Your request has been verified.',
+  },
+  {
+    key: 'assistance_coordinated',
+    title: 'Assistance Coordinated',
+    description: 'Arrangements for your assistance are underway.',
+  },
+  {
+    key: 'completed',
+    title: 'Completed',
+    description: 'Your request has been marked as completed.',
+  },
+];
+
+function StatusTimeline({ status }: { status: string }) {
+  const currentStatus = status.toLowerCase() as RequestStatus;
+
+  if (currentStatus === 'rejected') {
+    return (
+      <View style={timelineStyles.specialNotice}>
+        <Feather name="x-circle" size={22} color="#DC2626" />
+        <View style={{ flex: 1 }}>
+          <Text style={timelineStyles.specialTitle}>
+            Request Rejected
+          </Text>
+          <Text style={timelineStyles.specialDescription}>
+            Your request was not approved. Check the admin's message
+            for more information.
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (currentStatus === 'needs_more_information') {
+    return (
+      <View style={timelineStyles.infoNotice}>
+        <Feather name="message-circle" size={22} color="#B45309" />
+        <View style={{ flex: 1 }}>
+          <Text style={timelineStyles.infoTitle}>
+            More Information Needed
+          </Text>
+          <Text style={timelineStyles.infoDescription}>
+            Please check the admin's message for details about the
+            additional information needed.
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  const currentIndex = STATUS_STEPS.findIndex(
+    (step) => step.key === currentStatus
+  );
+
+  const activeIndex = currentIndex === -1 ? 0 : currentIndex;
+
+  return (
+    <View style={timelineStyles.container}>
+      <Text style={timelineStyles.heading}>
+        Request Progress
+      </Text>
+
+      {STATUS_STEPS.map((step, index) => {
+        const isCompleted = index < activeIndex;
+        const isCurrent = index === activeIndex;
+        const isReached = index <= activeIndex;
+        const isLast = index === STATUS_STEPS.length - 1;
+
+        return (
+          <View key={step.key} style={timelineStyles.stepRow}>
+            <View style={timelineStyles.rail}>
+              <View
+                style={[
+                  timelineStyles.dot,
+                  isReached && timelineStyles.dotReached,
+                  isCurrent && timelineStyles.dotCurrent,
+                ]}
+              >
+                {isCompleted && (
+                  <Feather name="check" size={12} color="#FFFFFF" />
+                )}
+                {isCurrent && (
+                  <View style={timelineStyles.currentDot} />
+                )}
+              </View>
+
+              {!isLast && (
+                <View
+                  style={[
+                    timelineStyles.line,
+                    isCompleted && timelineStyles.lineCompleted,
+                  ]}
+                />
+              )}
+            </View>
+
+            <View style={timelineStyles.stepContent}>
+              <Text
+                style={[
+                  timelineStyles.stepTitle,
+                  isReached && timelineStyles.stepTitleReached,
+                ]}
+              >
+                {step.title}
+                {isCurrent ? ' · Current status' : ''}
+              </Text>
+
+              <Text style={timelineStyles.stepDescription}>
+                {step.description}
+              </Text>
+            </View>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+
 export default function MyAssistanceRequestsScreen() {
   const router = useRouter();
 
@@ -234,6 +382,8 @@ export default function MyAssistanceRequestsScreen() {
                     {statusLabels[status] ?? status.replace(/_/g, ' ')}
                   </Text>
                 </View>
+
+                <StatusTimeline status={status} />
 
                 <View style={styles.detailRow}>
                   <Feather name="map-pin" size={16} color="#64748B" />
@@ -476,3 +626,125 @@ const styles = StyleSheet.create({
     marginTop: 13,
   },
 });
+
+
+const timelineStyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 14,
+    padding: 14,
+    marginTop: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  heading: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#123B5D',
+    marginBottom: 16,
+  },
+  stepRow: {
+    flexDirection: 'row',
+    minHeight: 65,
+  },
+  rail: {
+    width: 28,
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  dot: {
+    width: 23,
+    height: 23,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#CBD5E1',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  dotReached: {
+    backgroundColor: '#16A34A',
+    borderColor: '#16A34A',
+  },
+  dotCurrent: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#2563EB',
+    borderWidth: 2,
+  },
+  currentDot: {
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+    backgroundColor: '#2563EB',
+  },
+  line: {
+    position: 'absolute',
+    top: 23,
+    width: 2,
+    height: 42,
+    backgroundColor: '#CBD5E1',
+  },
+  lineCompleted: {
+    backgroundColor: '#16A34A',
+  },
+  stepContent: {
+    flex: 1,
+    paddingBottom: 16,
+  },
+  stepTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  stepTitleReached: {
+    color: '#123B5D',
+  },
+  stepDescription: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: '#64748B',
+    marginTop: 4,
+  },
+  specialNotice: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    backgroundColor: '#FEF2F2',
+    padding: 12,
+    borderRadius: 12,
+    marginTop: 12,
+  },
+  specialTitle: {
+    color: '#B91C1C',
+    fontWeight: '800',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  specialDescription: {
+    color: '#7F1D1D',
+    fontSize: 12,
+    lineHeight: 18,
+  },
+  infoNotice: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    backgroundColor: '#FFFBEB',
+    padding: 12,
+    borderRadius: 12,
+    marginTop: 12,
+  },
+  infoTitle: {
+    color: '#92400E',
+    fontWeight: '800',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  infoDescription: {
+    color: '#78350F',
+    fontSize: 12,
+    lineHeight: 18,
+  },
+});
+
