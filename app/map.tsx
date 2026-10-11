@@ -126,8 +126,6 @@ const panelPanResponder = useRef(
     },
 
     onPanResponderMove: (_, gesture) => {
-      // Swipe UP: gesture.dy is negative, so the map shrinks.
-      // Swipe DOWN: gesture.dy is positive, so the map expands.
       const newHeight = Math.max(
         MIN_MAP_HEIGHT,
         Math.min(
