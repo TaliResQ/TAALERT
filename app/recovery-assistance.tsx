@@ -4,16 +4,16 @@ import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Keyboard,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Keyboard,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import BottomNavbar from '../components/BottomNavbar';
 
@@ -318,33 +318,36 @@ export default function RecoveryAssistanceScreen() {
           )}
         </View>
 
+
         {/* Assistance Options */}
         <Text style={styles.sectionTitle}>
           How can we help you?
         </Text>
 
+        {/* Find Nearby Assistance */}
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.optionCard}
-onPress={() => {
-  const selectedLocation = getSelectedLocation();
+          onPress={() => {
+            const selectedLocation = getSelectedLocation();
 
-  if (!selectedLocation) {
-    Alert.alert(
-      'Location Needed',
-      'Please enter your current location before continuing.'
-    );
-    return;
-  }
+            if (!selectedLocation) {
+              Alert.alert(
+                'Location Needed',
+                'Please enter your current location before continuing.'
+              );
+              return;
+            }
 
-  router.push({
-    pathname: '/nearby-assistance',
-    params: {
-      location: selectedLocation,
-      area: locationArea,
-    },
-  });
-}}        >
+            router.push({
+              pathname: '/nearby-assistance',
+              params: {
+                location: selectedLocation,
+                area: locationArea,
+              },
+            });
+          }}
+        >
           <View style={[styles.optionIcon, { backgroundColor: '#DBEAFE' }]}>
             <Feather name="map-pin" size={24} color="#2563EB" />
           </View>
@@ -361,37 +364,38 @@ onPress={() => {
           <Feather name="chevron-right" size={22} color="#94A3B8" />
         </TouchableOpacity>
 
+        {/* Request Assistance */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.optionCard}
+          onPress={() => {
+            const selectedLocation = getSelectedLocation();
 
-<TouchableOpacity
-  activeOpacity={0.8}
-  style={styles.optionCard}
-  onPress={() => {
-    const selectedLocation = getSelectedLocation();
+            if (!selectedLocation) {
+              Alert.alert(
+                'Location Needed',
+                'Please use your current location or enter a location before continuing.'
+              );
+              return;
+            }
 
-    if (!selectedLocation) {
-      Alert.alert(
-        'Location Needed',
-        'Please use your current location or enter a location before continuing.'
-      );
-      return;
-    }
-
-    router.push({
-      pathname: '/request-assistance',
-      params: {
-        location: selectedLocation,
-        area: locationArea,
-      },
-    });
-  }}
->
-
+            router.push({
+              pathname: '/request-assistance',
+              params: {
+                location: selectedLocation,
+                area: locationArea,
+              },
+            });
+          }}
+        >
           <View style={[styles.optionIcon, { backgroundColor: '#D1FAE5' }]}>
             <Feather name="clipboard" size={24} color="#047857" />
           </View>
 
           <View style={styles.optionText}>
-            <Text style={styles.optionTitle}>Request Assistance</Text>
+            <Text style={styles.optionTitle}>
+              Request Assistance
+            </Text>
             <Text style={styles.optionDescription}>
               Submit a request for your household's recovery needs.
             </Text>
@@ -400,28 +404,50 @@ onPress={() => {
           <Feather name="chevron-right" size={22} color="#94A3B8" />
         </TouchableOpacity>
 
+        {/* My Requests */}
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.optionCard}
-onPress={() => {
-  const selectedLocation = getSelectedLocation();
+          onPress={() => router.push('/my-assistance-requests' as any)}
+        >
+          <View style={[styles.optionIcon, { backgroundColor: '#EDE9FE' }]}>
+            <Feather name="file-text" size={24} color="#6D28D9" />
+          </View>
 
-  if (!selectedLocation) {
-    Alert.alert(
-      'Location Needed',
-      'Please enter your current location before continuing.'
-    );
-    return;
-  }
+          <View style={styles.optionText}>
+            <Text style={styles.optionTitle}>My Requests</Text>
+            <Text style={styles.optionDescription}>
+              Track the status and updates of your submitted requests.
+            </Text>
+          </View>
 
-  router.push({
-    pathname: '/recovery-resources',
-    params: {
-      location: selectedLocation,
-      area: locationArea,
-    },
-  });
-}}        >
+          <Feather name="chevron-right" size={22} color="#94A3B8" />
+        </TouchableOpacity>
+
+        {/* Recovery Resources */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.optionCard}
+          onPress={() => {
+            const selectedLocation = getSelectedLocation();
+
+            if (!selectedLocation) {
+              Alert.alert(
+                'Location Needed',
+                'Please enter your current location before continuing.'
+              );
+              return;
+            }
+
+            router.push({
+              pathname: '/recovery-resources',
+              params: {
+                location: selectedLocation,
+                area: locationArea,
+              },
+            });
+          }}
+        >
           <View style={[styles.optionIcon, { backgroundColor: '#FEF3C7' }]}>
             <Feather name="heart" size={24} color="#B45309" />
           </View>
@@ -435,15 +461,6 @@ onPress={() => {
 
           <Feather name="chevron-right" size={22} color="#94A3B8" />
         </TouchableOpacity>
-
-        {/* Safety Note */}
-        <View style={styles.safetyNote}>
-          <Feather name="info" size={19} color="#92400E" />
-          <Text style={styles.safetyNoteText}>
-            This feature is for recovery support. If you are in immediate
-            danger, contact the appropriate local emergency services.
-          </Text>
-        </View>
 
         <View style={{ height: 24 }} />
       </ScrollView>
