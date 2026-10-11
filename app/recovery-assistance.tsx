@@ -386,8 +386,25 @@ export default function RecoveryAssistanceScreen() {
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.optionCard}
-          onPress={() => handleOptionPress('resources')}
-        >
+onPress={() => {
+  const selectedLocation = getSelectedLocation();
+
+  if (!selectedLocation) {
+    Alert.alert(
+      'Location Needed',
+      'Please enter your current location before continuing.'
+    );
+    return;
+  }
+
+  router.push({
+    pathname: '/recovery-resources',
+    params: {
+      location: selectedLocation,
+      area: locationArea,
+    },
+  });
+}}        >
           <View style={[styles.optionIcon, { backgroundColor: '#FEF3C7' }]}>
             <Feather name="heart" size={24} color="#B45309" />
           </View>
