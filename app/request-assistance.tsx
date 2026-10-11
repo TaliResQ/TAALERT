@@ -1,7 +1,7 @@
 
 import { supabase } from '@/src/services/supabase';
 import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
     ActivityIndicator,
@@ -28,10 +28,17 @@ const categories = [
 
 export default function RequestAssistanceScreen() {
   const router = useRouter();
-
+const { location, area } = useLocalSearchParams<{
+  location?: string;
+  area?: 'inside' | 'outside';
+}>();
   const [category, setCategory] = useState('Relief Goods');
-  const [barangay, setBarangay] = useState('');
-  const [address, setAddress] = useState('');
+const [barangay, setBarangay] = useState(
+  area === 'inside' ? 'Talisay, Batangas' : ''
+);
+const [address, setAddress] = useState(
+  typeof location === 'string' ? location : ''
+);
   const [description, setDescription] = useState('');
   const [contactNumber, setContactNumber] = useState('');
   const [loading, setLoading] = useState(false);
@@ -255,7 +262,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 22,
     paddingTop: 52,
-    paddingBottom: 30,
+    paddingBottom: 120,
   },
   backButton: {
     flexDirection: 'row',
