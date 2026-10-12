@@ -268,6 +268,109 @@ function StatusBadge({ status }: { status: string }) {
 
 
 
+const INCIDENT_STEPS = [
+  {
+    key: 'Submitted',
+    title: 'Report Submitted',
+    description: 'Your incident report has been received.',
+  },
+  {
+    key: 'Under Review',
+    title: 'Under Review',
+    description: 'The response team is reviewing the details.',
+  },
+  {
+    key: 'Verified',
+    title: 'Report Verified',
+    description: 'The incident details have been verified.',
+  },
+  {
+    key: 'Response in Progress',
+    title: 'Response in Progress',
+    description: 'The appropriate team is working on the response.',
+  },
+  {
+    key: 'Resolved',
+    title: 'Resolved',
+    description: 'The incident has been marked as resolved.',
+  },
+] as const;
+
+function StatusProgressTimeline({ status }: { status: string }) {
+  const normalized = status.trim().toLowerCase().replace(/_/g, ' ');
+  const specialStatus = normalized === 'rejected' || normalized === 'needs more information';
+
+  if (specialStatus) {
+    const rejected = normalized === 'rejected';
+    return (
+      <View style={[styles.progressNotice, rejected ? styles.progressNoticeError : styles.progressNoticeWarning]}>
+        <Ionicons
+          name={rejected ? 'close-circle-outline' : 'information-circle-outline'}
+          size={23}
+          color={rejected ? '#B42318' : '#B54708'}
+        />
+        <View style={styles.progressNoticeContent}>
+          <Text style={[styles.progressNoticeTitle, { color: rejected ? '#B42318' : '#B54708' }]}>
+            {rejected ? 'Report Rejected' : 'More Information Needed'}
+          </Text>
+          <Text style={styles.progressNoticeText}>
+            {rejected
+              ? 'This report was not approved. Review the latest update or status history for more details.'
+              : 'The response team needs additional details. Check the latest update or status history for instructions.'}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  const currentIndex = INCIDENT_STEPS.findIndex(
+    (step) => step.key.toLowerCase() === normalized,
+  );
+  const activeIndex = currentIndex < 0 ? 0 : currentIndex;
+
+  return (
+    <View style={styles.progressPanel}>
+      <Text style={styles.sectionTitle}>Report Progress</Text>
+      <Text style={styles.progressSubtitle}>Track each stage of your incident report.</Text>
+      {INCIDENT_STEPS.map((step, index) => {
+        const completed = index < activeIndex || normalized === 'resolved';
+        const current = index === activeIndex && normalized !== 'resolved';
+        const reached = index <= activeIndex;
+        const last = index === INCIDENT_STEPS.length - 1;
+        return (
+          <View key={step.key} style={styles.progressStepRow}>
+            <View style={styles.progressRail}>
+              <View style={[
+                styles.progressDot,
+                reached && styles.progressDotReached,
+                current && styles.progressDotCurrent,
+                normalized === 'resolved' && styles.progressDotReached,
+              ]}>
+                {(completed || (normalized === 'resolved' && index === activeIndex)) && (
+                  <Ionicons name="checkmark" size={13} color="#FFFFFF" />
+                )}
+                {current && <View style={styles.progressCurrentDot} />}
+              </View>
+              {!last && (
+                <View style={[
+                  styles.progressLine,
+                  (index < activeIndex || normalized === 'resolved') && styles.progressLineCompleted,
+                ]} />
+              )}
+            </View>
+            <View style={styles.progressStepContent}>
+              <Text style={[styles.progressStepTitle, reached && styles.progressStepTitleReached]}>
+                {step.title}{current ? ' · Current status' : ''}
+              </Text>
+              <Text style={styles.progressStepDescription}>{step.description}</Text>
+            </View>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
 export default function MyReportsScreen() {
 
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -358,7 +461,29 @@ export default function MyReportsScreen() {
 
 
 
-      setIncidents((data || []) as Incident[]);
+      const refreshedIncidents = (data || []) as Incident[];
+      setIncidents(refreshedIncidents);
+
+      // Keep the open report detail synchronized with admin changes.
+      setSelected((currentSelected) => {
+        if (!currentSelected) return currentSelected;
+        const refreshedSelected = refreshedIncidents.find(
+          (incident) => String(incident.id) === String(currentSelected.id)
+        );
+        if (!refreshedSelected) return currentSelected;
+
+        // Preserve the current object unless fields displayed in the detail changed.
+        if (
+          refreshedSelected.resident_status === currentSelected.resident_status &&
+          refreshedSelected.latest_update === currentSelected.latest_update &&
+          refreshedSelected.updated_at === currentSelected.updated_at &&
+          refreshedSelected.resolved_at === currentSelected.resolved_at
+        ) {
+          return currentSelected;
+        }
+
+        return refreshedSelected;
+      });
 
     } catch (err) {
 
@@ -378,16 +503,18 @@ export default function MyReportsScreen() {
 
 
 
-  // Refresh when the resident returns to this tab.
-
+  // Refresh on tab focus and every 10 seconds while this screen is active,
+  // so admin status/message edits appear without a manual refresh.
   useFocusEffect(
-
     useCallback(() => {
-
       void loadReports();
 
-    }, [loadReports])
+      const refreshInterval = setInterval(() => {
+        void loadReports(false);
+      }, 10000);
 
+      return () => clearInterval(refreshInterval);
+    }, [loadReports])
   );
 
 
@@ -1038,7 +1165,7 @@ export default function MyReportsScreen() {
 
               <StatusBadge status={getResidentStatus(selected)} />
 
-
+              <StatusProgressTimeline status={getResidentStatus(selected)} />
 
               <View style={styles.detailPanel}>
 
@@ -2026,6 +2153,111 @@ const styles = StyleSheet.create({
 
     lineHeight: 22,
 
+  },
+
+  progressPanel: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 14,
+    borderWidth: 1,
+    borderColor: '#E6EBF2',
+  },
+  progressSubtitle: {
+    color: '#667085',
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: -8,
+    marginBottom: 18,
+  },
+  progressStepRow: {
+    flexDirection: 'row',
+    minHeight: 66,
+  },
+  progressRail: {
+    width: 27,
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  progressDot: {
+    width: 23,
+    height: 23,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#CBD5E1',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  progressDotReached: {
+    backgroundColor: '#16A34A',
+    borderColor: '#16A34A',
+  },
+  progressDotCurrent: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#2563EB',
+  },
+  progressCurrentDot: {
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+    backgroundColor: '#2563EB',
+  },
+  progressLine: {
+    position: 'absolute',
+    top: 23,
+    width: 2,
+    height: 43,
+    backgroundColor: '#CBD5E1',
+  },
+  progressLineCompleted: {
+    backgroundColor: '#16A34A',
+  },
+  progressStepContent: {
+    flex: 1,
+    paddingBottom: 16,
+  },
+  progressStepTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  progressStepTitleReached: {
+    color: '#123B5D',
+  },
+  progressStepDescription: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: '#64748B',
+    marginTop: 4,
+  },
+  progressNotice: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    padding: 13,
+    borderRadius: 12,
+    marginTop: 14,
+  },
+  progressNoticeError: {
+    backgroundColor: '#FEF2F2',
+  },
+  progressNoticeWarning: {
+    backgroundColor: '#FFFBEB',
+  },
+  progressNoticeContent: {
+    flex: 1,
+  },
+  progressNoticeTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    marginBottom: 4,
+  },
+  progressNoticeText: {
+    color: '#475467',
+    fontSize: 12,
+    lineHeight: 18,
   },
 
   timelinePanel: {
