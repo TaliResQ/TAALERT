@@ -3,6 +3,108 @@ session_start();
 
 include '../config/db.php';
 
+// Resident-facing incident status updates.
+// Insert after include '../config/db.php';
+
+$residentStatuses = [
+    'Submitted',
+    'Under Review',
+    'Verified',
+    'Response in Progress',
+    'Resolved',
+    'Needs More Information',
+    'Rejected'
+];
+
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['update_incident_status'])
+) {
+    $incidentId = trim($_POST['incident_id'] ?? '');
+    $newStatus = trim($_POST['resident_status'] ?? '');
+    $message = trim($_POST['latest_update'] ?? '');
+
+    if ($incidentId === '' || !in_array($newStatus, $residentStatuses, true)) {
+        header('Location: records.php?error=invalid_status');
+        exit;
+    }
+
+    if ($message === '') {
+        $message = 'Your report status has been updated to ' . $newStatus . '.';
+    }
+
+    if (mb_strlen($message) > 2000) {
+        header('Location: records.php?error=message_too_long');
+        exit;
+    }
+
+    try {
+        $pdo->beginTransaction();
+
+        // Lock and confirm the incident exists.
+        $check = $pdo->prepare(
+            'SELECT id FROM public.incidents WHERE id::text = ? FOR UPDATE'
+        );
+        $check->execute([$incidentId]);
+
+        if (!$check->fetch(PDO::FETCH_ASSOC)) {
+            $pdo->rollBack();
+            header('Location: records.php?error=not_found');
+            exit;
+        }
+
+        // Keep the legacy status field unchanged.
+        // resolved_at continues to control the existing archive.
+        if ($newStatus === 'Resolved') {
+            $update = $pdo->prepare(
+                'UPDATE public.incidents
+                 SET resident_status = ?,
+                     latest_update = ?,
+                     updated_at = NOW(),
+                     resolved_at = COALESCE(resolved_at, NOW())
+                 WHERE id::text = ?'
+            );
+
+            $update->execute([$newStatus, $message, $incidentId]);
+        } else {
+            $update = $pdo->prepare(
+                'UPDATE public.incidents
+                 SET resident_status = ?,
+                     latest_update = ?,
+                     updated_at = NOW(),
+                     resolved_at = NULL
+                 WHERE id::text = ?'
+            );
+
+            $update->execute([$newStatus, $message, $incidentId]);
+        }
+
+        // Save a permanent copy of this status update.
+        $history = $pdo->prepare(
+            'INSERT INTO public.incident_status_history
+                (incident_id, status, message)
+             VALUES (?, ?, ?)'
+        );
+
+        $history->execute([$incidentId, $newStatus, $message]);
+
+        $pdo->commit();
+
+        header('Location: records.php?updated=1');
+        exit;
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
+        error_log('Incident status update failed: ' . $e->getMessage());
+
+        http_response_code(500);
+        exit('Unable to update the incident status. Check the server error log.');
+    }
+}
+
+
 /*
 |--------------------------------------------------------------------------
 | INCIDENT RECORDS
@@ -1020,57 +1122,22 @@ try {
                                     // STATUS
                                     // ==================================================
 
-                                    /*
-                                     * resolved_at determines whether
-                                     * the incident is resolved.
-                                     *
-                                     * This prevents the PostgreSQL
-                                     * enum error involving "Resolved".
-                                     */
 
-                                    if (
-                                        !empty(
-                                            $incident['resolved_at']
-                                        )
-                                    ) {
+$displayStatus = !empty($incident['resolved_at'])
+    ? 'Resolved'
+    : ($incident['resident_status'] ?? 'Submitted');
 
-                                        $displayStatus =
-                                            'Resolved';
+$statusClass = match ($displayStatus) {
+    'Submitted' => 'status-pending',
+    'Under Review' => 'status-default',
+    'Verified' => 'status-progress',
+    'Response in Progress' => 'status-progress',
+    'Resolved' => 'status-resolved',
+    'Needs More Information' => 'status-default',
+    'Rejected' => 'status-default',
+    default => 'status-pending',
+};
 
-                                        $statusClass =
-                                            'status-resolved';
-
-                                    } else {
-
-                                        $displayStatus =
-                                            $incident['status']
-                                            ?? 'Pending';
-
-
-                                        if (
-                                            $displayStatus ===
-                                            'Pending'
-                                        ) {
-
-                                            $statusClass =
-                                                'status-pending';
-
-                                        } elseif (
-                                            $displayStatus ===
-                                            'In Progress'
-                                        ) {
-
-                                            $statusClass =
-                                                'status-progress';
-
-                                        } else {
-
-                                            $statusClass =
-                                                'status-default';
-
-                                        }
-
-                                    }
 
                                     ?>
 
@@ -1264,37 +1331,57 @@ try {
                                             <td>
 
 
-                                                <form
-                                                    method="POST"
-                                                    onsubmit="return confirmResolve();"
-                                                >
 
+<form method="POST" class="incident-status-form">
+    <input
+        type="hidden"
+        name="incident_id"
+        value="<?= htmlspecialchars((string) $incident['id'], ENT_QUOTES, 'UTF-8'); ?>"
+    >
 
-                                                    <input
-                                                        type="hidden"
-                                                        name="incident_id"
-                                                        value="<?= htmlspecialchars(
-                                                            $incident['id']
-                                                        ); ?>"
-                                                    >
+    <label class="form-label" for="resident-status-<?= htmlspecialchars((string) $incident['id'], ENT_QUOTES, 'UTF-8'); ?>">
+        Resident Status
+    </label>
 
+    <select
+        class="form-select mb-2"
+        id="resident-status-<?= htmlspecialchars((string) $incident['id'], ENT_QUOTES, 'UTF-8'); ?>"
+        name="resident_status"
+        required
+    >
+        <?php
+        $selectedStatus = $incident['resident_status'] ?? 'Submitted';
+        foreach ($residentStatuses as $statusOption):
+        ?>
+            <option
+                value="<?= htmlspecialchars($statusOption, ENT_QUOTES, 'UTF-8'); ?>"
+                <?= $selectedStatus === $statusOption ? 'selected' : ''; ?>
+            >
+                <?= htmlspecialchars($statusOption, ENT_QUOTES, 'UTF-8'); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
 
-                                                    <button
-                                                        type="submit"
-                                                        name="resolve_incident"
-                                                        class="resolve-btn"
-                                                    >
+    <label class="form-label">Update Message</label>
 
-                                                        <i
-                                                            class="bi bi-check-circle"
-                                                        ></i>
+    <textarea
+        class="form-control mb-2"
+        name="latest_update"
+        rows="3"
+        maxlength="2000"
+        placeholder="Write an update for the resident..."
+    ><?= htmlspecialchars((string) ($incident['latest_update'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></textarea>
 
-                                                        Resolve
-
-                                                    </button>
-
-
-                                                </form>
+    <button
+        type="submit"
+        name="update_incident_status"
+        value="1"
+        class="btn btn-primary btn-sm"
+    >
+        <i class="bi bi-save"></i>
+        Save Update
+    </button>
+</form>
 
 
                                             </td>
