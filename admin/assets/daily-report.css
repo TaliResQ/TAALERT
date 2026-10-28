@@ -1,0 +1,493 @@
+/* ==========================================================
+   TaliResq Daily Incident Report
+   Separate stylesheet: assets/daily-report.css
+========================================================== */
+
+.daily-report {
+    margin: 24px 0;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #dce5ef;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(5, 34, 65, 0.06);
+    color: #17324d;
+}
+
+.daily-report-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.daily-report-header h3 {
+    margin: 0 0 7px;
+    color: #052241;
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.daily-report-header h3 i {
+    margin-right: 7px;
+    color: #1675b9;
+}
+
+.daily-report-header p {
+    margin: 0;
+    color: #65778a;
+    font-size: 0.92rem;
+}
+
+.report-print-btn,
+.report-generate-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 10px;
+    color: #ffffff;
+    background: #075b96;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.report-print-btn:hover,
+.report-generate-btn:hover {
+    color: #ffffff;
+    background: #043f6c;
+    transform: translateY(-1px);
+}
+
+.report-date-form {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    background: #f4f8fc;
+    border: 1px solid #e0e9f2;
+    border-radius: 12px;
+}
+
+.report-date-form > div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.report-date-form label {
+    color: #27445e;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.report-date-form input[type="date"] {
+    min-height: 42px;
+    min-width: 220px;
+    padding: 8px 11px;
+    color: #17324d;
+    background: #ffffff;
+    border: 1px solid #cbd8e5;
+    border-radius: 8px;
+    font: inherit;
+}
+
+.print-report-heading {
+    display: none;
+}
+
+.report-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.report-stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 105px;
+    padding: 16px;
+    border: 1px solid #e0e8f1;
+    border-left: 4px solid #2479b9;
+    border-radius: 12px;
+    background: #f8fbfe;
+}
+
+.report-stat span {
+    color: #5a6e82;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.report-stat strong {
+    margin-top: 10px;
+    color: #052241;
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.report-stat.pending-stat {
+    border-left-color: #d79a18;
+}
+
+.report-stat.progress-stat {
+    border-left-color: #3985d5;
+}
+
+.report-stat.resolved-stat,
+.report-stat.resolved-today-stat {
+    border-left-color: #218653;
+}
+
+.report-breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 16px;
+    margin-bottom: 26px;
+}
+
+.report-breakdown-card {
+    height: 100%;
+    padding: 17px;
+    border: 1px solid #e0e8f1;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.report-breakdown-card h4,
+.report-details-section h4 {
+    margin: 0 0 14px;
+    color: #052241;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.breakdown-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid #edf1f5;
+    font-size: 0.9rem;
+}
+
+.breakdown-row:last-child {
+    border-bottom: 0;
+}
+
+.breakdown-row span {
+    color: #52677b;
+    overflow-wrap: anywhere;
+}
+
+.breakdown-row strong {
+    min-width: 28px;
+    text-align: right;
+    color: #075b96;
+}
+
+.report-details-section {
+    margin-top: 8px;
+}
+
+.report-table-description {
+    margin: -5px 0 14px;
+    color: #65778a;
+    font-size: 0.88rem;
+}
+
+.report-details-table {
+    width: 100%;
+    margin-bottom: 0;
+    color: #253c52;
+    font-size: 0.84rem;
+    vertical-align: middle;
+}
+
+.report-details-table thead th {
+    padding: 11px 10px;
+    color: #ffffff;
+    background: #07365c;
+    border-color: #d5e0ea;
+    white-space: nowrap;
+}
+
+.report-details-table tbody td {
+    padding: 10px;
+    border-color: #dce5ed;
+}
+
+.report-details-table tbody tr:nth-child(even) {
+    background: #f5f8fb;
+}
+
+.report-empty {
+    padding: 22px !important;
+    color: #6b7d8e !important;
+    text-align: center;
+}
+
+.report-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #dce5ed;
+    color: #63768a;
+    font-size: 0.8rem;
+}
+
+.report-error {
+    padding: 14px 16px;
+    color: #842029;
+    background: #f8d7da;
+    border: 1px solid #f1aeb5;
+    border-radius: 10px;
+}
+
+@media (max-width: 1100px) {
+    .report-summary-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .report-breakdown-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .daily-report {
+        padding: 16px;
+    }
+
+    .daily-report-header {
+        flex-direction: column;
+    }
+
+    .report-summary-grid,
+    .report-breakdown-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .report-stat {
+        min-height: 85px;
+    }
+
+    .report-date-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .report-date-form input[type="date"] {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .report-generate-btn,
+    .report-print-btn {
+        width: 100%;
+    }
+
+    .report-footer {
+        flex-direction: column;
+    }
+}
+
+/* Print only the generated daily report, not the dashboard. */
+@media print {
+    @page {
+        size: landscape;
+        margin: 12mm;
+    }
+
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        color: #172b3d !important;
+        font-family: Arial, Helvetica, sans-serif !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    #printableDailyReport,
+    #printableDailyReport * {
+        visibility: visible !important;
+    }
+
+    #printableDailyReport {
+        position: absolute !important;
+        inset: 0 auto auto 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        font-size: 9pt !important;
+    }
+
+    .no-print,
+    .daily-report-header,
+    .report-date-form,
+    .sidebar,
+    .records-header,
+    .filter-card,
+    .dash-card,
+    .report-print-btn {
+        display: none !important;
+    }
+
+    .print-report-heading {
+        display: block !important;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        text-align: center;
+        border-bottom: 2px solid #07365c;
+    }
+
+    .print-report-heading h2 {
+        margin: 0 0 4px;
+        color: #07365c !important;
+        font-size: 19pt;
+        font-weight: 800;
+    }
+
+    .print-report-heading h3 {
+        margin: 0 0 8px;
+        font-size: 13pt;
+        font-weight: 700;
+    }
+
+    .print-report-heading p {
+        margin: 3px 0;
+    }
+
+    .report-generated-at {
+        color: #5a6875 !important;
+        font-size: 8pt;
+    }
+
+    .report-summary-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .report-stat {
+        min-height: 72px !important;
+        padding: 9px !important;
+        border-radius: 0 !important;
+        break-inside: avoid;
+    }
+
+    .report-stat span {
+        font-size: 8pt !important;
+    }
+
+    .report-stat strong {
+        font-size: 16pt !important;
+    }
+
+    .report-breakdown-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .report-breakdown-card {
+        padding: 10px !important;
+        border-radius: 0 !important;
+        break-inside: avoid;
+    }
+
+    .report-breakdown-card h4,
+    .report-details-section h4 {
+        font-size: 10pt !important;
+    }
+
+    .breakdown-row {
+        padding: 5px 0 !important;
+        font-size: 8pt !important;
+    }
+
+    .report-details-table {
+        width: 100% !important;
+        font-size: 7.5pt !important;
+    }
+
+    .report-details-table thead {
+        display: table-header-group;
+    }
+
+    .report-details-table tr {
+        break-inside: avoid;
+    }
+
+    .report-details-table th,
+    .report-details-table td {
+        padding: 5px !important;
+        overflow-wrap: anywhere;
+    }
+
+    .report-details-table thead th {
+        color: #ffffff !important;
+        background: #07365c !important;
+    }
+
+    .report-footer {
+        margin-top: 12px !important;
+        font-size: 8pt !important;
+    }
+
+    .table-responsive {
+        overflow: visible !important;
+    }
+}
+
+
+/* Fix Daily Report page scrolling */
+html,
+body {
+    min-height: 100%;
+    height: auto;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+}
+
+.dashboard-wrapper,
+.main-content,
+.daily-report,
+.daily-report-container {
+    height: auto !important;
+    min-height: 100vh;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+/* Keep the page content from being clipped */
+.main-content {
+    box-sizing: border-box;
+    padding-bottom: 40px;
+}
+
+/* Allow the report tables to scroll horizontally on small screens */
+.table-responsive {
+    max-width: 100%;
+    overflow-x: auto;
+}
