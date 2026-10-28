@@ -53,6 +53,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </a>
         </li>
 
+        <li class="nav-item <?php echo ($current_page == 'daily-report.php') ? 'active' : ''; ?>">
+            <a href="daily-report.php" class="nav-link">
+                <i class="bi bi-journal-text"></i>
+                <span>Report</span>
+            </a>
+        </li>
+
+
+
     </ul>
 
     <ul class="bottom-nav">
