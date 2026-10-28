@@ -7,6 +7,121 @@ $password = 'taliresq67_';
 
 $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
 
+$activity_success = '';
+$activity_error = '';
+
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['create_activity'])
+) {
+    $title = trim($_POST['activity_title'] ?? '');
+    $description = trim($_POST['activity_message'] ?? '');
+    $activityDate = $_POST['activity_date'] ?? '';
+    $targetArea = trim($_POST['target_area'] ?? '');
+
+    if (
+        $title === '' ||
+        $description === '' ||
+        $activityDate === '' ||
+        $targetArea === ''
+    ) {
+        $activity_error = 'Please complete all activity fields.';
+    } elseif (
+        !preg_match('/^\d{4}-\d{2}-\d{2}$/', $activityDate) ||
+        !checkdate(
+            (int) substr($activityDate, 5, 2),
+            (int) substr($activityDate, 8, 2),
+            (int) substr($activityDate, 0, 4)
+        )
+    ) {
+        $activity_error = 'Please enter a valid activity date.';
+    } else {
+        try {
+            $activityPdo = new PDO(
+                $dsn,
+                $user,
+                $password,
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                ]
+            );
+
+
+$activityPdo->beginTransaction();
+
+try {
+    $stmt = $activityPdo->prepare("
+        INSERT INTO public.community_activities (
+            title,
+            description,
+            activity_date,
+            target_area,
+            is_published
+        )
+        VALUES (
+            :title,
+            :description,
+            :activity_date,
+            :target_area,
+            TRUE
+        )
+        RETURNING id
+    ");
+
+    $stmt->execute([
+        ':title' => $title,
+        ':description' => $description,
+        ':activity_date' => $activityDate,
+        ':target_area' => $targetArea,
+    ]);
+
+    $activityId = $stmt->fetchColumn();
+
+    $notification = $activityPdo->prepare("
+        INSERT INTO public.activity_notifications (
+            activity_id,
+            title,
+            message
+        )
+        VALUES (
+            :activity_id,
+            :title,
+            :message
+        )
+    ");
+
+    $notification->execute([
+        ':activity_id' => $activityId,
+        ':title' => 'New Activity Posted',
+        ':message' => $title . ' — ' . $targetArea,
+    ]);
+
+    $activityPdo->commit();
+
+    $activity_success =
+        'Activity and notification published successfully!';
+
+} catch (PDOException $e) {
+    if ($activityPdo->inTransaction()) {
+        $activityPdo->rollBack();
+    }
+
+    throw $e;
+}
+
+
+        } catch (PDOException $e) {
+            error_log(
+                'Activity creation failed: ' . $e->getMessage()
+            );
+
+            $activity_error =
+                'Unable to publish activity. Check your server error log.';
+        }
+    }
+}
+
 $reports = [];
 $incidentTypes = [];
 $reportsOverTime = [];
@@ -228,25 +343,99 @@ try {
                         <?php endforeach; ?>
                     </div>
                 </div>
-                <div class="dash-card span-3">
-                    <h3 class="card-title mb-3">CREATE NEW ALERT</h3>
 
-                    <div class="form-scroll-wrapper">
-                        <label class="form-label mt-0">ALERT TITLE</label>
-                        <input type="text" class="form-control" placeholder="Enter alert title">
+<div class="dash-card span-3">
+    <h3 class="card-title mb-3">CREATE ACTIVITY</h3>
 
-                        <label class="form-label">MESSAGE</label>
-                        <textarea class="form-control" rows="4" placeholder="Type your message here..."
-                            style="resize: none; min-height: 80px;"></textarea>
+    <div class="form-scroll-wrapper">
 
-                        <label class="form-label">TARGET AREA</label>
-                        <select class="form-select" style="color: rgba(255,255,255,0.5);">
-                            <option style="color: #000;">Select area</option>
-                        </select>
+        <?php if ($activity_success !== ''): ?>
+            <div class="alert alert-success py-2" role="status">
+                <?= htmlspecialchars($activity_success) ?>
+            </div>
+        <?php endif; ?>
 
-                        <button class="btn-send">SEND ALERT</button>
-                    </div>
-                </div>
+        <?php if ($activity_error !== ''): ?>
+            <div class="alert alert-danger py-2" role="alert">
+                <?= htmlspecialchars($activity_error) ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="">
+            <label for="activity_title" class="form-label mt-0">
+                ACTIVITY TITLE
+            </label>
+
+            <input
+                type="text"
+                id="activity_title"
+                name="activity_title"
+                class="form-control"
+                placeholder="Enter activity title"
+                maxlength="200"
+                required
+            >
+
+            <label for="activity_date" class="form-label">
+                ACTIVITY DATE
+            </label>
+
+            <input
+                type="date"
+                id="activity_date"
+                name="activity_date"
+                class="form-control"
+                required
+            >
+
+            <label for="activity_message" class="form-label">
+                MESSAGE / DESCRIPTION
+            </label>
+
+            <textarea
+                id="activity_message"
+                name="activity_message"
+                class="form-control"
+                rows="4"
+                maxlength="2000"
+                placeholder="Describe the activity..."
+                style="resize: none; min-height: 80px;"
+                required
+            ></textarea>
+
+            <label for="target_area" class="form-label">
+                TARGET AREA
+            </label>
+
+            <select
+                id="target_area"
+                name="target_area"
+                class="form-select"
+                required
+            >
+                <option value="">Select area</option>
+                <option value="All Areas">All Areas</option>
+                <option value="Talisay">Talisay</option>
+                <option value="Agoncillo">Agoncillo</option>
+                <option value="Laurel">Laurel</option>
+                <option value="San Nicolas">San Nicolas</option>
+                <option value="Santa Teresita">Santa Teresita</option>
+                <option value="Lemery">Lemery</option>
+            </select>
+
+            <button
+                type="submit"
+                name="create_activity"
+                value="1"
+                class="btn-send"
+            >
+                <i class="bi bi-calendar-plus me-1"></i>
+                PUBLISH ACTIVITY
+            </button>
+        </form>
+    </div>
+</div>
+
 
                 <!-- ROW 3 (Map, Reports Graph) -->
                 <div class="dash-card span-6">

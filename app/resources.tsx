@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
-import React, { useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import {
   Animated,
   SafeAreaView,
@@ -59,6 +59,46 @@ export default function ResourcesScreen() {
           </View>
 
           {/* Resource List */}
+
+{/* Recovery Assistance Card */}
+<TouchableOpacity
+  activeOpacity={0.85}
+  onPress={() => router.push('/recovery-assistance')}
+  style={styles.recoveryCard}
+>
+  <View style={styles.recoveryCardHeader}>
+    <View style={styles.recoveryIconBox}>
+      <Feather name="life-buoy" size={25} color="#2563EB" />
+    </View>
+
+    <View style={styles.recoveryCardText}>
+      <Text style={styles.recoveryCardTitle}>
+        Recovery Assistance
+      </Text>
+
+      <Text style={styles.recoveryCardDescription}>
+        Find help, request assistance, and explore recovery resources.
+      </Text>
+    </View>
+
+    <Feather name="chevron-right" size={22} color="#2563EB" />
+  </View>
+
+  <View style={styles.recoveryTags}>
+    <View style={styles.recoveryTag}>
+      <Text style={styles.recoveryTagText}>Find Assistance</Text>
+    </View>
+
+    <View style={styles.recoveryTag}>
+      <Text style={styles.recoveryTagText}>Request Help</Text>
+    </View>
+
+    <View style={styles.recoveryTag}>
+      <Text style={styles.recoveryTagText}>Recovery Resources</Text>
+    </View>
+  </View>
+</TouchableOpacity>
+
           <View style={styles.listContainer}>
             <ResourceItem
               title="Before an eruption"

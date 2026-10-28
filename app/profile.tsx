@@ -1,7 +1,7 @@
 import { supabase } from '@/src/services/supabase';
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   SafeAreaView,
@@ -118,19 +118,47 @@ export default function ProfileScreen() {
             <StatCard value="0" label="SAFE DAYS" />
           </View>
 
-          {/* Menu List */}
-          <View style={styles.menuContainer}>
-            <MenuItem icon="bell" label="Notification preferences" color="#25A5FE" bg="#E0F2FE" />
-            <MenuItem icon="shield" label="Emergency contacts" color="#25A5FE" bg="#E0F2FE" />
-            <MenuItem 
-              icon="log-out" 
-              label="Sign out" 
-              color="#EF4444" 
-              bg="#FEE2E2" 
-              isLast 
-              onPress={() => router.replace('/')} 
-            />
-          </View>
+
+{/* Menu List */}
+<View style={styles.menuContainer}>
+  <MenuItem
+    icon="file-text"
+    label="My Reports"
+    sub={`View and track your ${reportCount} submitted reports`}
+    color="#25A5FE"
+    bg="#E0F2FE"
+    onPress={() => router.push('/my-reports')}
+  />
+
+  <MenuItem
+    icon="bell"
+    label="Notification preferences"
+    color="#25A5FE"
+    bg="#E0F2FE"
+    onPress={() => {}}
+  />
+
+  <MenuItem
+    icon="shield"
+    label="Emergency contacts"
+    color="#25A5FE"
+    bg="#E0F2FE"
+    onPress={() => {}}
+  />
+
+  <MenuItem
+    icon="log-out"
+    label="Sign out"
+    color="#EF4444"
+    bg="#FEE2E2"
+    isLast
+    onPress={async () => {
+      await supabase.auth.signOut();
+      router.replace('/');
+    }}
+  />
+</View>
+
 
           <View style={{ height: 100 }} />
         </ScrollView>

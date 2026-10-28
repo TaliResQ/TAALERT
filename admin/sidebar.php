@@ -62,6 +62,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 
 
+
+<li class="nav-item <?php echo ($current_page == 'recovery-requests.php' || $current_page == 'recovery-assistance.php') ? 'active' : ''; ?>">
+    <a href="recovery-requests.php" class="nav-link">
+        <i class="bi bi-life-preserver"></i>
+        <span>Recovery Assistance</span>
+    </a>
+</li>
+
+
     </ul>
 
     <ul class="bottom-nav">

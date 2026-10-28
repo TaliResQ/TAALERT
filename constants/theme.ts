@@ -836,6 +836,61 @@ export const ResourceStyles = StyleSheet.create({
   cardTextContainer: { flex: 1, marginLeft: 15 },
   cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#1E293B' },
   cardDesc: { fontSize: 13, color: '#64748B', marginTop: 2 },
+
+recoveryCard: {
+  backgroundColor: '#EFF6FF',
+  borderWidth: 1,
+  borderColor: '#BFDBFE',
+  borderRadius: 20,
+  padding: 16,
+  marginBottom: 22,
+},
+recoveryCardHeader: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 14,
+},
+recoveryIconBox: {
+  width: 48,
+  height: 48,
+  borderRadius: 14,
+  backgroundColor: '#DBEAFE',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: 12,
+},
+recoveryCardText: {
+  flex: 1,
+  marginRight: 8,
+},
+recoveryCardTitle: {
+  fontSize: 16,
+  fontWeight: '700',
+  color: '#1E3A8A',
+  marginBottom: 5,
+},
+recoveryCardDescription: {
+  fontSize: 12,
+  lineHeight: 18,
+  color: '#475569',
+},
+recoveryTags: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  gap: 7,
+},
+recoveryTag: {
+  backgroundColor: '#DBEAFE',
+  borderRadius: 20,
+  paddingHorizontal: 10,
+  paddingVertical: 6,
+},
+recoveryTagText: {
+  fontSize: 10,
+  fontWeight: '600',
+  color: '#1D4ED8',
+},
+
 });
 
 

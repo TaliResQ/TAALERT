@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -135,18 +135,21 @@ export default function ReportScreen() {
             }
 
             const { error: dbError } = await supabase
-                .from('incidents')
-                .insert([
-                    {
-                        user_id: user.id,
-                        category: selectedType, 
-                        location: location.trim(),
-                        description: description.trim(),
-                        photo_url: photoUrl,
-                        status: 'pending',     
-                        priority: 'medium'     
-                    }
-                ]);
+.from('incidents')
+.insert([
+  {
+    user_id: user.id,
+    category: selectedType,
+    location: location.trim(),
+    description: description.trim(),
+    photo_url: photoUrl,
+    status: 'pending',
+    resident_status: 'Submitted',
+    latest_update: 'Your report has been submitted and is awaiting review.',
+    priority: 'medium'
+  }
+]);
+
 
             if (dbError) {
                 Alert.alert("Database Error!", dbError.message);
