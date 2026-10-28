@@ -1,0 +1,1865 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>TALISAY MAP</name>
+	<open>1</open>
+	<LookAt>
+		<longitude>120.9973780669115</longitude>
+		<latitude>14.08624685131989</latitude>
+		<altitude>0</altitude>
+		<heading>-10.20944472349979</heading>
+		<tilt>60.00850261023852</tilt>
+		<range>1092.934359934261</range>
+		<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+	</LookAt>
+	<atom:link rel="app" href="https://www.google.com/earth/about/versions/#earth-pro" title="Google Earth Pro 7.3.7.1155"></atom:link>
+	<Schema name="Talisay" id="S_Talisay_SSSSS0">
+		<SimpleField type="string" name="geocode">
+			<displayName>&lt;b&gt;geocode&lt;/b&gt;</displayName>
+		</SimpleField>
+		<SimpleField type="string" name="name">
+			<displayName>&lt;b&gt;name&lt;/b&gt;</displayName>
+		</SimpleField>
+		<SimpleField type="string" name="_020_Pop">
+			<displayName>&lt;b&gt;2020_Pop&lt;/b&gt;</displayName>
+		</SimpleField>
+		<SimpleField type="string" name="layer">
+			<displayName>&lt;b&gt;layer&lt;/b&gt;</displayName>
+		</SimpleField>
+		<SimpleField type="string" name="path">
+			<displayName>&lt;b&gt;path&lt;/b&gt;</displayName>
+		</SimpleField>
+	</Schema>
+	<StyleMap id="dir_route01">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#dir_route150</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#dir_route151</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="dir_route1460">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#dir_route1470</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#dir_route1480</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="dir_route1470">
+		<LineStyle>
+			<color>ff0000ff</color>
+			<width>6</width>
+		</LineStyle>
+	</Style>
+	<Style id="dir_route1480">
+		<LineStyle>
+			<color>ff0000ff</color>
+			<width>6</width>
+		</LineStyle>
+	</Style>
+	<Style id="dir_route1490">
+		<LineStyle>
+			<color>ff00ff55</color>
+			<width>6</width>
+		</LineStyle>
+	</Style>
+	<Style id="dir_route150">
+		<LineStyle>
+			<color>ffa00000</color>
+			<width>6</width>
+		</LineStyle>
+	</Style>
+	<Style id="dir_route151">
+		<LineStyle>
+			<color>ffa00000</color>
+			<width>6</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="dir_route770">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#dir_route800</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#dir_route1490</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="dir_route800">
+		<LineStyle>
+			<color>ff00ff55</color>
+			<width>6</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="falseColor00">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#falseColor2</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#falseColor10</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="falseColor10">
+		<BalloonStyle>
+			<text><![CDATA[<table border="0">
+  <tr><td><b>geocode</b></td><td>$[Talisay/geocode]</td></tr>
+  <tr><td><b>name</b></td><td>$[Talisay/name]</td></tr>
+  <tr><td><b>2020_Pop</b></td><td>$[Talisay/_020_Pop]</td></tr>
+  <tr><td><b>layer</b></td><td>$[Talisay/layer]</td></tr>
+  <tr><td><b>path</b></td><td>$[Talisay/path]</td></tr>
+</table>]]></text>
+		</BalloonStyle>
+		<LineStyle>
+			<width>2</width>
+		</LineStyle>
+		<PolyStyle>
+			<color>66ffffff</color>
+			<colorMode>random</colorMode>
+		</PolyStyle>
+	</Style>
+	<Style id="falseColor2">
+		<BalloonStyle>
+			<text><![CDATA[<table border="0">
+  <tr><td><b>geocode</b></td><td>$[Talisay/geocode]</td></tr>
+  <tr><td><b>name</b></td><td>$[Talisay/name]</td></tr>
+  <tr><td><b>2020_Pop</b></td><td>$[Talisay/_020_Pop]</td></tr>
+  <tr><td><b>layer</b></td><td>$[Talisay/layer]</td></tr>
+  <tr><td><b>path</b></td><td>$[Talisay/path]</td></tr>
+</table>]]></text>
+		</BalloonStyle>
+		<LineStyle>
+			<width>2</width>
+		</LineStyle>
+		<PolyStyle>
+			<color>66ffffff</color>
+			<colorMode>random</colorMode>
+		</PolyStyle>
+	</Style>
+	<StyleMap id="msn_arrow0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_arrow0</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_arrow0</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_homegardenbusiness01">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_homegardenbusiness00</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_homegardenbusiness00</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_homegardenbusiness1">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_homegardenbusiness2</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_homegardenbusiness2</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_target0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_target0</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_target0</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_toilets0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_toilets0</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_toilets0</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_track0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_track0</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_track0</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin00">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin20</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin50</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin100">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin110</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin110</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin110">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin00</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin20</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin120">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin30</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin100</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin15">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin60</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin60</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin16">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin120</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin70</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin20">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin70</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin120</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin30">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin100</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin90</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin40">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin90</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin16</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin50">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin80</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin40</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin60">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin50</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin30</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin70">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin15</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin00</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin80">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin40</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin80</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin90">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin16</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin15</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="sh_arrow0">
+		<IconStyle>
+			<scale>1.18182</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/arrow.png</href>
+			</Icon>
+			<hotSpot x="32" y="1" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sh_homegardenbusiness00">
+		<IconStyle>
+			<color>ff0055ff</color>
+			<scale>1.18182</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png</href>
+			</Icon>
+			<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+		</IconStyle>
+		<LabelStyle>
+			<color>ff7fff00</color>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sh_homegardenbusiness2">
+		<IconStyle>
+			<color>ffffff55</color>
+			<scale>1.18182</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png</href>
+			</Icon>
+			<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sh_target0">
+		<IconStyle>
+			<scale>1.18182</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/target.png</href>
+			</Icon>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sh_toilets0">
+		<IconStyle>
+			<scale>0.945456</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/toilets.png</href>
+			</Icon>
+			<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sh_track0">
+		<IconStyle>
+			<scale>1.18182</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/track.png</href>
+			</Icon>
+			<hotSpot x="32" y="32" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin00">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ffff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin100">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>bfffff00</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin110">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>80ffff55</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin120">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>bfff5500</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin15">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>bf00ff55</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin16">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ff55</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin20">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ffff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin30">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000aaff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin40">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>80005555</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin50">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ffff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin60">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>bf0000ff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin70">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>bfffff00</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin80">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>80005555</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin90">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ffff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_arrow0">
+		<IconStyle>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/arrow.png</href>
+			</Icon>
+			<hotSpot x="32" y="1" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sn_homegardenbusiness00">
+		<IconStyle>
+			<color>ff0055ff</color>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png</href>
+			</Icon>
+			<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+		</IconStyle>
+		<LabelStyle>
+			<color>ff7fff00</color>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sn_homegardenbusiness2">
+		<IconStyle>
+			<color>ffffff55</color>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png</href>
+			</Icon>
+			<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sn_target0">
+		<IconStyle>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/target.png</href>
+			</Icon>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sn_toilets0">
+		<IconStyle>
+			<scale>0.8</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/toilets.png</href>
+			</Icon>
+			<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sn_track0">
+		<IconStyle>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/track.png</href>
+			</Icon>
+			<hotSpot x="32" y="1" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0.8</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin00">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ffff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin100">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ffff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin110">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>80ffff55</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin120">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>bfffff00</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin15">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ffff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin16">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>bf00ff55</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin20">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ffff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin30">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>bfffff00</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin40">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>80005555</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin50">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000aaff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin60">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>bf0000ff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin70">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>bfff5500</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin80">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>80005555</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin90">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff000000</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>8000ff55</color>
+		</PolyStyle>
+	</Style>
+	<Folder id="layer 0">
+		<name>Talisay</name>
+		<Placemark>
+			<name>AYA</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030001000000</SimpleData>
+					<SimpleData name="name">Aya</SimpleData>
+					<SimpleData name="_020_Pop">6,703</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0382624859592,14.09057538818668,0 121.0383195323879,14.09034879969363,0 121.0383333187201,14.09010606524665,0 121.038333777639,14.08972985750792,0 121.0385807014415,14.08978927255976,0 121.0398355726782,14.08997633606449,0 121.0407545642852,14.09060401709824,0 121.041195782847,14.09111193089958,0 121.0417837492524,14.09163692798986,0 121.0421854221182,14.09192302979658,0 121.0425652556981,14.09188107560118,0 121.0431266822517,14.0916059336592,0 121.0435475288046,14.09128537934146,0 121.0449056337393,14.08970078724477,0 121.0453586296535,14.08977681497064,0 121.0456745956099,14.08989200775395,0 121.0463836768969,14.08966243170175,0 121.0466716594887,14.08938181808049,0 121.0469598871808,14.08917223120631,0 121.0472708498314,14.08932261319873,0 121.0476041951138,14.08966956277927,0 121.0479424215491,14.08996549145472,0 121.0481114644397,14.09041143677371,0 121.048528592844,14.09099310298651,0 121.0489838756731,14.09106011974125,0 121.0505248923984,14.09424929930585,0 121.0514028990699,14.0953862209707,0 121.0514106414902,14.09597880927425,0 121.0514179066797,14.09661514181243,0 121.0517309093599,14.09706911075622,0 121.0521959170765,14.09834602585568,0 121.0529059210257,14.09903197753078,0 121.0544549235255,14.0995419355745,0 121.0523109364425,14.10147782369015,0 121.0512039397663,14.10193780063652,0 121.0506275011013,14.10219777934664,0 121.0500979433185,14.10243477519758,0 121.0485949499906,14.10340772148528,0 121.0484957077402,14.10593114147424,0 121.0488460948322,14.10724175164851,0 121.04962498666,14.10939033056589,0 121.0509979957291,14.11141241804543,0 121.0513421967232,14.11245056950471,0 121.0513030194582,14.11479097328892,0 121.0514030363106,14.11751279764926,0 121.0512350530076,14.12019062643374,0 121.0507310702673,14.12293545290769,0 121.0507186531579,14.12308267879141,0 121.0504800888576,14.12591126304435,0 121.0492281026345,14.12804313337826,0 121.0469519284044,14.12720660902655,0 121.0467755205779,14.12671423328509,0 121.0463919680712,14.1261928864651,0 121.0449537765821,14.12574524269924,0 121.044291621834,14.12581396983255,0 121.0438491501645,14.1256702490412,0 121.0437044190254,14.12568426640091,0 121.0434253011009,14.12579449213861,0 121.0432870960996,14.12575244094564,0 121.0430535442126,14.12537877829054,0 121.0424057982014,14.125365409437,0 121.0420058991387,14.12533998308046,0 121.0419137973334,14.12508702942296,0 121.0414820490647,14.12477438706204,0 121.0408469688678,14.12486839381274,0 121.0407280619149,14.12522280366865,0 121.0400951347655,14.12519534070174,0 121.0410225167593,14.12358091299538,0 121.0412981314511,14.12201397709599,0 121.0418037406403,14.11979951472432,0 121.0420494685828,14.11815673648563,0 121.0429942795144,14.11661837389664,0 121.042399357444,14.11551063717793,0 121.0425715059504,14.11409939147886,0 121.0424489893457,14.11203373460995,0 121.0426132711296,14.11047267631416,0 121.0422207797736,14.10981163824088,0 121.0419391777746,14.10933736118993,0 121.0404845552716,14.10781178149172,0 121.0393691461097,14.10532157581518,0 121.0384040977645,14.10361418258909,0 121.0375578246003,14.10165439210352,0 121.0378844563479,14.1007635782464,0 121.0383892508668,14.09929373538222,0 121.0384337915597,14.09816537116324,0 121.0389088922835,14.09636889655149,0 121.0391271740067,14.09545904756289,0 121.0390850920844,14.09522041004935,0 121.0389442303445,14.09496563537623,0 121.038835950402,14.09477329691559,0 121.0388167813282,14.09459164676902,0 121.038831384428,14.0944346918482,0 121.0388820574733,14.09419825150066,0 121.0389482554935,14.09394340974341,0 121.0389319645946,14.0937260146203,0 121.038896693435,14.09359300415338,0 121.0388209190271,14.09351147768816,0 121.0386406903386,14.09349458759116,0 121.0386406179023,14.09339917551504,0 121.0386463285148,14.09320067182911,0 121.0386098903925,14.09291342153828,0 121.0385360922727,14.09270882769629,0 121.0385312472603,14.09257008605256,0 121.0384403594542,14.09235948559201,0 121.0383827959585,14.09218640917193,0 121.0384125558561,14.09200081124247,0 121.038401965032,14.09166045508893,0 121.0383540704854,14.09128286778067,0 121.0383096278017,14.090998436819,0 121.0382750897043,14.0907360289656,0 121.0382624859592,14.09057538818668,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>BANGA</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030004000000</SimpleData>
+					<SimpleData name="name">Banga</SimpleData>
+					<SimpleData name="_020_Pop">4,834</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0084369483906,14.08939739789828,0 121.0092719506442,14.08818492202094,0 121.0104912959065,14.08865044790435,0 121.0115246604396,14.08873122933821,0 121.0119771971863,14.08922630007433,0 121.0122841579097,14.0901353942864,0 121.0127691783186,14.09057984713209,0 121.0133265196171,14.09078596039718,0 121.0141511043803,14.09119043724132,0 121.0152623290502,14.09097220880436,0 121.0162731739982,14.09041007651629,0 121.0170045097374,14.09014772765409,0 121.0178248972483,14.0895753174899,0 121.0181568600458,14.08928626360855,0 121.0184206253255,14.08884484333046,0 121.0187290824535,14.08877729197763,0 121.0189969281472,14.08872814009611,0 121.0191769436188,14.08896690298696,0 121.0191851722845,14.08920753834904,0 121.019165125178,14.08939341480199,0 121.0192142543838,14.08949750577359,0 121.0192692400563,14.08967890475843,0 121.0193459383457,14.08978613028832,0 121.0193933853549,14.08987481456564,0 121.0194740409939,14.09004225561143,0 121.0195200085587,14.09016024921376,0 121.0195492934222,14.09026231063076,0 121.0195982223938,14.09039240175655,0 121.0194974862759,14.0903951933352,0 121.0194510329867,14.09054616652527,0 121.0195439395651,14.09058100649218,0 121.0194248303255,14.09067972857089,0 121.0193755463916,14.09081327293837,0 121.019344234729,14.09098304708739,0 121.0194045796974,14.09109779933494,0 121.0197007194163,14.09131845245883,0 121.0198060953547,14.09138852442446,0 121.0199257455296,14.0915148372981,0 121.0199888555658,14.09166923463869,0 121.0200175162894,14.09177358964401,0 121.0200645716646,14.0918516635346,0 121.0200654481808,14.09194680503796,0 121.0200187870196,14.09207741085288,0 121.0198752451043,14.09240223536045,0 121.019875165174,14.09261372850677,0 121.0198802947859,14.0926441037616,0 121.019793710581,14.09284225788311,0 121.0197561320718,14.09295213588069,0 121.019703802597,14.09307963600915,0 121.019649839274,14.09315630151637,0 121.0196210650126,14.09330621220431,0 121.0196573666908,14.09348681580891,0 121.0197313463591,14.09361739148993,0 121.0197714717125,14.09370735262311,0 121.0197938032442,14.09382136498167,0 121.0198399611609,14.0939833080999,0 121.0198962396704,14.09412514220988,0 121.0200112972021,14.09432258030871,0 121.0200800646399,14.09443214762062,0 121.0201248203663,14.09449863938591,0 121.0201484219113,14.09455174286204,0 121.0201926748081,14.094598945952,0 121.0201749736494,14.09464909923501,0 121.0201631728769,14.09470220271118,0 121.0201631728769,14.09474350541484,0 121.0201867744219,14.09478185792541,0 121.020115969787,14.09484086178781,0 121.0200481153452,14.09490281584333,0 121.0199596095516,14.09497952086447,0 121.0199242072342,14.09504147491995,0 121.0199094562686,14.09506507646491,0 121.0198681535649,14.095165383031,0 121.0198239006681,14.09521848650714,0 121.0197855481575,14.09526863979019,0 121.0197589964195,14.09534239461819,0 121.0197648968057,14.09538664751502,0 121.0197412952607,14.09546040234298,0 121.0197383519602,14.09550497590415,0 121.0197123728828,14.09557252150538,0 121.0197071770673,14.09564526292211,0 121.0197383519602,14.09571280852338,0 121.0197851142995,14.09577515830915,0 121.0198162891924,14.09585829135688,0 121.0198890306091,14.0959102495117,0 121.0198526599008,14.09598299092843,0 121.019790310115,14.0960401448987,0 121.0194271452075,14.0969169777113,0 121.0199208840076,14.09694877783739,0 121.0197687429227,14.09900402658598,0 121.0188201903573,14.09900713977433,0 121.0188266832695,14.09901363268646,0 121.0188309997416,14.1006582085639,0 121.0172599535638,14.10062400927817,0 121.017260181694,14.10071537540016,0 121.0155198991574,14.10065466786984,0 121.0154149482546,14.10089307921015,0 121.0143769568518,14.10221100057447,0 121.0133009668477,14.10375190782555,0 121.0117529753567,14.10502183529685,0 121.00668966245,14.10917462875328,0 121.0032150222729,14.11202443544235,0 121.0023815068278,14.10618678523129,0 121.00215197,14.10485743999999,0 121.0021476144649,14.10388768063151,0 121.0000719410989,14.09873130885691,0 121.000048935102,14.09776237131151,0 121.0007129256923,14.09628746225486,0 121.0017889163956,14.09485754787572,0 121.0034209071902,14.09347862693856,0 121.0049468966213,14.09187272123283,0 121.0079754400761,14.0894367049708,0 121.0081667290037,14.0892382555543,0 121.0081667290037,14.08923825555422,0 121.0081667290037,14.08923825555422,0 121.0081667290038,14.0892382555543,0 121.0082832944186,14.0892949360679,0 121.0084369483906,14.08939739789828,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>BALAS</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030003000000</SimpleData>
+					<SimpleData name="name">Balas</SimpleData>
+					<SimpleData name="_020_Pop">1,596</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							120.9912418184678,14.08316967509431,0 120.9912265717569,14.08312131638064,0 120.9910648149663,14.08251448511032,0 120.9909500739846,14.08221618223224,0 120.9931600922057,14.08218319780677,0 120.9943308400266,14.08194165988899,0 120.9952979975092,14.08196578864186,0 120.9961526463867,14.0816300208154,0 120.9966911747288,14.08152069163081,0 120.9974573460591,14.08171226917632,0 120.998368410258,14.08129663493098,0 120.9991289971628,14.08135978341942,0 120.9999430378692,14.08200699057197,0 121.0002135032263,14.08255780073817,0 121.0000239642086,14.08435322904675,0 120.9995920718486,14.08890918711169,0 120.9993238928258,14.09089281745383,0 120.999300636869,14.09314618434815,0 120.9986292759719,14.09424461202956,0 120.9980195352687,14.09535348005999,0 120.9964709353726,14.09757340459171,0 120.9950139369126,14.09772740329011,0 120.9943671198133,14.09769027167185,0 120.9939689369602,14.09766741331868,0 120.991984939094,14.09788341114167,0 120.9924499311234,14.09662748917044,0 120.992907915076,14.0940676511092,0 120.9919148860224,14.09204108267254,0 120.9914736535147,14.09132957731522,0 120.9912128892258,14.09060275222163,0 120.9913920662665,14.08975833528198,0 120.9920417420902,14.08909025431883,0 120.9927180087714,14.08859739939796,0 120.9931465382438,14.08786924899642,0 120.9926412361807,14.08619941629095,0 120.9915575751356,14.0840288989865,0 120.9913742836262,14.08358982110018,0 120.9912418184678,14.08316967509431,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>BUCO</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030006000000</SimpleData>
+					<SimpleData name="name">Buco</SimpleData>
+					<SimpleData name="_020_Pop">1,064</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							120.9829819299193,14.09582459670685,0 120.9831119176481,14.09385272275916,0 120.9836379025082,14.09144287464986,0 120.9857168936448,14.08708533712657,0 120.9855854197592,14.08658752020692,0 120.9854291629965,14.08627022542931,0 120.9852582352712,14.08607730683405,0 120.984760209053,14.08570909566274,0 120.985184209908,14.08550376052928,0 120.985516789524,14.08523550089201,0 120.9858638971407,14.08492481240632,0 120.986274516785,14.0844125267055,0 120.9863749208082,14.08406893165137,0 120.9863857185933,14.08381405568919,0 120.9866276149723,14.08360958196224,0 120.9870692435737,14.08352374207432,0 120.9873416315746,14.08371491456644,0 120.9876883637561,14.08385460824063,0 120.9882936944981,14.0836216263421,0 120.9886473399267,14.0833912390598,0 120.9891604895965,14.08269529781721,0 120.9909500739846,14.08221618223224,0 120.9910648149663,14.08251448511028,0 120.9912265717569,14.08312131638064,0 120.9913742836262,14.08358982110018,0 120.9915575751356,14.0840288989865,0 120.9926412361807,14.08619941629095,0 120.9931465382438,14.08786924899642,0 120.9927180087714,14.08859739939796,0 120.9920417420902,14.08909025431883,0 120.9913920662665,14.08975833528198,0 120.9912128892258,14.09060275222163,0 120.9914736535147,14.09132957731522,0 120.9919148860224,14.09204108267254,0 120.992907915076,14.0940676511092,0 120.9924499311234,14.09662748917044,0 120.991984939094,14.09788341114167,0 120.991595941512,14.09824838996555,0 120.9902299444074,14.09862737365818,0 120.9885819466954,14.09889036647618,0 120.987429946764,14.09882737732968,0 120.9862479449969,14.09846640752356,0 120.9835159376279,14.09710251136858,0 120.9829819299193,14.09582459670685,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>CALOOCAN</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030008000000</SimpleData>
+					<SimpleData name="name">Caloocan</SimpleData>
+					<SimpleData name="_020_Pop">1,741</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							120.9799458587649,14.08607233891173,0 120.9812281445804,14.08605641508348,0 120.9819712009247,14.08615875169075,0 120.9826061308306,14.08630817668812,0 120.9831092223388,14.08661891616627,0 120.9835116024863,14.08680514167393,0 120.9839343532775,14.08701051946934,0 120.9843185669989,14.08706417466386,0 120.984822521013,14.08671461641132,0 120.9848469594684,14.08650191213745,0 120.9846777684356,14.08612178845759,0 120.984760209053,14.08570909566274,0 120.9852582352712,14.08607730683405,0 120.9854291629965,14.08627022542927,0 120.9855854197592,14.08658752020696,0 120.9857168936448,14.08708533712657,0 120.9845762526235,14.08947610540036,0 120.9836379025082,14.09144287464986,0 120.9831119176481,14.09385272275916,0 120.9829819299193,14.09582459670685,0 120.9835159376279,14.09710251136858,0 120.9824099559239,14.09998333263616,0 120.9821809716938,14.10251217137117,0 120.9823259822768,14.10422806017921,0 120.982540994688,14.10624292935348,0 120.9807049407888,14.1179484095144,0 120.9804021354302,14.11866003787804,0 120.9799166400158,14.11980100945374,0 120.9760841651714,14.11474112388056,0 120.9732943873032,14.10771567096286,0 120.9725484495403,14.10580800524147,0 120.9722400178863,14.10486428869696,0 120.9724569075276,14.10423530873693,0 120.9716565847115,14.10360415957639,0 120.9713355880422,14.10365404419387,0 120.9712358188071,14.10383406259625,0 120.9710341114406,14.10398154755242,0 120.9707521549066,14.10391431176357,0 120.9705439408509,14.10360632847278,0 120.9698759207552,14.10356295054449,0 120.9718295643329,14.10102926660803,0 120.9721775486579,14.10064690831732,0 120.9725991393954,14.10015422499846,0 120.9731212208962,14.09958917239031,0 120.9736562365003,14.09911823717613,0 120.9741936836306,14.09868865217372,0 120.9744252439716,14.09832959553158,0 120.9749316911536,14.09743293762226,0 120.9751710943702,14.09650652292306,0 120.9759141515007,14.09580648085619,0 120.9768062689831,14.09565864967325,0 120.9774290711207,14.09512815670738,0 120.9776006911303,14.09501178230494,0 120.9779991744281,14.0947415733955,0 120.9783426649161,14.09426632405678,0 120.9786475349458,14.09372405873741,0 120.9793100897363,14.09299143663886,0 120.979762775253,14.09258511466787,0 120.9805310166545,14.09152189736843,0 120.9806322353888,14.09068229493933,0 120.980908934781,14.08963884467322,0 120.9810994448776,14.08886660597855,0 120.981064812596,14.08857965591192,0 120.9810099200702,14.08798807326445,0 120.9809299527898,14.08786755906179,0 120.9808617844207,14.08778017545536,0 120.9807015516329,14.08757851216773,0 120.98059401632,14.08740936922528,0 120.9804929788134,14.08727279928009,0 120.9803492396045,14.08707762352817,0 120.9801046448963,14.08644551614849,0 120.9799458587649,14.08607233891173,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>LEYNES</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030009000000</SimpleData>
+					<SimpleData name="name">Leynes</SimpleData>
+					<SimpleData name="_020_Pop">1,523</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							120.9774290711207,14.09512815670738,0 120.9768062689831,14.09565864967329,0 120.9759141515007,14.09580648085619,0 120.9751710943702,14.09650652292306,0 120.9749316911536,14.09743293762226,0 120.9744252439716,14.09832959553158,0 120.9741936836306,14.09868865217372,0 120.9736562365003,14.09911823717617,0 120.9731212208962,14.09958917239031,0 120.9725991393954,14.10015422499842,0 120.9721775486579,14.10064690831732,0 120.9718295643329,14.10102926660803,0 120.9698759207552,14.10356295054449,0 120.9696351732532,14.10307061105847,0 120.9695223906397,14.102905774931,0 120.9695917953249,14.10241994213429,0 120.9698412184126,14.10196013609448,0 120.969728435799,14.10176493541722,0 120.9697522936596,14.10149382336549,0 120.9700689525361,14.10073904741335,0 120.9703530779664,14.1003725039194,0 120.9700797970182,14.10035298385163,0 120.969780489313,14.10039636177992,0 120.9694096080261,14.10022285006681,0 120.9707069450897,14.097492561915,0 120.9715079421113,14.09706258483566,0 120.9725759390714,14.09663960573044,0 120.973429934008,14.0958766497528,0 120.9739259276413,14.0948807108732,0 120.9734839226841,14.09405276672835,0 120.9734229203907,14.09367879113946,0 120.974119449258,14.09354403177783,0 120.9737534539926,14.09298383047132,0 120.9736219244441,14.09241808122172,0 120.9734182655802,14.09201842316319,0 120.9732216171225,14.0917136659801,0 120.9731243996301,14.09100370196232,0 120.9732559291787,14.09049341396043,0 120.9731987424184,14.09008851071242,0 120.973090087574,14.08975571298452,0 120.973326413375,14.08913439745574,0 120.9733609530991,14.08898982966824,0 120.9735745913724,14.08849748391135,0 120.9736526544452,14.08843135632147,0 120.9737573306063,14.08839638225706,0 120.9739672030414,14.08842306733333,0 120.9741294887773,14.08850156404159,0 120.9742015434418,14.08852177938543,0 120.9742916103206,14.08849255549951,0 120.9743875697435,14.08837016189882,0 120.9744705329141,14.08819730105186,0 120.9745242295967,14.08805174859681,0 120.9745408787292,14.08793972845313,0 120.9745507799762,14.08781348755364,0 120.9747464893517,14.08785895609909,0 120.9755037442491,14.08795946798862,0 120.9763552805805,14.08792560369021,0 120.9775539805607,14.08735602316123,0 120.9782139679864,14.08724248607418,0 120.9791337943535,14.08680858893788,0 120.9793485350204,14.08664232234211,0 120.9796882715589,14.08637746398418,0 120.9799458587649,14.08607233891173,0 120.9801046448963,14.08644551614849,0 120.9803492396045,14.08707762352817,0 120.9804929788134,14.08727279928009,0 120.98059401632,14.08740936922528,0 120.9807015516329,14.08757851216773,0 120.9808617844207,14.08778017545536,0 120.9809299527898,14.08786755906179,0 120.9810099200702,14.08798807326445,0 120.9810648125961,14.08857965591192,0 120.9810994448776,14.08886660597855,0 120.980908934781,14.08963884467322,0 120.9806322353888,14.09068229493933,0 120.9805310166545,14.09152189736843,0 120.979762775253,14.09258511466791,0 120.9793100897363,14.09299143663886,0 120.9786475349458,14.09372405873741,0 120.9783426649161,14.09426632405678,0 120.9779991744281,14.0947415733955,0 120.9776006911303,14.09501178230494,0 120.9774290711207,14.09512815670738,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>MIRANDA</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030010000000</SimpleData>
+					<SimpleData name="name">Miranda</SimpleData>
+					<SimpleData name="_020_Pop">1,949</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.019790310115,14.0960401448987,0 121.0209623717499,14.09661906057746,0 121.0218645713888,14.09788761748106,0 121.0223177932949,14.098619522072,0 121.0230132978114,14.09998385545299,0 121.0232543031493,14.0998045376778,0 121.023801842637,14.10003941061306,0 121.0232447834076,14.10204354324287,0 121.0225556704624,14.10205226619155,0 121.0223799560306,14.10260992764669,0 121.0219459693186,14.10472379425025,0 121.0213579778035,14.10605271225381,0 121.0209689945438,14.10872554265545,0 121.0205800119824,14.11151036586589,0 121.0193130317541,14.11461217389531,0 121.0186340425726,14.11631006873376,0 121.0180240547669,14.11823394863914,0 121.0184210761664,14.12170672301265,0 121.0185890932438,14.1244675445261,0 121.0149760285607,14.12554247722507,0 121.0065021659119,14.11789384977579,0 121.0045340146446,14.11658930486693,0 121.00394166666,14.11747913157501,0 121.0033754133003,14.11716599607656,0 121.0039625423599,14.11621876119375,0 121.002047144297,14.11495278487422,0 121.0032150222729,14.11202443544235,0 121.00668966245,14.10917462875328,0 121.0117529753567,14.10502183529685,0 121.0133009668477,14.10375190782555,0 121.0143769568518,14.10221100057447,0 121.0154149482546,14.10089307921015,0 121.0155198991574,14.10065466786984,0 121.017260181694,14.10071537540016,0 121.0172599535638,14.10062400927817,0 121.0188309997416,14.1006582085639,0 121.0188266832695,14.09901363268646,0 121.0188201903573,14.09900713977433,0 121.0197687429227,14.09900402658598,0 121.0199208840076,14.09694877783739,0 121.0194271452075,14.0969169777113,0 121.019790310115,14.0960401448987,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>POBLACION 1</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030011000000</SimpleData>
+					<SimpleData name="name">Poblacion Barangay 1</SimpleData>
+					<SimpleData name="_020_Pop">2,028</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0227090631998,14.09450084846331,0 121.0228012739852,14.09369846151658,0 121.0228640107511,14.09295875352133,0 121.0235789472796,14.09302945314277,0 121.0251120186914,14.09318105760571,0 121.0255104862866,14.0939473399837,0 121.0259648781898,14.09456903246699,0 121.0259242705547,14.09528974011348,0 121.0251302962215,14.0962988390038,0 121.0250476308807,14.09725637920213,0 121.0245791939491,14.09785570292339,0 121.0242003111368,14.09869613388881,0 121.0239395816125,14.09929466262506,0 121.0230132978114,14.09998385545299,0 121.0223177932949,14.098619522072,0 121.0218645713888,14.09788761748106,0 121.021942831598,14.09762141469816,0 121.0220303264048,14.0972589362131,0 121.0221013300715,14.09696545439081,0 121.0218103047502,14.09696575468576,0 121.0217944491783,14.09658786355406,0 121.0221928167602,14.09659647553351,0 121.0221615686149,14.09642773554908,0 121.0221865671311,14.09625899556461,0 121.022286561196,14.09619024964506,0 121.0224490515513,14.09601526003158,0 121.0225677945033,14.09587151856337,0 121.022642790052,14.09569652894989,0 121.0227490337459,14.0955715363688,0 121.0227552833749,14.0954277949006,0 121.0227865315202,14.09518405936756,0 121.0227802818911,14.09501531938314,0 121.0227490337459,14.09487782754398,0 121.0228562789774,14.09489263286567,0 121.0228576840394,14.09479427852264,0 121.022685795928,14.09474380327378,0 121.0227090631998,14.09450084846331,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>POBLACION 3</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030013000000</SimpleData>
+					<SimpleData name="name">Poblacion Barangay 3</SimpleData>
+					<SimpleData name="_020_Pop">766</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0220303264048,14.0972589362131,0 121.021942831598,14.09762141469816,0 121.0218645713888,14.09788761748106,0 121.0209623717499,14.09661906057746,0 121.0212120979582,14.09567774433702,0 121.021404272575,14.09496194968707,0 121.0215605298422,14.09439335929834,0 121.0216768071619,14.09360106925129,0 121.021701543143,14.09284443920064,0 121.0222706354725,14.09291349198157,0 121.0228640107511,14.09295875352133,0 121.0228012739852,14.09369846151658,0 121.0227090631998,14.09450084846331,0 121.022685795928,14.09474380327378,0 121.0228576840394,14.09479427852264,0 121.0228562789774,14.09489263286567,0 121.0227490337459,14.09487782754398,0 121.0227802818911,14.09501531938314,0 121.0227865315202,14.09518405936756,0 121.0227552833749,14.0954277949006,0 121.0227490337459,14.0955715363688,0 121.022642790052,14.09569652894989,0 121.0225677945033,14.09587151856337,0 121.0224490515513,14.09601526003158,0 121.022286561196,14.09619024964506,0 121.0221865671311,14.09625899556461,0 121.0221615686149,14.09642773554908,0 121.0221928167602,14.09659647553351,0 121.0217944491783,14.09658786355406,0 121.0218103047502,14.09696575468576,0 121.0221013300715,14.09696545439081,0 121.0220303264048,14.0972589362131,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>POBLACION 2</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030012000000</SimpleData>
+					<SimpleData name="name">Poblacion Barangay 2</SimpleData>
+					<SimpleData name="_020_Pop">1,370</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0228640107511,14.09295875352133,0 121.0230010293238,14.09129809963121,0 121.0231539655376,14.08967424713602,0 121.0231567344893,14.08906723711157,0 121.0233011660348,14.08892465633823,0 121.0236700997279,14.08880089942595,0 121.0237103113749,14.08888678227238,0 121.0238216948254,14.08896050584375,0 121.0240470073079,14.08894101479082,0 121.0241798277121,14.08893106100206,0 121.0242813590137,14.0895492083164,0 121.0244317413257,14.09002161470872,0 121.024497060148,14.09050447208373,0 121.0243078563879,14.09119482422422,0 121.0240852764035,14.09160856814019,0 121.0240852764035,14.09191184584218,0 121.024177377997,14.09221980057246,0 121.0244648094605,14.09258331683519,0 121.0247860563904,14.09292147149818,0 121.0251120186914,14.09318105760571,0 121.0235789472796,14.09302945314277,0 121.0228640107511,14.09295875352133,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>POBLACION 4</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030014000000</SimpleData>
+					<SimpleData name="name">Poblacion Barangay 4</SimpleData>
+					<SimpleData name="_020_Pop">783</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.021701543143,14.09284443920064,0 121.0218470623006,14.09113084231193,0 121.0219624540042,14.08973496429748,0 121.0220079567102,14.08880719176711,0 121.0220272263351,14.0887823049549,0 121.0220867733041,14.08889565140941,0 121.022304806712,14.08890167596494,0 121.0224066579455,14.08897287540368,0 121.0227189540782,14.0888952918075,0 121.0228581594774,14.08907160217536,0 121.0231567344893,14.08906723711157,0 121.0231539655376,14.08967424713602,0 121.0230010293238,14.09129809963121,0 121.0228640107511,14.09295875352133,0 121.0222706354725,14.09291349198157,0 121.021701543143,14.09284443920064,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>POBLACION 5</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030015000000</SimpleData>
+					<SimpleData name="name">Poblacion Barangay 5</SimpleData>
+					<SimpleData name="_020_Pop">504</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0196210650126,14.09330621220431,0 121.019649839274,14.09315630151637,0 121.019703802597,14.09307963600915,0 121.0197561320718,14.09295213588069,0 121.019793710581,14.09284225788311,0 121.0198802947859,14.0926441037616,0 121.0200794256356,14.09265995914561,0 121.0203265050859,14.09268654333877,0 121.0209631802904,14.09275546485447,0 121.0210202243942,14.09276238075896,0 121.021701543143,14.09284443920064,0 121.0216768071619,14.09360106925129,0 121.0215605298422,14.09439335929834,0 121.021404272575,14.09496194968707,0 121.0212120979582,14.09567774433702,0 121.0209623717499,14.09661906057746,0 121.019790310115,14.0960401448987,0 121.0198526599008,14.09598299092843,0 121.0198890306091,14.0959102495117,0 121.0198162891924,14.09585829135688,0 121.0197851142995,14.09577515830915,0 121.0197383519602,14.09571280852338,0 121.0197071770673,14.09564526292211,0 121.0197123728828,14.09557252150538,0 121.0197383519602,14.09550497590415,0 121.0197412952607,14.09546040234298,0 121.0197648968057,14.09538664751502,0 121.0197589964195,14.09534239461819,0 121.0197855481575,14.09526863979019,0 121.0198239006681,14.09521848650714,0 121.0198681535649,14.095165383031,0 121.0199094562686,14.09506507646491,0 121.0199242072342,14.09504147491995,0 121.0199596095516,14.09497952086447,0 121.0200481153452,14.09490281584333,0 121.020115969787,14.09484086178781,0 121.0201867744219,14.09478185792541,0 121.0201631728769,14.09474350541484,0 121.0201631728769,14.09470220271118,0 121.0201749736494,14.09464909923501,0 121.0201926748081,14.094598945952,0 121.0201484219113,14.09455174286204,0 121.0201248203663,14.09449863938591,0 121.0200800646399,14.09443214762062,0 121.0200112972021,14.09432258030871,0 121.0198962396704,14.09412514220988,0 121.0198399611609,14.0939833080999,0 121.0197938032442,14.09382136498167,0 121.0197714717125,14.09370735262311,0 121.0197313463591,14.09361739148993,0 121.0196573666908,14.09348681580891,0 121.0196210650126,14.09330621220431,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>POBLACION 6</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030016000000</SimpleData>
+					<SimpleData name="name">Poblacion Barangay 6</SimpleData>
+					<SimpleData name="_020_Pop">409</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<MultiGeometry>
+				<Polygon>
+					<outerBoundaryIs>
+						<LinearRing>
+							<coordinates>
+								120.9659732619792,14.03531159158643,0 120.9660203401946,14.03482542420424,0 120.9663276883929,14.03460316721906,0 120.966564111286,14.03422998824546,0 120.9671017452234,14.03367094616891,0 120.9675013927598,14.03329002608088,0 120.9678695451406,14.03298849822711,0 120.9684377884355,14.032519906116,0 120.9689127894698,14.03214589073565,0 120.9697989299182,14.03196769925548,0 120.9706489886776,14.03177358542195,0 120.9713280548329,14.03136180117246,0 120.9719185146595,14.03104330741609,0 120.9724634350589,14.03077441798704,0 120.9728403599821,14.03034969966445,0 120.9731697021756,14.02987152435614,0 120.9734490725089,14.02959518884483,0 120.973526796628,14.02907139196972,0 120.9735917475231,14.02840955363406,0 120.9735221418346,14.02792121072375,0 120.9733110995112,14.02766785088252,0 120.9733028831995,14.02729083485964,0 120.9736841504844,14.02671688084169,0 120.9736695307325,14.02633041217418,0 120.9735266909369,14.02592525909654,0 120.9734243522162,14.02538676741317,0 120.9737118317525,14.02518744826806,0 120.9739770827143,14.02497446068641,0 120.9923246750758,14.0112823774839,0 120.9923896063387,14.01123109668221,0 120.9924409475403,14.01116663485753,0 120.9921907556907,14.01185201473826,0 120.9923016004611,14.01244949461899,0 120.9921647620882,14.01320066172875,0 120.9924300427496,14.01357981788318,0 120.993779975071,14.01485975267921,0 120.9944486267268,14.0155604475935,0 120.9948176411341,14.01590173448285,0 120.9950894081027,14.01615308104689,0 120.9955791509979,14.01633448952445,0 120.9963106070392,14.01626725731298,0 120.9971974932304,14.01597906288757,0 120.9972130521768,14.01597400699463,0 120.9980764232263,14.01580532967655,0 120.9992391433728,14.01563022112454,0 120.999991835802,14.01557889283084,0 121.0007968859561,14.01512474905477,0 121.0013264338066,14.01471227508488,0 121.001676511751,14.01435233476057,0 121.0018568225435,14.01416694426074,0 121.002105448617,14.01361243408332,0 121.0023421772297,14.01307324376481,0 121.0028244212643,14.01260726962194,0 121.0030247009609,14.01211860987455,0 121.0032734212409,14.01143324983643,0 121.0032098864883,14.01107502745667,0 121.0030507482079,14.010575683002,0 121.0046143964541,14.01086393878585,0 121.0162801035033,14.01368097443024,0 121.0199924295543,14.01726043633848,0 121.0196836328368,14.01958851321524,0 121.0184896186557,14.02152805930877,0 121.0173598062741,14.0223289561712,0 121.0169040426184,14.02280824215138,0 121.0162298891512,14.02336190941897,0 121.0158877562738,14.02414749050712,0 121.0156055049778,14.02469255521744,0 121.0156212083619,14.02506178481122,0 121.0157580165972,14.02559284122251,0 121.015870717652,14.02614104077234,0 121.0159314149046,14.02671793858163,0 121.0160457964294,14.02711632079392,0 121.0158973921873,14.02788815386102,0 121.0161273125085,14.02827559134572,0 121.016284681166,14.02867149648359,0 121.0162358696725,14.02909255912211,0 121.0162796171287,14.02951205160406,0 121.0163046472994,14.0300153449529,0 121.0167275322721,14.0305503042462,0 121.0169735064045,14.03107763379195,0 121.0171543996594,14.03168128741068,0 121.0174432088872,14.03220839512568,0 121.0173997224954,14.03272393073352,0 121.0172655685617,14.0331498611385,0 121.0171446716547,14.03384845005122,0 121.0169980895485,14.03443309214644,0 121.0168833098836,14.03492811298208,0 121.0168843743503,14.035481410407,0 121.0174703815207,14.0360284390252,0 121.0180625332256,14.03668525459418,0 121.0187836887519,14.03715340828291,0 121.0191714506366,14.03758925666761,0 121.0194671191029,14.03815446985954,0 121.019160530656,14.03823121514303,0 121.0187139124763,14.03835795926367,0 121.018301076637,14.03811638636423,0 121.0180535340347,14.03793012770085,0 121.0177993937934,14.03802515690188,0 121.0173949637681,14.03839151603915,0 121.0170288142504,14.03889873546309,0 121.0166690918584,14.03935904354974,0 121.0164529527376,14.03992515112783,0 121.0165186944555,14.04040952591979,0 121.0169030553035,14.04068247909705,0 121.0170131445862,14.04101485104245,0 121.01682056339,14.04111832881017,0 121.0162353271931,14.04114675401668,0 121.0157197171818,14.0411233716735,0 121.0152540398818,14.04150065951251,0 121.0149456828792,14.04229023711489,0 121.0143117007232,14.0428339409478,0 121.0137307786949,14.04305534561648,0 121.0128852488533,14.04277676224667,0 121.0123462886573,14.04285595663995,0 121.0115490889245,14.04286726849572,0 121.0111847296237,14.04245444982588,0 121.0109680424562,14.04177839705115,0 121.0109812138959,14.04052381661909,0 121.0108443509591,14.03964599669518,0 121.0106725688503,14.0392471392912,0 121.0104993479774,14.03852096548255,0 121.0100854319658,14.03770876967566,0 121.0095998474788,14.03721286231688,0 121.0090374022365,14.03684515076799,0 121.0084204253321,14.03657670671781,0 121.0079514538437,14.03661192659163,0 121.0075818231968,14.036730870678,0 121.0071452698597,14.03700129244243,0 121.0066871254932,14.03680282847928,0 121.0057922247389,14.0368688498369,0 121.0053220212255,14.0367250689589,0 121.0048024657455,14.03644763936928,0 121.0045814152164,14.03580368298746,0 121.0042796127004,14.03530938615951,0 121.0039775932501,14.03510848877051,0 121.0036880688782,14.03505729091283,0 121.0031815997825,14.03511212900662,0 121.0025578772856,14.035308351595,0 121.0025555042942,14.03530932366858,0 121.0018291820657,14.03560685472113,0 121.0009247560181,14.03560451256003,0 121.0004481550371,14.03562869808853,0 120.99970875142,14.03554341077704,0 120.9990186308321,14.03563222886372,0 120.9984929841774,14.03571014618763,0 120.9976892508065,14.0359654125233,0 120.9962346649002,14.0364649817927,0 120.9951595227229,14.03656844132304,0 120.9944971528328,14.03682751339795,0 120.9936495113686,14.03684486647748,0 120.9929730115373,14.03667558203398,0 120.9914299114084,14.03531118478172,0 120.9901672550561,14.03378794362815,0 120.9893853461659,14.03292669712172,0 120.9883681236601,14.03210630321403,0 120.9873221420275,14.03185912210417,0 120.9860024859087,14.03201710867356,0 120.9846315810386,14.03230356952148,0 120.9832298822201,14.03242180934545,0 120.9819111555438,14.03259038484641,0 120.9808141613407,14.03302803946436,0 120.9797440514916,14.03412959208951,0 120.9786989332183,14.0355000440129,0 120.9785758466856,14.03616008019041,0 120.9782393113979,14.03633890614777,0 120.9770303319152,14.03614937217098,0 120.9765329747481,14.03638376337814,0 120.9760899301769,14.03690535752929,0 120.9758206006354,14.03760557579402,0 120.9759592381193,14.03824960159859,0 120.9763478081002,14.03927039495123,0 120.9762185165679,14.04014941329683,0 120.9753973999208,14.04051539535093,0 120.9747657052608,14.04085632912958,0 120.9738109120336,14.04145319513172,0 120.9732698447506,14.04226646244446,0 120.9725667032521,14.04241198920434,0 120.9714351783372,14.04170371533914,0 120.9705413111281,14.04120629380698,0 120.9699631547735,14.04103655660996,0 120.9692989177767,14.04062884330156,0 120.9687646675049,14.04025067266911,0 120.9683479727553,14.03995571406022,0 120.9676238498533,14.03933652205215,0 120.9671353793032,14.03873743980246,0 120.9669791050145,14.03783702184823,0 120.966751541347,14.03696279230878,0 120.966298001319,14.03615284523873,0 120.9659732619792,14.03531159158643,0 
+							</coordinates>
+						</LinearRing>
+					</outerBoundaryIs>
+				</Polygon>
+				<Polygon>
+					<outerBoundaryIs>
+						<LinearRing>
+							<coordinates>
+								121.0419255671038,14.03081684519391,0 121.0419258036136,14.03049202923039,0 121.0421720656206,14.0301645097867,0 121.0426473273484,14.02990773724811,0 121.0434073991579,14.02990233911765,0 121.0441897806796,14.02974606040911,0 121.0447878193265,14.02960341577501,0 121.0453910746748,14.02940691986247,0 121.0456831081023,14.02916353208361,0 121.0458352622586,14.0288173587714,0 121.0461247593107,14.02848462676945,0 121.0473211947944,14.02720992597061,0 121.0479654995665,14.02710601136206,0 121.0483256569676,14.0268082616076,0 121.0485441925935,14.02649524841304,0 121.0486415572316,14.02618511969537,0 121.0489152329863,14.02593225108045,0 121.0493130180399,14.02573962952046,0 121.0496005551472,14.02594423817972,0 121.049865339441,14.02603377548377,0 121.0501746562136,14.0260470356487,0 121.0504871642538,14.02606043262075,0 121.0506253489485,14.02589195624566,0 121.0509818441345,14.025926453332,0 121.0513045182534,14.02599995219884,0 121.0516954351674,14.02600780521076,0 121.0520673011917,14.02617225775382,0 121.0524410670768,14.02633574780056,0 121.0524558568798,14.02657734286028,0 121.0525925682359,14.026774626832,0 121.0527462362751,14.02701244595979,0 121.052954624157,14.02719806619258,0 121.0532256517267,14.0273436852842,0 121.0534630096696,14.02736431120097,0 121.0537167345871,14.02735109154944,0 121.0540455399204,14.02742254336466,0 121.0540417733763,14.02767076431942,0 121.0540758976909,14.0278929279814,0 121.0538751809645,14.02817450548775,0 121.0536705313456,14.02834480348382,0 121.0535936564737,14.02856697623482,0 121.053405597699,14.02879946105561,0 121.0535931294478,14.02905789835905,0 121.0533840256701,14.02913504761971,0 121.0528850790956,14.02910172141447,0 121.0522780679565,14.02916150032505,0 121.051744433571,14.02930958607719,0 121.0513311787319,14.02960641940811,0 121.0508631155305,14.03006609410733,0 121.0502772768505,14.03048460392905,0 121.0496595103147,14.0308569722169,0 121.0492018002727,14.03077706006964,0 121.0482546752523,14.03122572653953,0 121.0469956847415,14.03229084357399,0 121.0462042427616,14.0330654512294,0 121.0464327477426,14.03368904407033,0 121.0459041454067,14.03405998942536,0 121.0459329634011,14.03434658185207,0 121.0462282961397,14.03568836894978,0 121.0455878568263,14.03631202574059,0 121.0449166206369,14.03614800534892,0 121.0444644825709,14.03605119270614,0 121.0443718355147,14.03584484291409,0 121.0443521715651,14.03558610978592,0 121.04421178675,14.03544822921524,0 121.044097317763,14.03529532960839,0 121.0441091314832,14.03499550108466,0 121.0440528342174,14.03464272552697,0 121.0439047095656,14.03423127073777,0 121.0436626131907,14.03382865420266,0 121.0433882219999,14.03366451947589,0 121.0433292053806,14.03329984341262,0 121.0428850855975,14.03264332949436,0 121.0425438242548,14.03180472590207,0 121.0420837876976,14.03112442652384,0 121.0419255671038,14.03081684519391,0 
+							</coordinates>
+						</LinearRing>
+					</outerBoundaryIs>
+				</Polygon>
+				<Polygon>
+					<outerBoundaryIs>
+						<LinearRing>
+							<coordinates>
+								121.0265709335771,14.03186773526811,0 121.0275444001818,14.03130358975277,0 121.0286624351677,14.03098846132606,0 121.0292076313283,14.03066018255733,0 121.0292934958221,14.03027517732911,0 121.0296365024653,14.03000863810906,0 121.0305811244329,14.02994214736167,0 121.0314002485943,14.03011693929787,0 121.0317401275136,14.03065420000963,0 121.0316181281754,14.03160428554799,0 121.0312348826999,14.03250776260456,0 121.0305425248275,14.03342833270407,0 121.0297433255641,14.03447696173992,0 121.0295840764079,14.03539103553577,0 121.029131128406,14.03525582545892,0 121.0284596330062,14.03425993372612,0 121.0277688625347,14.03339180122843,0 121.0270546516527,14.03267144831411,0 121.0265709335771,14.03186773526811,0 
+							</coordinates>
+						</LinearRing>
+					</outerBoundaryIs>
+				</Polygon>
+				<Polygon>
+					<outerBoundaryIs>
+						<LinearRing>
+							<coordinates>
+								121.0209631802904,14.09275546485447,0 121.0211274873359,14.09105584359266,0 121.0212233263462,14.08983105747477,0 121.0212354786196,14.08901687308282,0 121.0212338494176,14.08875662805146,0 121.0217986857763,14.08873578946656,0 121.0220247510233,14.0887823049549,0 121.0220079567102,14.08880719176711,0 121.0219624540042,14.08973496429748,0 121.0218470623006,14.09113084231193,0 121.021701543143,14.09284443920064,0 121.0210202243942,14.09276238075896,0 121.0209631802904,14.09275546485447,0 
+							</coordinates>
+						</LinearRing>
+					</outerBoundaryIs>
+				</Polygon>
+			</MultiGeometry>
+		</Placemark>
+		<Placemark>
+			<name>POBLACION 7</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030017000000</SimpleData>
+					<SimpleData name="name">Poblacion Barangay 7</SimpleData>
+					<SimpleData name="_020_Pop">443</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.019344234729,14.09098304708739,0 121.0193755463916,14.09081327293837,0 121.0199344035679,14.09091545795007,0 121.0204179504415,14.09097097054806,0 121.0211274873359,14.09105584359266,0 121.0209631802904,14.09275546485447,0 121.0203265050859,14.09268654333881,0 121.0200794256356,14.09265995914561,0 121.0198802947859,14.0926441037616,0 121.019875165174,14.09261372850677,0 121.0198752451043,14.09240223536045,0 121.0200187870196,14.09207741085288,0 121.0200654481808,14.09194680503796,0 121.0200645716646,14.0918516635346,0 121.0200175162894,14.09177358964401,0 121.0199888555658,14.09166923463869,0 121.0199257455296,14.0915148372981,0 121.0198060953547,14.09138852442446,0 121.0197007194163,14.09131845245883,0 121.0194045796974,14.09109779933494,0 121.019344234729,14.09098304708739,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>POBLACION 8</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030018000000</SimpleData>
+					<SimpleData name="name">Poblacion Barangay 8</SimpleData>
+					<SimpleData name="_020_Pop">755</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0189969281472,14.08872814009611,0 121.0196729248294,14.0887876868876,0 121.0203592280024,14.08875409650041,0 121.0212338494176,14.08875662805146,0 121.0212354786196,14.08901687308282,0 121.0212233263462,14.08983105747477,0 121.0211274873359,14.09105584359266,0 121.0204179504415,14.09097097054806,0 121.0199344035679,14.09091545795007,0 121.0193755463916,14.09081327293837,0 121.0194248303255,14.09067972857089,0 121.0195439395651,14.09058100649218,0 121.0194510329867,14.09054616652527,0 121.0194974862759,14.0903951933352,0 121.0195982223938,14.09039240175655,0 121.0195492934222,14.09026231063076,0 121.0195200085587,14.09016024921376,0 121.0194740409939,14.09004225561143,0 121.0193933853549,14.08987481456564,0 121.0193459383457,14.08978613028832,0 121.0192692400563,14.08967890475843,0 121.0192142543838,14.08949750577359,0 121.019165125178,14.08939341480199,0 121.0191851722844,14.08920753834908,0 121.0191769436188,14.08896690298696,0 121.0189969281472,14.08872814009611,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>QUILING</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030019000000</SimpleData>
+					<SimpleData name="name">Quiling</SimpleData>
+					<SimpleData name="_020_Pop">4,999</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0327145210545,14.08931802897305,0 121.0336922662681,14.08895590111619,0 121.0348142671623,14.08943052704219,0 121.0349779402727,14.08952011026351,0 121.0351357413972,14.08960612734701,0 121.0357629412382,14.08995250237898,0 121.0361996053944,14.09041213849731,0 121.0367747105058,14.09041400614307,0 121.0377145956748,14.0902034349872,0 121.038333777639,14.08972985750792,0 121.0383333187201,14.09010606524665,0 121.0383195323879,14.09034879969363,0 121.0382624859592,14.09057538818668,0 121.0382750897043,14.09073602896555,0 121.0383096278017,14.09099843681904,0 121.0383540704854,14.09128286778067,0 121.038401965032,14.09166045508893,0 121.0384125558561,14.09200081124247,0 121.0383827959585,14.09218640917193,0 121.0384403594542,14.09235948559201,0 121.0385312472603,14.09257008605256,0 121.0385360922727,14.09270882769629,0 121.0386098903925,14.09291342153828,0 121.0386463285148,14.09320067182911,0 121.0386406179023,14.09339917551504,0 121.0386406903386,14.09349458759116,0 121.0388209190271,14.09351147768816,0 121.038896693435,14.09359300415338,0 121.0389319645946,14.0937260146203,0 121.0389482554935,14.09394340974341,0 121.0388820574733,14.09419825150066,0 121.038831384428,14.0944346918482,0 121.0388167813282,14.09459164676902,0 121.038835950402,14.09477329691559,0 121.0389442303445,14.09496563537623,0 121.0390850920844,14.09522041004935,0 121.0391271740067,14.09545904756289,0 121.0389088922835,14.09636889655149,0 121.0384337915597,14.09816537116324,0 121.0383892508668,14.09929373538222,0 121.0378844563479,14.1007635782464,0 121.0375578246003,14.10165439210352,0 121.0384040977645,14.10361418258909,0 121.0393691461097,14.10532157581518,0 121.0404845552716,14.10781178149172,0 121.0419391777746,14.10933736118993,0 121.0422207797736,14.10981163824088,0 121.0426132711296,14.11047267631416,0 121.0424489893457,14.11203373460995,0 121.0425715059504,14.11409939147886,0 121.042399357444,14.11551063717793,0 121.0429942795144,14.11661837389664,0 121.0420494685828,14.11815673648563,0 121.0418037406403,14.11979951472436,0 121.0412981314511,14.12201397709599,0 121.0410225167593,14.12358091299538,0 121.0400951347655,14.12519534070174,0 121.0385213109417,14.12514290172119,0 121.0372120565666,14.12589896788646,0 121.0361467605757,14.12705638601232,0 121.0359193735754,14.12915215102593,0 121.035517333891,14.13088331241302,0 121.0359592248464,14.13421627497552,0 121.0338084986176,14.13435426892694,0 121.0328807796068,14.13477869086634,0 121.0311349369561,14.13479991870734,0 121.0303863980735,14.13526064967624,0 121.0298155292219,14.13491476700925,0 121.0280462485443,14.13458096766097,0 121.02743761585,14.13468990693605,0 121.026817931347,14.13462583841736,0 121.0278581112606,14.12798526354345,0 121.0286980888097,14.12442748730172,0 121.0298800748285,14.12225561994804,0 121.0311010564431,14.11937679782931,0 121.0317040354642,14.11603800895669,0 121.0316960222915,14.11391514551786,0 121.0322070038786,14.11098233110705,0 121.0327029866422,14.10823750470732,0 121.0334739732573,14.10613163559687,0 121.034910200969,14.10443564075022,0 121.0351259346037,14.10371396012077,0 121.0352406950234,14.10324854387706,0 121.0350973275083,14.10274031794753,0 121.0347968812942,14.10222031417356,0 121.0347761169881,14.10206696719329,0 121.034743831454,14.10182853451253,0 121.034773272797,14.10112875198425,0 121.0348780488905,14.10070480308822,0 121.0351230465384,14.10028077853115,0 121.03527608842,14.09975326983639,0 121.0352494800109,14.09931070323302,0 121.0350379748854,14.09903436629617,0 121.0348652106406,14.09866775648082,0 121.0347335721952,14.0983569730398,0 121.0348154458697,14.09776846954139,0 121.0349659010466,14.09736683847442,0 121.0350005681472,14.09699101921511,0 121.0350028124061,14.09642208988095,0 121.0350143197062,14.09539937966743,0 121.0351147198872,14.09509817912408,0 121.034913919525,14.09467984503619,0 121.0345625188912,14.09442884458341,0 121.0342869409748,14.09399886766706,0 121.0342911826283,14.09375589648297,0 121.0343418909804,14.09349965776053,0 121.0342613183478,14.09325750913717,0 121.0341274514397,14.09312364222906,0 121.0339768511681,14.09288937513985,0 121.0337593174423,14.09277224159514,0 121.033591983807,14.09237064087079,0 121.0333409833544,14.09203597360041,0 121.0331592916308,14.09188636089295,0 121.0328769060173,14.09136802677061,0 121.0328368592383,14.09109697205773,0 121.0329809093624,14.09072433744724,0 121.0330966914197,14.09038583534533,0 121.0331403036204,14.09001431613146,0 121.032966702605,14.08963778410642,0 121.0327145210545,14.08931802897305,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>SAN GUILLERMO</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030021000000</SimpleData>
+					<SimpleData name="name">San Guillermo</SimpleData>
+					<SimpleData name="_020_Pop">1,171</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							120.9807049407888,14.1179484095144,0 120.982540994688,14.10624292935348,0 120.9823259822768,14.10422806017921,0 120.9821809716938,14.10251217137117,0 120.9824099559239,14.09998333263616,0 120.9835159376279,14.09710251136858,0 120.9862479449969,14.09846640752356,0 120.987429946764,14.09882737732968,0 120.9885819466954,14.09889036647618,0 120.9902299444074,14.09862737365818,0 120.991595941512,14.09824838996555,0 120.991984939094,14.09788341114167,0 120.9939689369602,14.09766741331868,0 120.9943671198133,14.09769027167185,0 120.9950139369126,14.09772740329011,0 120.9964709353726,14.09757340459171,0 120.9979129368312,14.09790237491917,0 120.9984699373754,14.09802636365581,0 121.0000719410989,14.09873130885691,0 121.0021476144649,14.10388768063151,0 121.00215197,14.10485743999999,0 121.0023815068278,14.10618678523129,0 121.0032150222729,14.11202443544235,0 121.002047144297,14.11495278487422,0 120.9967830472806,14.1114775938848,0 120.9937126350479,14.1107087093217,0 120.9934474790294,14.11053128081294,0 120.9924757495132,14.11020694475237,0 120.9876416130465,14.1168125470966,0 120.9850681975497,14.11642321306023,0 120.9822202747596,14.11661966902692,0 120.9807049407888,14.1179484095144,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>SAMPALOC</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030020000000</SimpleData>
+					<SimpleData name="name">Sampaloc</SimpleData>
+					<SimpleData name="_020_Pop">5,441</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							120.9703456019337,14.08431551529383,0 120.9706290213567,14.08422381135963,0 120.9711057409539,14.08485036005075,0 120.9714854968273,14.08562837881461,0 120.9716685493923,14.08585606375031,0 120.971888080438,14.08601705610261,0 120.9723058247334,14.08618084101644,0 120.9727508428271,14.08631774344407,0 120.9731516516521,14.08650544261915,0 120.974038089277,14.08652808248034,0 120.974211671362,14.08697791432311,0 120.974239050442,14.08733419000699,0 120.9745507799762,14.08781348755364,0 120.9745408787292,14.08793972845313,0 120.9745242295967,14.08805174859681,0 120.9744705329141,14.08819730105186,0 120.9743875697435,14.08837016189882,0 120.9742916103206,14.08849255549951,0 120.9742015434418,14.08852177938543,0 120.9741294887773,14.08850156404159,0 120.9739672030414,14.08842306733333,0 120.9737573306063,14.08839638225706,0 120.9736526544452,14.08843135632147,0 120.9735745913724,14.08849748391135,0 120.9733609530991,14.08898982966824,0 120.973326413375,14.08913439745574,0 120.973090087574,14.08975571298452,0 120.9731987424184,14.09008851071242,0 120.9732559291787,14.09049341396043,0 120.9731243996301,14.09100370196232,0 120.9732216171225,14.0917136659801,0 120.9734182655802,14.09201842316319,0 120.9736219244441,14.09241808122172,0 120.9737534539926,14.09298383047128,0 120.9741194492582,14.09354403177783,0 120.9734229203907,14.09367879113946,0 120.9734839226841,14.09405276672835,0 120.9739259276413,14.0948807108732,0 120.973429934008,14.0958766497528,0 120.9725759390714,14.09663960573044,0 120.9715079421113,14.09706258483566,0 120.9707069450897,14.097492561915,0 120.9694096080261,14.10022285006681,0 120.9689584775718,14.10017730324209,0 120.9687415879304,14.09994523132581,0 120.9685463872531,14.09986498215846,0 120.9683598621615,14.09936613598325,0 120.9684205912611,14.09910803730998,0 120.968179843759,14.09883041856894,0 120.9679716297432,14.09863304929921,0 120.9676606737848,14.09855182866288,0 120.9674908655954,14.09851009612301,0 120.9652763753359,14.09794575664383,0 120.9630105462518,14.09703087471173,0 120.9571625151417,14.09466959422579,0 120.9605132323437,14.07654290934273,0 120.9606683157088,14.07621058204569,0 120.9606942070616,14.07617057767651,0 120.9608767342693,14.07588855742644,0 120.9612458819004,14.07554170937304,0 120.9618424626501,14.07552000699403,0 120.96174889057,14.07613822654378,0 120.9618387325793,14.07691349746408,0 120.9617838576975,14.07708593813494,0 120.9617237539194,14.07735275218316,0 120.9616453767409,14.07753805813874,0 120.9615594314582,14.07823394869508,0 120.9614737959092,14.07887013540063,0 120.9615998062475,14.07984437879371,0 120.9619104572503,14.08064738055132,0 120.9623493494383,14.08089904065424,0 120.9626195462896,14.08163164015442,0 120.962918813705,14.08211232145047,0 120.9631020437501,14.08252790035108,0 120.9635347912367,14.08295432083452,0 120.9640037897632,14.08316558580033,0 120.9643923408772,14.08338146350692,0 120.9649279716169,14.08358574216167,0 120.9655713644939,14.08371612705071,0 120.9660826446952,14.08362443795564,0 120.9664593516728,14.0836763664762,0 120.9666896107499,14.08390078616479,0 120.96686406953,14.08451270003341,0 120.9671094935288,14.08532103669298,0 120.9678352194823,14.08642463610244,0 120.9684336107736,14.08688060493521,0 120.9687928753554,14.08695634580922,0 120.969073929562,14.0869361287462,0 120.9693243298823,14.0868924777975,0 120.9694031107833,14.0868096654444,0 120.96946540844,14.08662237134929,0 120.9695741802925,14.0865264684117,0 120.9699049298412,14.08628648680152,0 120.9700302440846,14.08602196684358,0 120.9700344709679,14.0855875705562,0 120.9701553270023,14.08506876190728,0 120.970227197809,14.08495488640485,0 120.9702658519817,14.08476032856965,0 120.9703175090479,14.08455183995703,0 120.9703456019337,14.08431551529383,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>STA. MARIA</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030023000000</SimpleData>
+					<SimpleData name="name">Santa Maria</SimpleData>
+					<SimpleData name="_020_Pop">1,359</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							120.9964709353726,14.09757340459171,0 120.9980195352687,14.09535348005999,0 120.9986292759719,14.09424461202956,0 120.999300636869,14.09314618434815,0 120.9993238928258,14.09089281745383,0 120.9995920718486,14.08890918711169,0 121.0000239642086,14.08435322904675,0 121.0002135032263,14.08255780073817,0 121.0019656170714,14.08359473801365,0 121.0025858374907,14.08385747201505,0 121.0034993812254,14.08422923059085,0 121.005004707789,14.08533222395645,0 121.0054879816604,14.08616683126184,0 121.0068403892643,14.08714488899416,0 121.0088392009674,14.08801970534125,0 121.0092719506442,14.08818492202094,0 121.0084369483906,14.08939739789828,0 121.0082832944186,14.0892949360679,0 121.0081667290038,14.0892382555543,0 121.0081667290037,14.08923825555422,0 121.0081667290037,14.0892382555543,0 121.0079754400761,14.0894367049708,0 121.0049468966213,14.09187272123283,0 121.0034209071902,14.09347862693856,0 121.0017889163956,14.09485754787572,0 121.0007129256923,14.09628746225486,0 121.000048935102,14.09776237131151,0 121.0000719410989,14.09873130885691,0 120.9984699373754,14.09802636365581,0 120.9979129368312,14.09790237491917,0 120.9964709353726,14.09757340459171,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>TRANCA</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030024000000</SimpleData>
+					<SimpleData name="name">Tranca</SimpleData>
+					<SimpleData name="_020_Pop">3,228</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0484957077402,14.10593114147424,0 121.0485949499906,14.10340772148528,0 121.0500979433185,14.10243477519758,0 121.0506275011013,14.10219777934664,0 121.0512039397663,14.10193780063652,0 121.0523109364425,14.10147782369015,0 121.0544549235255,14.0995419355745,0 121.0561869352886,14.10155879558909,0 121.0565429691339,14.10198687277411,0 121.0577429462224,14.10342966603793,0 121.059734959469,14.10570350798998,0 121.0603449784035,14.1087983053014,0 121.0605590067275,14.11337800945347,0 121.0605740234031,14.11606583648737,0 121.0601310404716,14.11878466424566,0 121.0592806977518,14.1247085596446,0 121.0597135392599,14.12491190800411,0 121.0600069418929,14.12501067720733,0 121.0601783355102,14.12511235138708,0 121.0602102902524,14.12517916584805,0 121.0601405708149,14.12539413411388,0 121.060079566307,14.12559167252023,0 121.0599720821741,14.12578630595008,0 121.0598243102376,14.12605354663734,0 121.059581486082,14.1264025234292,0 121.0591714715241,14.12705801595842,0 121.0591343181013,14.12711507300047,0 121.0590918570467,14.12716549550272,0 121.0588423378212,14.12743468054426,0 121.058793302757,14.12746670360822,0 121.0587561493343,14.1275051839389,0 121.0587309380832,14.12754366426955,0 121.0587136882797,14.12758877913999,0 121.0585951065312,14.12781047210477,0 121.0582333476002,14.12836502029298,0 121.0582169407851,14.12840813034887,0 121.0582195253921,14.1284675763103,0 121.0582532512195,14.12857334484175,0 121.0582784624706,14.12860784444856,0 121.0582837701024,14.12864897859513,0 121.0582731548389,14.12870205491331,0 121.0581855789139,14.12886659149959,0 121.0580435005467,14.12915341254099,0 121.0573352712589,14.13023228180164,0 121.0572171139431,14.13041193380071,0 121.055728557101,14.13370892425073,0 121.0553906672403,14.13449568019428,0 121.0533491706458,14.13926738739261,0 121.0520901896217,14.14223220427173,0 121.0516522912797,14.1432069353824,0 121.0512452016816,14.14411308838167,0 121.0457064585418,14.15099762903871,0 121.0455470648798,14.15313450545725,0 121.0453734612773,14.15388492102905,0 121.045383861079,14.15494332595659,0 121.04490182825,14.15623903763678,0 121.0441569771802,14.1560070784958,0 121.0436103387163,14.15580177634049,0 121.0432957382443,14.15540005583491,0 121.0428712886064,14.15508042366266,0 121.042272067538,14.15524448376788,0 121.0413190111158,14.15513325994716,0 121.040631581386,14.15470598301832,0 121.0387166321239,14.15373710320766,0 121.0367954075454,14.15379287010233,0 121.0372189208826,14.15343706164711,0 121.0389507068319,14.15240945721496,0 121.0391825875566,14.15218709455775,0 121.0408279240945,14.15070452338756,0 121.0407507797283,14.15011549497176,0 121.040270243391,14.1491979854705,0 121.0406286244577,14.14812973751497,0 121.0391901265252,14.14787222013599,0 121.0392355423668,14.14704555411587,0 121.0396525373292,14.1464023628316,0 121.0408395520242,14.14623618077433,0 121.0415527515204,14.14511593887092,0 121.0415818222106,14.14377963038378,0 121.0416054593532,14.14074016835743,0 121.0416111956216,14.1391060311245,0 121.0419694195721,14.13812118283142,0 121.041224018911,14.1367823269236,0 121.0385777811888,14.13478930400091,0 121.0382396015697,14.13382768049708,0 121.0376544920319,14.13361826053875,0 121.0362045717219,14.13348227866131,0 121.0359592248464,14.13421627497552,0 121.035517333891,14.13088331241302,0 121.0359193735754,14.12915215102593,0 121.0361467605757,14.12705638601232,0 121.0372120565666,14.12589896788646,0 121.0385213109417,14.12514290172119,0 121.0400951347655,14.12519534070174,0 121.0407280619149,14.12522280366865,0 121.0408469688678,14.12486839381274,0 121.0414820490647,14.12477438706204,0 121.0419137973334,14.12508702942296,0 121.0420058991387,14.12533998308046,0 121.0424057982014,14.125365409437,0 121.0430535442126,14.12537877829054,0 121.0432870960996,14.12575244094564,0 121.0434253011009,14.12579449213861,0 121.0437044190254,14.12568426640091,0 121.0438491501645,14.1256702490412,0 121.044291621834,14.12581396983255,0 121.0449537765821,14.12574524269924,0 121.0463919680712,14.1261928864651,0 121.0467755205779,14.12671423328509,0 121.0469519284044,14.12720660902655,0 121.0492281026345,14.12804313337826,0 121.0504800888576,14.12591126304435,0 121.0507186531579,14.12308267879141,0 121.0507310702673,14.12293545290769,0 121.0512350530076,14.12019062643374,0 121.0514030363106,14.11751279764926,0 121.0513685151341,14.11657335017597,0 121.0513030194582,14.11479097328892,0 121.0513421967232,14.11245056950471,0 121.0509979957291,14.11141241804543,0 121.04962498666,14.10939033056589,0 121.0488460948322,14.10724175164851,0 121.0484957077402,14.10593114147424,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>TUMAWAY</name>
+			<styleUrl>#falseColor00</styleUrl>
+			<ExtendedData>
+				<SchemaData schemaUrl="#S_Talisay_SSSSS0">
+					<SimpleData name="geocode">1030025000000</SimpleData>
+					<SimpleData name="name">Tumaway</SimpleData>
+					<SimpleData name="_020_Pop">3,572</SimpleData>
+					<SimpleData name="layer">Talisay</SimpleData>
+					<SimpleData name="path">D:/2022 files/Map Repository/PSA City Mun with 2020 Population/Talisay.shp</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Polygon>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0240852764035,14.09160856814019,0 121.0243078563879,14.09119482422422,0 121.024497060148,14.09050447208373,0 121.0244317413257,14.09002161470876,0 121.0242813590137,14.0895492083164,0 121.0241798277121,14.08893106100206,0 121.0243627618184,14.08895185046633,0 121.0245557468265,14.08900392285126,0 121.0248005274874,14.08905831190624,0 121.0264458719417,14.08942946508539,0 121.0277492402117,14.09011522669513,0 121.0284186821263,14.09053150129715,0 121.029138098812,14.09090347150767,0 121.0298449641435,14.09096759295894,0 121.0307052015246,14.09081137166512,0 121.031504981224,14.09049312781312,0 121.0327145210545,14.08931802897305,0 121.032966702605,14.08963778410642,0 121.0331403036204,14.09001431613146,0 121.0330966914197,14.09038583534533,0 121.0329809093624,14.09072433744724,0 121.0328368592383,14.09109697205773,0 121.0328769060173,14.09136802677061,0 121.0331592916308,14.09188636089295,0 121.0333409833544,14.09203597360041,0 121.033591983807,14.09237064087079,0 121.0337593174423,14.09277224159514,0 121.0339768511681,14.09288937513985,0 121.0341274514397,14.09312364222906,0 121.0342613183478,14.09325750913717,0 121.0343418909804,14.09349965776053,0 121.0342911826283,14.09375589648297,0 121.0342869409748,14.09399886766706,0 121.0345625188912,14.09442884458341,0 121.034913919525,14.09467984503619,0 121.0351147198872,14.09509817912408,0 121.0350143197062,14.09539937966743,0 121.0350028124061,14.09642208988095,0 121.0350005681472,14.09699101921511,0 121.0349659010466,14.09736683847442,0 121.0348154458697,14.09776846954139,0 121.0347335721952,14.0983569730398,0 121.0348652106406,14.09866775648082,0 121.0350379748854,14.09903436629617,0 121.0352494800109,14.09931070323298,0 121.03527608842,14.09975326983639,0 121.0351230465384,14.10028077853115,0 121.0348780488905,14.10070480308822,0 121.034773272797,14.10112875198425,0 121.034743831454,14.10182853451253,0 121.0347761169881,14.10206696719329,0 121.0347968812942,14.10222031417356,0 121.0350973275083,14.10274031794753,0 121.0352406950235,14.10324854387706,0 121.0351259346037,14.10371396012077,0 121.034910200969,14.10443564075022,0 121.0334739732573,14.10613163559687,0 121.0327029866422,14.10823750470732,0 121.0322070038786,14.11098233110705,0 121.0316960222915,14.11391514551786,0 121.0317040354642,14.11603800895669,0 121.0311010564431,14.11937679782931,0 121.0298800748285,14.12225561994804,0 121.0286980888097,14.12442748730172,0 121.0278581112606,14.12798526354345,0 121.026817931347,14.13462583841736,0 121.0230644817069,14.13215190125159,0 121.020294981908,14.13031208863374,0 121.0149760285607,14.12554247722507,0 121.0185890932438,14.1244675445261,0 121.0184210761664,14.12170672301265,0 121.0180240547669,14.11823394863914,0 121.0186340425726,14.11631006873376,0 121.0193130317541,14.11461217389531,0 121.0205800119824,14.11151036586589,0 121.0209689945438,14.10872554265545,0 121.0213579778035,14.10605271225381,0 121.0219459693186,14.10472379425025,0 121.0223799560306,14.10260992764669,0 121.0225556704624,14.10205226619155,0 121.0232447834076,14.10204354324287,0 121.023801842637,14.10003941061306,0 121.0232543031493,14.0998045376778,0 121.0239395816125,14.09929466262506,0 121.0242003111368,14.09869613388881,0 121.0245791939491,14.09785570292339,0 121.0250476308807,14.09725637920213,0 121.0251302962215,14.0962988390038,0 121.0259242705547,14.09528974011348,0 121.0259648781898,14.09456903246699,0 121.0255104862866,14.0939473399837,0 121.0251120186914,14.09318105760571,0 121.0247860563904,14.09292147149818,0 121.0244648094605,14.09258331683519,0 121.024177377997,14.09221980057246,0 121.0240852764035,14.09191184584218,0 121.0240852764035,14.09160856814019,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>Untitled Polygon</name>
+			<styleUrl>#msn_ylw-pushpin110</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0210593321823,14.09314263378055,0 121.0210858627106,14.09298534714783,0 121.0212097369803,14.09299975515994,0 121.0211982292052,14.0930608577094,0 121.0213692562008,14.09308830821833,0 121.0213578549446,14.09318211047805,0 121.0211820810431,14.09315682462301,0 121.0210593321823,14.09314263378055,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<GroundOverlay>
+			<name>PUP</name>
+			<Icon>
+				<href>C:/Users/User/AppData/LocalLow/Google/GoogleEarth/craiyon_100550_image.png</href>
+				<viewBoundScale>0.75</viewBoundScale>
+			</Icon>
+			<LatLonBox>
+				<north>14.09314311018133</north>
+				<south>14.09302975130182</south>
+				<east>121.0211938806375</east>
+				<west>121.0210781306415</west>
+				<rotation>10.76249054440726</rotation>
+			</LatLonBox>
+		</GroundOverlay>
+		<GroundOverlay>
+			<name>MDRRMO</name>
+			<Icon>
+				<href>C:/Users/User/AppData/LocalLow/Google/GoogleEarth/craiyon_100941_image.png</href>
+				<viewBoundScale>0.75</viewBoundScale>
+			</Icon>
+			<LatLonBox>
+				<north>14.09345002393371</north>
+				<south>14.09319086641704</south>
+				<east>121.0212478118452</east>
+				<west>121.0209620687186</west>
+				<rotation>5.303992748260498</rotation>
+			</LatLonBox>
+		</GroundOverlay>
+		<GroundOverlay>
+			<name>LOGO TALISAY</name>
+			<Icon>
+				<href>C:/Users/User/AppData/LocalLow/Google/GoogleEarth/craiyon_102322_image.png</href>
+				<viewBoundScale>0.75</viewBoundScale>
+			</Icon>
+			<LatLonBox>
+				<north>14.09239576453912</north>
+				<south>14.09193460386386</south>
+				<east>121.0275663222129</east>
+				<west>121.0270490470546</west>
+				<rotation>2.748778104782104</rotation>
+			</LatLonBox>
+		</GroundOverlay>
+	</Folder>
+	<Folder>
+		<name>POINTS</name>
+		<open>1</open>
+		<Placemark>
+			<name>PIN 1</name>
+			<description>MDRRMO OPERATION CENTER</description>
+			<LookAt>
+				<longitude>121.0212706673457</longitude>
+				<latitude>14.09327720073356</latitude>
+				<altitude>0</altitude>
+				<heading>0.000420349778784332</heading>
+				<tilt>24.14905464666934</tilt>
+				<range>159.6899988233542</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_homegardenbusiness01</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>121.0211185731848,14.09330422357931,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>PIN 2</name>
+			<description>TALISAY MUNICIPAL HALL</description>
+			<LookAt>
+				<longitude>121.0274013737239</longitude>
+				<latitude>14.09269652963041</latitude>
+				<altitude>0</altitude>
+				<heading>0.003604096983271835</heading>
+				<tilt>32.07229060540413</tilt>
+				<range>169.3311034137095</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_homegardenbusiness01</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>121.0274195442986,14.09254719756305,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>PIN 3</name>
+			<description>NDN EVENT PLACE RESORT</description>
+			<LookAt>
+				<longitude>121.0412137384484</longitude>
+				<latitude>14.09292935003316</latitude>
+				<altitude>0</altitude>
+				<heading>0.003363590349287334</heading>
+				<tilt>32.07302556830184</tilt>
+				<range>323.4699436948623</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_homegardenbusiness01</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>121.041025944919,14.09254420448558,0</coordinates>
+			</Point>
+		</Placemark>
+	</Folder>
+	<Folder>
+		<name>LINES</name>
+		<open>1</open>
+		<Placemark id="1.3.2">
+			<name>P1 TO P2</name>
+			<styleUrl>#dir_route1460</styleUrl>
+			<LineString>
+				<coordinates>
+					121.0209283,14.0932891,0 121.0209283,14.0932891,0 121.0209604,14.0929097,0 121.020992,14.092847,0 121.0210099,14.0927696,0 121.0213696,14.0928132,0 121.0217033,14.0928512,0 121.0218996,14.0928709,0 121.0222685,14.0929079,0 121.0226377,14.0929418,0 121.0228576,14.092962,0 121.0235856,14.0930395,0 121.0238872,14.0930704,0 121.0245276,14.0931269,0 121.0248927,14.0931641,0 121.025051,14.0931798,0 121.0252542,14.0931999,0 121.0253121,14.0931998,0 121.0257762,14.0932475,0 121.0262715,14.0932943,0 121.0263294,14.0932994,0 121.0265256,14.0933168,0 121.026552,14.0933192,0 121.0266231,14.0933255,0 121.0267172,14.0933338,0 121.0269689,14.0933484,0 121.0269928,14.0930239,0 
+				</coordinates>
+			</LineString>
+		</Placemark>
+		<Placemark id="1.3.2">
+			<name>P2 TO P3</name>
+			<styleUrl>#dir_route01</styleUrl>
+			<LineString>
+				<coordinates>
+					121.0269928,14.0930239,0 121.0269928,14.0930239,0 121.0269689,14.0933484,0 121.0270393,14.0933525,0 121.027187,14.093365,0 121.0279017,14.0934285,0 121.0287006,14.0934964,0 121.0290151,14.0935275,0 121.0294336,14.0935668,0 121.0296488,14.0935879,0 121.0298952,14.0936103,0 121.0303068,14.0936478,0 121.0304337,14.0936593,0 121.0308606,14.0936989,0 121.0310998,14.0937211,0 121.0311439,14.0937252,0 121.0312363,14.0937338,0 121.0320034,14.0938043,0 121.032437,14.0938373,0 121.0330617,14.0938999,0 121.0331669,14.0939089,0 121.0343063,14.0940054,0 121.0345893,14.0940303,0 121.0347514,14.0940468,0 121.035816,14.094149,0 121.0360947,14.094181,0 121.0367394,14.0942357,0 121.0370477,14.0942675,0 121.0374597,14.0943146,0 121.0377383,14.0943469,0 121.037981,14.094367,0 121.0382939,14.0943976,0 121.0383403,14.0944046,0 121.0386872,14.0944441,0 121.0389786,14.0944625,0 121.0390878,14.0944668,0 121.0393505,14.0944921,0 121.0394569,14.0944966,0 121.0399614,14.0945392,0 121.0400866,14.0945486,0 121.0400898,14.0943707,0 121.0400912,14.0943537,0 121.0400945,14.0940493,0 121.0400969,14.0940105,0 121.0401027,14.0939875,0 121.0401119,14.0939668,0 121.0401461,14.0939215,0 121.0402078,14.0938518,0 121.0402387,14.0938145,0 121.0402717,14.09376,0 121.0402867,14.0937536,0 121.0403644,14.093757,0 121.0404808,14.0937877,0 121.0406419,14.0937945,0 121.0407169,14.0937869,0 121.0407671,14.0937657,0 121.0407966,14.0937249,0 121.0408005,14.0937096,0 121.0408055,14.0936857,0 121.0408467,14.0932214,0 121.0408403,14.0930554,0 121.0410633,14.0930695,0 121.0411525,14.0928257,0 
+				</coordinates>
+			</LineString>
+		</Placemark>
+		<Placemark id="1.3.2">
+			<name>P3 TO P1</name>
+			<open>1</open>
+			<styleUrl>#dir_route770</styleUrl>
+			<LineString>
+				<coordinates>
+					121.0209283,14.0932891,0 121.0209283,14.0932891,0 121.0209604,14.0929097,0 121.020992,14.092847,0 121.0210099,14.0927696,0 121.0213696,14.0928132,0 121.0217033,14.0928512,0 121.0218996,14.0928709,0 121.0222685,14.0929079,0 121.0226377,14.0929418,0 121.0228576,14.092962,0 121.0235856,14.0930395,0 121.0238872,14.0930704,0 121.0245276,14.0931269,0 121.0248927,14.0931641,0 121.025051,14.0931798,0 121.0252542,14.0931999,0 121.0253121,14.0931998,0 121.0257762,14.0932475,0 121.0262715,14.0932943,0 121.0263294,14.0932994,0 121.0265256,14.0933168,0 121.026552,14.0933192,0 121.0266231,14.0933255,0 121.0267172,14.0933338,0 121.0269689,14.0933484,0 121.0270393,14.0933525,0 121.027187,14.093365,0 121.0279017,14.0934285,0 121.0287006,14.0934964,0 121.0290151,14.0935275,0 121.0294336,14.0935668,0 121.0296488,14.0935879,0 121.0298952,14.0936103,0 121.0303068,14.0936478,0 121.0304337,14.0936593,0 121.0308606,14.0936989,0 121.0310998,14.0937211,0 121.0311439,14.0937252,0 121.0312363,14.0937338,0 121.0320034,14.0938043,0 121.032437,14.0938373,0 121.0330617,14.0938999,0 121.0331669,14.0939089,0 121.0343063,14.0940054,0 121.0345893,14.0940303,0 121.0347514,14.0940468,0 121.035816,14.094149,0 121.0360947,14.094181,0 121.0367394,14.0942357,0 121.0370477,14.0942675,0 121.0374597,14.0943146,0 121.0377383,14.0943469,0 121.037981,14.094367,0 121.0382939,14.0943976,0 121.0383403,14.0944046,0 121.0386872,14.0944441,0 121.0389786,14.0944625,0 121.0390878,14.0944668,0 121.0393505,14.0944921,0 121.0394569,14.0944966,0 121.0399614,14.0945392,0 121.0400866,14.0945486,0 121.0400898,14.0943707,0 121.0400912,14.0943537,0 121.0400945,14.0940493,0 121.0400969,14.0940105,0 121.0401027,14.0939875,0 121.0401119,14.0939668,0 121.0401461,14.0939215,0 121.0402078,14.0938518,0 121.0402387,14.0938145,0 121.0402717,14.09376,0 121.0402867,14.0937536,0 121.0403644,14.093757,0 121.0404808,14.0937877,0 121.0406419,14.0937945,0 121.0407169,14.0937869,0 121.0407671,14.0937657,0 121.0407966,14.0937249,0 121.0408005,14.0937096,0 121.0408055,14.0936857,0 121.0408467,14.0932214,0 121.0408403,14.0930554,0 121.0410633,14.0930695,0 121.0411525,14.0928257,0 
+				</coordinates>
+			</LineString>
+		</Placemark>
+	</Folder>
+	<Folder>
+		<name>POLYGON</name>
+		<open>1</open>
+		<Placemark>
+			<name>POLY 2</name>
+			<styleUrl>#msn_ylw-pushpin30</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0210040073298,14.092853920913,0 121.0216730933907,14.09293026973629,0 121.0216305171378,14.0935738347747,0 121.0209552475417,14.09346704422056,0 121.0210040073298,14.092853920913,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>POLY 2</name>
+			<styleUrl>#msn_ylw-pushpin100</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.027091590519,14.09151851970917,0 121.0277879246869,14.09230751134674,0 121.0276811858693,14.09243714077179,0 121.0274347268147,14.09272966529183,0 121.0273454745824,14.09335677766584,0 121.0269720711756,14.09333885653716,0 121.027091590519,14.09151851970917,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>POLY 3</name>
+			<styleUrl>#msn_ylw-pushpin40</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0402262276771,14.0906412097382,0 121.0406155931177,14.09075784710515,0 121.0412476453777,14.09127087798589,0 121.0411457981588,14.09142861701302,0 121.0414610417671,14.09160772162008,0 121.0412119126793,14.09314703147718,0 121.0402345275246,14.09306983533027,0 121.0402262276771,14.0906412097382,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>HR</name>
+			<styleUrl>#msn_ylw-pushpin20</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0403734874506,14.09165582735162,0 121.0407063411907,14.09165593893473,0 121.0407077688188,14.09176291278206,0 121.0406592958967,14.09176780150057,0 121.0406524296437,14.09207542628228,0 121.0403743869191,14.0920758905881,0 121.0403734874506,14.09165582735162,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>HR OFFICE</name>
+			<LookAt>
+				<longitude>121.0406664557704</longitude>
+				<latitude>14.09180535058398</latitude>
+				<altitude>0</altitude>
+				<heading>-0.00723414203564786</heading>
+				<tilt>27.27357630865702</tilt>
+				<range>130.0918235540063</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_homegardenbusiness1</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>121.0405236610774,14.0918467557652,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>OFFICES</name>
+			<styleUrl>#msn_ylw-pushpin16</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0403958960771,14.09164215040704,0 121.0404187956402,14.09160012128328,0 121.0404066295373,14.09154865465833,0 121.0407260970788,14.09153926588606,0 121.0407477481627,14.09159148251204,0 121.0407235166682,14.09164055450958,0 121.0403958960771,14.09164215040704,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>OFFICES</name>
+			<LookAt>
+				<longitude>121.0405556511277</longitude>
+				<latitude>14.09175048461176</latitude>
+				<altitude>0</altitude>
+				<heading>-0.001439189548874374</heading>
+				<tilt>30.00047165278037</tilt>
+				<range>104.9568793594322</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_arrow0</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>121.0405671357249,14.09158328078268,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>WATER SUPPLY</name>
+			<styleUrl>#msn_ylw-pushpin90</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0402983789172,14.09156626307723,0 121.0403762687751,14.09156657131159,0 121.0403737150577,14.09163407819756,0 121.0402975765653,14.0916341036819,0 121.0402983789172,14.09156626307723,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>WATER SUPPLY</name>
+			<LookAt>
+				<longitude>121.0404041438279</longitude>
+				<latitude>14.09167929398742</latitude>
+				<altitude>0</altitude>
+				<heading>-0.001476284336328021</heading>
+				<tilt>30.00041172609358</tilt>
+				<range>91.50464748649712</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_track0</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>121.0403316644983,14.09158873761561,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>COMFORT ROOM</name>
+			<styleUrl>#msn_ylw-pushpin15</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0403185563821,14.09164858553086,0 121.0403700290238,14.09164799218764,0 121.0403663133262,14.09175797758962,0 121.0403153710398,14.09175801767419,0 121.0403185563821,14.09164858553086,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>COMFORT ROOM</name>
+			<LookAt>
+				<longitude>121.0404101238708</longitude>
+				<latitude>14.09185132529018</latitude>
+				<altitude>0</altitude>
+				<heading>-0.0009485971527487038</heading>
+				<tilt>29.10844494579025</tilt>
+				<range>167.5167178612028</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_toilets0</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>121.0403442437917,14.09167906143877,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>MAIN</name>
+			<styleUrl>#msn_ylw-pushpin120</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0408329512249,14.09269732393318,0 121.0408506442684,14.0924168249582,0 121.0412053129543,14.09245462309471,0 121.041215999851,14.09259608657369,0 121.041179622989,14.09272429727502,0 121.0408329512249,14.09269732393318,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>SIDE WEST</name>
+			<styleUrl>#msn_ylw-pushpin60</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0270424033431,14.09258687760144,0 121.0270618024371,14.09237380132011,0 121.0271388633365,14.09242542738931,0 121.0271185018108,14.092635385192,0 121.0270424033431,14.09258687760144,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>AERIAL</name>
+			<styleUrl>#msn_ylw-pushpin00</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0271387472099,14.09242717346275,0 121.0272983525191,14.09244606643301,0 121.0272695930065,14.09264831971975,0 121.0271192471162,14.09263550732478,0 121.0271387472099,14.09242717346275,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>BACK</name>
+			<styleUrl>#msn_ylw-pushpin50</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0271395911894,14.09242720590906,0 121.0270656174495,14.09237554332359,0 121.0272404664043,14.09239556826375,0 121.0272966444794,14.09244786017784,0 121.0271395911894,14.09242720590906,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>WEST HALL</name>
+			<LookAt>
+				<longitude>121.027415601852</longitude>
+				<latitude>14.09258972536432</latitude>
+				<altitude>0</altitude>
+				<heading>-0.004675813812901003</heading>
+				<tilt>30.00038900768693</tilt>
+				<range>85.60525641680991</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_target0</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>121.027182903228,14.09248662518881,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>SIDE EAST</name>
+			<styleUrl>#msn_ylw-pushpin60</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0273222843018,14.09264656099559,0 121.0272795491916,14.09261277733185,0 121.027295042443,14.09240402237736,0 121.0273463074515,14.09243431445265,0 121.0273222843018,14.09264656099559,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>AERIAL</name>
+			<styleUrl>#msn_ylw-pushpin70</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0273476999553,14.09243740779586,0 121.0275183709748,14.09244972161465,0 121.0274941690031,14.09266364601003,0 121.0273258357976,14.09264641063939,0 121.0273476999553,14.09243740779586,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>Untitled Polygon</name>
+			<styleUrl>#msn_ylw-pushpin80</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							121.0273392418692,14.09243664791292,0 121.0273407865628,14.09243664509444,0 121.0273447264545,14.09243509001542,0 121.027292777558,14.09240402683113,0 121.0272951869209,14.09240252008869,0 121.0274359300049,14.09240002398678,0 121.0275178825179,14.09244886441179,0 121.0273392418692,14.09243664791292,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>EAST HALL</name>
+			<LookAt>
+				<longitude>121.0275323456647</longitude>
+				<latitude>14.09263759890275</latitude>
+				<altitude>0</altitude>
+				<heading>-0.004642095681117451</heading>
+				<tilt>30.00054460021363</tilt>
+				<range>118.3422136496391</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_target0</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>121.0274291060583,14.09248353113782,0</coordinates>
+			</Point>
+		</Placemark>
+	</Folder>
+	<GroundOverlay>
+		<name>NDN SWIMMING POOL</name>
+		<Icon>
+			<href>C:/Users/User/Downloads/craiyon_103128_image.png</href>
+			<viewBoundScale>0.75</viewBoundScale>
+		</Icon>
+		<LatLonBox>
+			<north>14.09220594063598</north>
+			<south>14.09195594641665</south>
+			<east>121.0409791220056</east>
+			<west>121.0407813858282</west>
+			<rotation>95.03309631347656</rotation>
+		</LatLonBox>
+	</GroundOverlay>
+</Document>
+</kml>
