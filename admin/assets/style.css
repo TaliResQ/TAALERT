@@ -1501,3 +1501,47 @@ MODAL BUTTONS
     }
 
 }
+
+
+/* Fixed sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px; /* Match your existing sidebar width */
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1000;
+}
+
+/* Main content scrolls independently */
+.main-content {
+    margin-left: 250px; /* Match the sidebar width */
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    height: auto;
+    overflow: visible;
+    box-sizing: border-box;
+}
+
+/* Prevent the page itself from being clipped */
+html,
+body {
+    min-height: 100%;
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .main-content {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+    }
+}
