@@ -262,7 +262,6 @@ const panelPanResponder = useRef(
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <StatusBar
         barStyle="dark-content"
-        backgroundColor="#FFFFFF"
       />
 
       <View style={styles.container}>

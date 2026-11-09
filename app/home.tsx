@@ -379,7 +379,6 @@ export default function DisasterAppUI() {
       >
         <StatusBar
           barStyle="dark-content"
-          backgroundColor={COLORS.background}
         />
 
         <ScrollView
