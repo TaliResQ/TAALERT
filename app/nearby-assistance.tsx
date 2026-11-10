@@ -5,22 +5,22 @@ import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Linking,
-    RefreshControl,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Linking,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import BottomNavbar from '../components/BottomNavbar';
 
 type RecoveryResource = {
-  id: string;
+  resource_id: string;
   title: string;
   category: string;
   description: string;
@@ -135,7 +135,7 @@ export default function NearbyAssistanceScreen() {
       const { data, error } = await supabase
         .from('recovery_resources')
         .select(
-          'id, title, category, description, barangay, address, contact_number, latitude, longitude'
+          'resource_id, title, category, description, barangay, address, contact_number, latitude, longitude'
         )
         .eq('is_active', true)
         .eq('verified', true);
@@ -327,7 +327,7 @@ export default function NearbyAssistanceScreen() {
         {!loading &&
           !errorMessage &&
           filteredResources.map((resource) => (
-            <View key={resource.id} style={styles.resourceCard}>
+            <View key={resource.resource_id} style={styles.resourceCard}>
               <View style={styles.resourceHeader}>
                 <View style={styles.resourceIcon}>
                   <Feather name="life-buoy" size={23} color="#2563EB" />

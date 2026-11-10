@@ -20,7 +20,7 @@ if (isset($_POST['update_contact'])) {
             description = ?,
             updated_at = NOW()
 
-        WHERE id = ?
+        WHERE hotline_id = ?
 
     ");
 
@@ -95,7 +95,7 @@ $stmt = $pdo->query("
 
     SELECT
 
-        id,
+        hotline_id,
         area_name,
         title,
         contact_number,
@@ -105,7 +105,7 @@ $stmt = $pdo->query("
 
     WHERE is_emergency = true
 
-    ORDER BY id ASC
+    ORDER BY hotline_id ASC
 
 ");
 
@@ -377,7 +377,7 @@ $contacts = $stmt->fetchAll();
                                             <input
                                                 type="hidden"
                                                 name="id"
-                                                value="<?= $contact['id']; ?>">
+                                                value="<?= $contact['hotline_id']; ?>">
 
                                             <input
                                                 type="text"

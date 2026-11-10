@@ -19,7 +19,7 @@ import { COLORS, IndexStyles as styles } from '../constants/theme';
 // TYPES
 
 type CommunityActivity = {
-  id: string;
+  activity_id: string;
   title: string;
   activity_date: string;
   description: string | null;
@@ -27,7 +27,7 @@ type CommunityActivity = {
 };
 
 type ActivityNotification = {
-  id: string;
+  notification_id: string;
   activity_id: string;
   title: string;
   message: string;
@@ -85,7 +85,7 @@ export default function DisasterAppUI() {
 
   // Number of unread notifications
   const unreadCount = notifications.filter(
-    (item) => !readNotificationIds.includes(item.id)
+    (item) => !readNotificationIds.includes(item.notification_id)
   ).length;
 
   // FETCH USER INFORMATION
@@ -124,7 +124,7 @@ export default function DisasterAppUI() {
       const { data, error } = await supabase
         .from('community_activities')
         .select(
-          'id, title, activity_date, description, target_area'
+          'activity_id, title, activity_date, description, target_area'
         )
         .eq('is_published', true)
         .order('activity_date', { ascending: true })
@@ -169,7 +169,7 @@ export default function DisasterAppUI() {
       const [notificationResult, readResult] = await Promise.all([
         supabase
           .from('activity_notifications')
-          .select('id, activity_id, title, message, created_at')
+          .select('notification_id, activity_id, title, message, created_at')
           .order('created_at', { ascending: false })
           .limit(30),
 
@@ -608,7 +608,7 @@ export default function DisasterAppUI() {
           ) : (
             /* Activity cards */
             activities.map((item) => (
-              <View key={item.id} style={styles.activityCard}>
+              <View key={item.activity_id} style={styles.activityCard}>
                 <View style={styles.activityCardHeader}>
                   <View style={styles.timeContainer}>
                     <Feather
@@ -761,11 +761,11 @@ export default function DisasterAppUI() {
                 contentContainerStyle={{ paddingBottom: 20 }}
               >
                 {notifications.map((item) => {
-                  const isRead = readNotificationIds.includes(item.id);
+                  const isRead = readNotificationIds.includes(item.notification_id);
 
                   return (
                     <View
-                      key={item.id}
+                      key={item.notification_id}
                       style={[
                         styles.activityCard,
                         !isRead && {
@@ -827,7 +827,7 @@ export default function DisasterAppUI() {
                       <TouchableOpacity
                         onPress={async () => {
                           const markedRead =
-                            await markNotificationAsRead(item.id);
+                            await markNotificationAsRead(item.notification_id);
 
                           if (!markedRead) {
                             return;

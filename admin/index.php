@@ -1,9 +1,9 @@
 <?php
-$host = 'aws-1-ap-northeast-1.pooler.supabase.com';
+$host = 'aws-0-ap-southeast-2.pooler.supabase.com';
 $port = '6543';
 $dbname = 'postgres';
-$user = 'postgres.okwnknzodfvbsbgetvzh';
-$password = 'taliresq67_'; 
+$user = 'postgres.llfhttyqxogagirvdxzs';
+$password = 'taliresq67_';
 
 $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
 
@@ -66,7 +66,7 @@ try {
             :target_area,
             TRUE
         )
-        RETURNING id
+        RETURNING activity_id
     ");
 
     $stmt->execute([
@@ -142,10 +142,13 @@ try {
     );
 
     // Total registered users
-    $stmt = $pdo->query("
-        SELECT public.get_registered_users() AS total
-    ");
-    $totalUsers = $stmt->fetch()['total'];
+// Total registered users
+$stmt = $pdo->query("
+    SELECT COUNT(*) AS total
+    FROM public.users
+");
+
+$totalUsers = (int) $stmt->fetch()['total'];
 
     // Total incidents (reports)
     $stmt = $pdo->query("
@@ -157,7 +160,7 @@ try {
     // Recent incidents
     $stmt = $pdo->query("
     SELECT
-        id,
+        incident_id,
         created_at,
         category,  -- Changed from 'type' to 'category'
         location,
@@ -288,7 +291,7 @@ try {
                                     <?php else: ?>
                                         <?php foreach ($reports as $report): ?>
                                             <tr>
-                                                <td><?php echo htmlspecialchars($report['id']); ?></td>
+                                                <td><?php echo htmlspecialchars($report['incident_id']); ?></td>
                                                 <td>
                                                     <!-- Updated to category -->
                                                     <?php echo htmlspecialchars($report['category']); ?>

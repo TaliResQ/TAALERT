@@ -29,7 +29,7 @@ type IncidentStatus =
   | 'Rejected';
 
 type Incident = {
-  id: string | number;
+  incident_id: string | number;
   report_id: string | null;
   created_at: string;
   updated_at: string | null;
@@ -49,16 +49,16 @@ type Incident = {
 };
 
 type HistoryItem = {
-  id: number;
-  incident_id: string;
+  history_id: string |number;
+  incident_id: string | number;
   status: string;
   message: string | null;
   created_at: string;
 };
 
 type EscalationHistoryItem = {
-  id: number;
-  incident_id: string;
+  escalation_history_id: string | number;
+  incident_id: string | number;
   priority_level: string;
   escalation_reason: string;
   created_at: string;
@@ -501,7 +501,7 @@ export default function MyReportsScreen() {
       const { data, error: queryError } = await supabase
         .from('incidents')
         .select(`
-          id,
+          incident_id,
           report_id,
           created_at,
           updated_at,
@@ -534,7 +534,7 @@ export default function MyReportsScreen() {
 
         const refreshedSelected = refreshedIncidents.find(
           (incident) =>
-            String(incident.id) === String(currentSelected.id),
+            String(incident.incident_id) === String(currentSelected.incident_id),
         );
 
         if (!refreshedSelected) return currentSelected;
@@ -593,7 +593,7 @@ export default function MyReportsScreen() {
         return;
       }
 
-      const incidentId = String(selected.id);
+      const incidentId = String(selected.incident_id);
 
       setHistoryLoading(true);
       setHistoryError('');
@@ -602,14 +602,14 @@ export default function MyReportsScreen() {
 
       const statusHistoryPromise = supabase
         .from('incident_status_history')
-        .select('id, incident_id, status, message, created_at')
+        .select('history_id, incident_id, status, message, created_at')
         .eq('incident_id', incidentId)
         .order('created_at', { ascending: true });
 
       const escalationHistoryPromise = supabase
         .from('incident_escalation_history')
         .select(
-          'id, incident_id, priority_level, escalation_reason, created_at',
+          'escalation_history_id, incident_id, priority_level, escalation_reason, created_at',
         )
         .eq('incident_id', incidentId)
         .order('created_at', { ascending: true });
@@ -666,7 +666,7 @@ export default function MyReportsScreen() {
       active = false;
     };
   }, [
-    selected?.id,
+    selected?.incident_id,
     selected?.resident_status,
     selected?.latest_update,
     selected?.updated_at,
@@ -767,7 +767,7 @@ export default function MyReportsScreen() {
             </Text>
 
             <Text style={styles.reportNumber} numberOfLines={1}>
-              Report ID: {item.report_id || String(item.id)}
+              Report ID: {item.report_id || String(item.incident_id)}
             </Text>
           </View>
 
@@ -992,7 +992,7 @@ export default function MyReportsScreen() {
       ) : (
         <FlatList
           data={visibleReports}
-          keyExtractor={(item) => String(item.id)}
+          keyExtractor={(item) => String(item.incident_id)}
           renderItem={renderReport}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
@@ -1079,7 +1079,7 @@ export default function MyReportsScreen() {
               showsVerticalScrollIndicator={false}
             >
               <Text style={styles.detailEyebrow}>
-                REPORT ID: {selected.report_id || String(selected.id)}
+                REPORT ID: {selected.report_id || String(selected.incident_id)}
               </Text>
 
               <Text style={styles.detailCategory}>
@@ -1205,7 +1205,7 @@ export default function MyReportsScreen() {
 
                     return (
                       <View
-                        key={entry.id}
+                        key={entry.history_id}
                         style={styles.timelineItem}
                       >
                         <View style={styles.timelineRail}>
@@ -1275,7 +1275,7 @@ export default function MyReportsScreen() {
                 ) : (
                   escalationHistory.map((entry) => (
                     <View
-                      key={entry.id}
+                      key={entry.escalation_history_id}
                       style={styles.escalationHistoryItem}
                     >
                       <View style={styles.escalationHistoryHeader}>

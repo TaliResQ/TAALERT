@@ -42,7 +42,7 @@ if (isset($_GET['success'])) {
 
 try {
     $stmt = $pdo->query(
-        'SELECT id, title, message, created_at, is_published
+        'SELECT alert_id, title, message, created_at, is_published
          FROM public.alerts
          ORDER BY created_at DESC'
     );
@@ -214,7 +214,7 @@ function h($value): string {
                     <?php if (!empty($alerts)): ?>
                         <?php foreach ($alerts as $alert): ?>
                             <tr>
-                                <td><?= h($alert['id']) ?></td>
+                                <td><?= h($alert['alert_id']) ?></td>
                                 <td><?= h($alert['title']) ?></td>
                                 <td class="alert-message">
                                     <?= h($alert['message']) ?>
