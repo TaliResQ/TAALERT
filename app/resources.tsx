@@ -53,7 +53,11 @@ export default function ResourcesScreen() {
             <Text style={styles.featuredLabel}>FEATURED</Text>
             <Text style={styles.featuredTitle}>Understanding Taal's 5 Alert Levels</Text>
             <Text style={styles.featuredSub}>5 min read · PHIVOLCS Official</Text>
-            <TouchableOpacity style={styles.readBtn}>
+
+            <TouchableOpacity
+              style={styles.readBtn}
+              onPress={() => router.push('/taal-alert')}
+            >
               <Text style={styles.readBtnText}>Read guide</Text>
             </TouchableOpacity>
           </View>
