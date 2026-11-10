@@ -1128,3 +1128,118 @@ export const WelcomeStyles = StyleSheet.create({
     lineHeight: 18,
   },
 });
+
+/* For Hotlines */
+
+export const HotlineStyles = StyleSheet.create({
+
+
+container: {
+    flex: 1,
+    backgroundColor: '#F0F9FF',
+},
+
+header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 15,
+},
+
+backBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#E0F2FE',
+    justifyContent: 'center',
+    alignItems: 'center',
+},
+
+headerTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginLeft: 15,
+},
+
+scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+    paddingTop: 10,
+},
+
+
+hotlineGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 12,
+    marginTop: 16,
+},
+
+hotlineCard: {
+    width: '48%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    elevation: 2,
+    minHeight: 155,
+},
+
+hotlineIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+},
+
+hotlineTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1F2937',
+    textAlign: 'center',
+    marginBottom: 5,
+},
+
+hotlineNumber: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginBottom: 10,
+},
+
+callIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#25A5FE',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 5,
+},
+
+callText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+},
+
+sectionDescription: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginBottom: 4,
+},
+
+hotlineLogo: {
+    width: 48,
+    height: 48,
+    resizeMode: 'contain',
+},
+});

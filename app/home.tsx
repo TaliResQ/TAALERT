@@ -13,8 +13,11 @@ import {
   View,
 } from 'react-native';
 
+import { useRouter } from 'expo-router';
 import BottomNavbar from '../components/BottomNavbar';
 import { COLORS, IndexStyles as styles } from '../constants/theme';
+
+const router = useRouter();
 
 // TYPES
 
@@ -508,12 +511,7 @@ export default function DisasterAppUI() {
               {/* Hotlines */}
               <TouchableOpacity
                 style={styles.actionCard}
-                onPress={() =>
-                  Alert.alert(
-                    'Emergency Hotlines',
-                    'Emergency number: 911\n\nPlease verify your local emergency contacts before relying on this app.'
-                  )
-                }
+              onPress={() => router.push('/hotlines')}
               >
                 <View style={styles.actionIconContainer}>
                   <Feather
