@@ -76,9 +76,12 @@ if (!profileError && profile) {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profile</Text>
-        <TouchableOpacity style={styles.settingsBtn}>
-          <Feather name="settings" size={20} color="#1E293B" />
-        </TouchableOpacity>
+<TouchableOpacity
+  style={styles.settingsBtn}
+  onPress={() => router.push('/edit-profile')}
+>
+  <Feather name="settings" size={20} color="#1E293B" />
+</TouchableOpacity>
       </View>
 
       <Animated.View style={{ flex: 1, opacity: fadeAnim, transform: [{ translateY: slideUpAnim }] }}>
