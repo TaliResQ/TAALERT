@@ -4,30 +4,28 @@ import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Linking,
-    RefreshControl,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Linking,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import BottomNavbar from '../components/BottomNavbar';
 
 type RecoveryResource = {
-  id: string;
+  resource_id: string;
   title: string;
   category: string;
   description: string;
   barangay: string | null;
   address: string | null;
   contact_number: string | null;
-  latitude: number | null;
-  longitude: number | null;
 };
 
 export default function RecoveryResourcesScreen() {
@@ -53,7 +51,7 @@ export default function RecoveryResourcesScreen() {
       const { data, error } = await supabase
         .from('recovery_resources')
         .select(
-          'id, title, category, description, barangay, address, contact_number, latitude, longitude'
+          'resource_id, title, category, description, barangay, address, contact_number'
         )
         .eq('is_active', true)
         .eq('verified', true)
@@ -123,23 +121,7 @@ export default function RecoveryResourcesScreen() {
     }
   };
 
-  const openMap = async (resource: RecoveryResource) => {
-    if (resource.latitude == null || resource.longitude == null) {
-      Alert.alert(
-        'Location Unavailable',
-        'This resource does not have map coordinates yet.'
-      );
-      return;
-    }
 
-    try {
-      await Linking.openURL(
-        `https://www.google.com/maps/search/?api=1&query=${resource.latitude},${resource.longitude}`
-      );
-    } catch {
-      Alert.alert('Unable to Open Map', 'Please try again.');
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -289,7 +271,7 @@ export default function RecoveryResourcesScreen() {
         {!loading &&
           !errorMessage &&
           filteredResources.map((resource) => (
-            <View key={resource.id} style={styles.resourceCard}>
+            <View key={resource.resource_id} style={styles.resourceCard}>
               <View style={styles.resourceHeader}>
                 <View style={styles.resourceIcon}>
                   <Feather
@@ -333,13 +315,6 @@ export default function RecoveryResourcesScreen() {
                   </TouchableOpacity>
                 )}
 
-                <TouchableOpacity
-                  style={styles.mapButton}
-                  onPress={() => openMap(resource)}
-                >
-                  <Feather name="map" size={16} color="#FFFFFF" />
-                  <Text style={styles.mapButtonText}>View Map</Text>
-                </TouchableOpacity>
               </View>
             </View>
           ))}

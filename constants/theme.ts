@@ -768,6 +768,79 @@ export const ReportStyles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
+
+
+locationDropdown: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
+    paddingHorizontal: 13,
+    minHeight: 50,
+},
+
+locationModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+},
+
+locationModalContent: {
+    backgroundColor: '#FFFFFF',
+    width: '100%',
+    maxHeight: '75%',
+    borderRadius: 18,
+    padding: 20,
+},
+
+locationModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 18,
+},
+
+locationModalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1E293B',
+},
+
+locationModalSubtitle: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 4,
+},
+
+locationOption: {
+    minHeight: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+},
+
+selectedLocation: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 8,
+},
+
+locationOptionText: {
+    fontSize: 14,
+    color: '#334155',
+},
+
+selectedLocationText: {
+    color: '#25A5FE',
+    fontWeight: '700',
+},
+
 });
 
 

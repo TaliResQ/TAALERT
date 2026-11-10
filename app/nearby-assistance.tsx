@@ -1,8 +1,7 @@
 
 import { supabase } from '@/src/services/supabase';
 import { Feather } from '@expo/vector-icons';
-import * as Location from 'expo-location';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -27,101 +26,18 @@ type RecoveryResource = {
   barangay: string | null;
   address: string | null;
   contact_number: string | null;
-  latitude: number | null;
-  longitude: number | null;
 };
-
-type Coordinates = {
-  latitude: number;
-  longitude: number;
-};
-
-type NearbyResource = RecoveryResource & {
-  distanceKm: number | null;
-};
-
-function calculateDistanceKm(
-  origin: Coordinates,
-  destination: Coordinates
-) {
-  const toRadians = (value: number) => (value * Math.PI) / 180;
-
-  const earthRadiusKm = 6371;
-  const latitudeDifference = toRadians(
-    destination.latitude - origin.latitude
-  );
-  const longitudeDifference = toRadians(
-    destination.longitude - origin.longitude
-  );
-
-  const a =
-    Math.sin(latitudeDifference / 2) ** 2 +
-    Math.cos(toRadians(origin.latitude)) *
-      Math.cos(toRadians(destination.latitude)) *
-      Math.sin(longitudeDifference / 2) ** 2;
-
-  return (
-    earthRadiusKm *
-    2 *
-    Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-  );
-}
 
 export default function NearbyAssistanceScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{
-    location?: string;
-    area?: 'inside' | 'outside';
-  }>();
 
-  const [resources, setResources] = useState<NearbyResource[]>([]);
+  const [resources, setResources] = useState<RecoveryResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
-  const [origin, setOrigin] = useState<Coordinates | null>(null);
-  const [originLabel, setOriginLabel] = useState(
-    typeof params.location === 'string' ? params.location : ''
-  );
-  const [locationLoading, setLocationLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const getDeviceLocation = async () => {
-    try {
-      setLocationLoading(true);
-
-      const permission =
-        await Location.requestForegroundPermissionsAsync();
-
-      if (permission.status !== 'granted') {
-        Alert.alert(
-          'Location Permission Required',
-          'Allow location access to sort assistance resources by distance.'
-        );
-        return;
-      }
-
-      const position = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
-
-      const coords = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      };
-
-      setOrigin(coords);
-      setOriginLabel('Your current GPS location');
-    } catch (error) {
-      console.error('Unable to get current location:', error);
-      Alert.alert(
-        'Location Unavailable',
-        'Please try again or continue browsing the verified resources.'
-      );
-    } finally {
-      setLocationLoading(false);
-    }
-  };
-
+  // Load verified recovery resources from Supabase
   const loadResources = useCallback(async (refresh = false) => {
     if (refresh) {
       setRefreshing(true);
@@ -135,53 +51,31 @@ export default function NearbyAssistanceScreen() {
       const { data, error } = await supabase
         .from('recovery_resources')
         .select(
-          'resource_id, title, category, description, barangay, address, contact_number, latitude, longitude'
+          'resource_id, title, category, description, barangay, address, contact_number'
         )
         .eq('is_active', true)
-        .eq('verified', true);
+        .eq('verified', true)
+        .order('title', { ascending: true });
 
       if (error) throw error;
 
-      const validResources = (data ?? []) as RecoveryResource[];
-
-      const sortedResources: NearbyResource[] = validResources
-        .map((resource) => {
-          let distanceKm: number | null = null;
-
-          if (
-            origin &&
-            resource.latitude !== null &&
-            resource.longitude !== null
-          ) {
-            distanceKm = calculateDistanceKm(origin, {
-              latitude: resource.latitude,
-              longitude: resource.longitude,
-            });
-          }
-
-          return { ...resource, distanceKm };
-        })
-        .sort((a, b) => {
-          if (a.distanceKm === null && b.distanceKm === null) return 0;
-          if (a.distanceKm === null) return 1;
-          if (b.distanceKm === null) return -1;
-          return a.distanceKm - b.distanceKm;
-        });
-
-      setResources(sortedResources);
+      setResources((data ?? []) as RecoveryResource[]);
     } catch (error) {
-      console.error('Unable to load nearby resources:', error);
-      setErrorMessage('Could not load assistance resources. Please try again.');
+      console.error('Unable to load recovery resources:', error);
+      setErrorMessage(
+        'Could not load assistance resources. Please try again.'
+      );
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [origin]);
+  }, []);
 
   useEffect(() => {
     loadResources();
   }, [loadResources]);
 
+  // Search and filter resources
   const filteredResources = resources.filter((resource) => {
     const query = search.trim().toLowerCase();
 
@@ -195,24 +89,48 @@ export default function NearbyAssistanceScreen() {
     );
   });
 
-  const openDirections = async (resource: NearbyResource) => {
-    if (resource.latitude === null || resource.longitude === null) {
-      Alert.alert(
-        'Location Unavailable',
-        'This resource does not have coordinates yet.'
-      );
-      return;
-    }
-
-    const url =
-      `https://www.google.com/maps/dir/?api=1&destination=` +
-      `${resource.latitude},${resource.longitude}`;
+  // Call assistance provider
+  const callResource = async (phone: string) => {
+    const cleanedPhone = phone.replace(/[^\d+]/g, '');
 
     try {
-      await Linking.openURL(url);
+      await Linking.openURL(`tel:${cleanedPhone}`);
     } catch {
-      Alert.alert('Unable to Open Maps', 'Please try again.');
+      Alert.alert(
+        'Unable to Call',
+        'Your device could not open the phone app. Please try again.'
+      );
     }
+  };
+
+  // Category icon
+  const getCategoryIcon = (category: string): string => {
+    const value = category.toLowerCase();
+
+    if (value.includes('medical') || value.includes('health')) {
+      return 'heart';
+    }
+
+    if (value.includes('shelter') || value.includes('housing')) {
+      return 'home';
+    }
+
+    if (
+      value.includes('food') ||
+      value.includes('relief') ||
+      value.includes('water')
+    ) {
+      return 'package';
+    }
+
+    if (
+      value.includes('livelihood') ||
+      value.includes('financial')
+    ) {
+      return 'briefcase';
+    }
+
+    return 'life-buoy';
   };
 
   return (
@@ -220,6 +138,7 @@ export default function NearbyAssistanceScreen() {
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -228,12 +147,17 @@ export default function NearbyAssistanceScreen() {
           />
         }
       >
+        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => router.back()}
           >
-            <Feather name="arrow-left" size={21} color="#123B5D" />
+            <Feather
+              name="arrow-left"
+              size={21}
+              color="#123B5D"
+            />
           </TouchableOpacity>
 
           <View style={{ flex: 1 }}>
@@ -242,40 +166,34 @@ export default function NearbyAssistanceScreen() {
           </View>
         </View>
 
+        {/* Introduction */}
         <View style={styles.locationCard}>
-          <Feather name="map-pin" size={22} color="#1769AA" />
+          <Feather
+            name="life-buoy"
+            size={25}
+            color="#1769AA"
+          />
+
           <View style={{ flex: 1 }}>
-            <Text style={styles.locationTitle}>Your search location</Text>
+            <Text style={styles.locationTitle}>
+              Verified Recovery Support
+            </Text>
+
             <Text style={styles.locationText}>
-              {originLabel || 'Location not selected'}
+              Browse available recovery services and contact providers
+              directly for assistance.
             </Text>
           </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.gpsButton}
-          onPress={getDeviceLocation}
-          disabled={locationLoading}
-        >
-          {locationLoading ? (
-            <ActivityIndicator color="#1769AA" />
-          ) : (
-            <Feather name="crosshair" size={18} color="#1769AA" />
-          )}
-          <Text style={styles.gpsButtonText}>
-            {locationLoading ? 'Getting location...' : 'Use Current GPS Location'}
-          </Text>
-        </TouchableOpacity>
-
-        {!origin && (
-          <Text style={styles.helperText}>
-            GPS is optional. Without GPS coordinates, resources can still be
-            browsed, but distances cannot be calculated accurately.
-          </Text>
-        )}
-
+        {/* Search */}
         <View style={styles.searchBox}>
-          <Feather name="search" size={19} color="#64748B" />
+          <Feather
+            name="search"
+            size={19}
+            color="#64748B"
+          />
+
           <TextInput
             style={styles.searchInput}
             value={search}
@@ -283,67 +201,174 @@ export default function NearbyAssistanceScreen() {
             placeholder="Search shelters, relief, medical..."
             placeholderTextColor="#94A3B8"
           />
+
+          {search.length > 0 && (
+            <TouchableOpacity onPress={() => setSearch('')}>
+              <Feather
+                name="x-circle"
+                size={18}
+                color="#94A3B8"
+              />
+            </TouchableOpacity>
+          )}
         </View>
 
+        {/* Result Count */}
         {!loading && !errorMessage && (
           <Text style={styles.resultCount}>
             {filteredResources.length} verified{' '}
-            {filteredResources.length === 1 ? 'resource' : 'resources'} found
+            {filteredResources.length === 1
+              ? 'resource'
+              : 'resources'}{' '}
+            found
           </Text>
         )}
 
+        {/* Loading */}
         {loading && (
           <View style={styles.stateContainer}>
-            <ActivityIndicator size="large" color="#1769AA" />
-            <Text style={styles.stateText}>Finding assistance resources...</Text>
+            <ActivityIndicator
+              size="large"
+              color="#1769AA"
+            />
+
+            <Text style={styles.stateText}>
+              Finding assistance resources...
+            </Text>
           </View>
         )}
 
+        {/* Error */}
         {!loading && errorMessage !== '' && (
           <View style={styles.stateContainer}>
-            <Text style={styles.stateText}>{errorMessage}</Text>
+            <Feather
+              name="alert-circle"
+              size={38}
+              color="#DC2626"
+            />
+
+            <Text style={styles.emptyTitle}>
+              Unable to Load Resources
+            </Text>
+
+            <Text style={styles.stateText}>
+              {errorMessage}
+            </Text>
+
             <TouchableOpacity
               style={styles.primaryButton}
               onPress={() => loadResources()}
             >
-              <Text style={styles.primaryButtonText}>Try Again</Text>
+              <Text style={styles.primaryButtonText}>
+                Try Again
+              </Text>
             </TouchableOpacity>
           </View>
         )}
 
+        {/* Empty Resources */}
         {!loading &&
           !errorMessage &&
+          resources.length === 0 && (
+            <View style={styles.stateContainer}>
+              <Feather
+                name="inbox"
+                size={42}
+                color="#94A3B8"
+              />
+
+              <Text style={styles.emptyTitle}>
+                No Verified Resources Yet
+              </Text>
+
+              <Text style={styles.stateText}>
+                Verified recovery assistance listings will appear
+                here once authorized administrators add resources.
+              </Text>
+
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={() => loadResources()}
+              >
+                <Text style={styles.primaryButtonText}>
+                  Refresh Resources
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+        {/* No Search Results */}
+        {!loading &&
+          !errorMessage &&
+          resources.length > 0 &&
           filteredResources.length === 0 && (
             <View style={styles.stateContainer}>
-              <Feather name="inbox" size={40} color="#94A3B8" />
-              <Text style={styles.emptyTitle}>No resources found</Text>
+              <Feather
+                name="search"
+                size={38}
+                color="#94A3B8"
+              />
+
+              <Text style={styles.emptyTitle}>
+                No Matching Resources
+              </Text>
+
               <Text style={styles.stateText}>
-                Verified listings will appear here when available. Try a
-                different search term or refresh the list.
+                Try another keyword or search for a different
+                category or barangay.
               </Text>
             </View>
           )}
 
+        {/* Resource Cards */}
         {!loading &&
           !errorMessage &&
           filteredResources.map((resource) => (
-            <View key={resource.resource_id} style={styles.resourceCard}>
+            <View
+              key={resource.resource_id}
+              style={styles.resourceCard}
+            >
+              {/* Resource Header */}
               <View style={styles.resourceHeader}>
                 <View style={styles.resourceIcon}>
-                  <Feather name="life-buoy" size={23} color="#2563EB" />
+                  <Feather
+                    name={getCategoryIcon(resource.category) as any}
+                    size={23}
+                    color="#2563EB"
+                  />
                 </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.resourceTitle}>{resource.title}</Text>
-                  <Text style={styles.category}>{resource.category}</Text>
+
+                <View style={styles.resourceHeading}>
+                  <Text style={styles.resourceTitle}>
+                    {resource.title}
+                  </Text>
+
+                  <Text style={styles.category}>
+                    {resource.category}
+                  </Text>
                 </View>
-                <Feather name="check-circle" size={19} color="#15803D" />
+
+                <Feather
+                  name="check-circle"
+                  size={20}
+                  color="#15803D"
+                />
               </View>
 
-              <Text style={styles.description}>{resource.description}</Text>
+              {/* Description */}
+              <Text style={styles.description}>
+                {resource.description}
+              </Text>
 
+              {/* Address */}
               {(resource.address || resource.barangay) && (
                 <View style={styles.detailRow}>
-                  <Feather name="map-pin" size={15} color="#64748B" />
+                  <Feather
+                    name="map-pin"
+                    size={16}
+                    color="#64748B"
+                  />
+
                   <Text style={styles.detailText}>
                     {[resource.address, resource.barangay]
                       .filter(Boolean)
@@ -352,140 +377,315 @@ export default function NearbyAssistanceScreen() {
                 </View>
               )}
 
-              <View style={styles.distanceRow}>
-                <Feather name="navigation" size={15} color="#1769AA" />
-                <Text style={styles.distanceText}>
-                  {resource.distanceKm !== null
-                    ? `${resource.distanceKm.toFixed(1)} km away (straight-line distance)`
-                    : 'Distance unavailable'}
-                </Text>
-              </View>
+              {/* Contact Number */}
+              {resource.contact_number && (
+                <View style={styles.detailRow}>
+                  <Feather
+                    name="phone"
+                    size={15}
+                    color="#64748B"
+                  />
 
+                  <Text style={styles.detailText}>
+                    {resource.contact_number}
+                  </Text>
+                </View>
+              )}
+
+              {/* Action Buttons */}
               <View style={styles.actionRow}>
-                {resource.contact_number && (
+                {resource.contact_number ? (
                   <TouchableOpacity
-                    style={styles.secondaryButton}
-                    onPress={() => {
-                      Linking.openURL(`tel:${resource.contact_number}`).catch(
-                        () => Alert.alert('Unable to Call', 'Please try again.')
-                      );
-                    }}
+                    style={styles.primaryButton}
+                    onPress={() =>
+                      callResource(resource.contact_number!)
+                    }
                   >
-                    <Feather name="phone" size={16} color="#1769AA" />
-                    <Text style={styles.secondaryButtonText}>Call</Text>
-                  </TouchableOpacity>
-                )}
+                    <Feather
+                      name="phone"
+                      size={16}
+                      color="#FFFFFF"
+                    />
 
-                <TouchableOpacity
-                  style={styles.primaryButton}
-                  onPress={() => openDirections(resource)}
-                >
-                  <Feather name="navigation" size={16} color="#FFFFFF" />
-                  <Text style={styles.primaryButtonText}>Get Directions</Text>
-                </TouchableOpacity>
+                    <Text style={styles.primaryButtonText}>
+                      Call Provider
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.noContact}>
+                    <Feather
+                      name="info"
+                      size={15}
+                      color="#94A3B8"
+                    />
+
+                    <Text style={styles.noContactText}>
+                      No contact number available
+                    </Text>
+                  </View>
+                )}
               </View>
             </View>
           ))}
 
+        {/* Information Notice */}
         <View style={styles.notice}>
-          <Feather name="info" size={18} color="#92400E" />
+          <Feather
+            name="info"
+            size={18}
+            color="#92400E"
+          />
+
           <Text style={styles.noticeText}>
-            Distances are approximate straight-line measurements, not travel
-            distances. Confirm availability before travelling. For immediate
-            danger, contact local emergency services.
+            Please contact the listed provider to confirm
+            availability before travelling. Resource listings are
+            subject to change. For immediate danger, contact local
+            emergency services.
           </Text>
         </View>
 
         <View style={{ height: 110 }} />
       </ScrollView>
 
+      {/* Bottom Navigation */}
       <BottomNavbar activeTab="resources" />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F8FAFC' },
-  content: { padding: 20, paddingBottom: 130 },
-  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 22 },
-  backButton: {
-    width: 42, height: 42, borderRadius: 13, backgroundColor: '#FFFFFF',
-    alignItems: 'center', justifyContent: 'center', marginRight: 12,
-    borderWidth: 1, borderColor: '#E2E8F0',
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
   },
+
+  content: {
+    padding: 20,
+    paddingBottom: 130,
+  },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 22,
+  },
+
+  backButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 13,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+
   eyebrow: {
-    fontSize: 10, fontWeight: '700', letterSpacing: 1, color: '#64748B',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1,
+    color: '#64748B',
     marginBottom: 4,
   },
-  title: { fontSize: 23, fontWeight: '800', color: '#123B5D' },
+
+  title: {
+    fontSize: 23,
+    fontWeight: '800',
+    color: '#123B5D',
+  },
+
   locationCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: '#EAF4FF', borderRadius: 14, padding: 15,
-    borderWidth: 1, borderColor: '#D5E8FC',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: '#EAF4FF',
+    borderRadius: 14,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#D5E8FC',
+    marginBottom: 18,
   },
-  locationTitle: { fontSize: 13, fontWeight: '800', color: '#123B5D' },
-  locationText: { fontSize: 12, color: '#475569', marginTop: 4 },
-  gpsButton: {
-    minHeight: 47, flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: '#93C5FD',
-    backgroundColor: '#FFFFFF', borderRadius: 12, marginTop: 12,
+
+  locationTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#123B5D',
   },
-  gpsButtonText: { fontSize: 13, fontWeight: '700', color: '#1769AA' },
-  helperText: {
-    fontSize: 12, lineHeight: 18, color: '#64748B', marginTop: 8,
+
+  locationText: {
+    fontSize: 12,
+    color: '#475569',
+    marginTop: 5,
+    lineHeight: 18,
   },
+
   searchBox: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#CBD5E1',
-    borderRadius: 13, paddingHorizontal: 13, minHeight: 49, marginTop: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 13,
+    paddingHorizontal: 13,
+    minHeight: 49,
   },
-  searchInput: { flex: 1, color: '#0F172A', fontSize: 14, paddingVertical: 10 },
-  resultCount: { fontSize: 12, color: '#64748B', marginTop: 16, marginBottom: 12 },
+
+  searchInput: {
+    flex: 1,
+    color: '#0F172A',
+    fontSize: 14,
+    paddingVertical: 10,
+  },
+
+  resultCount: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 16,
+    marginBottom: 12,
+  },
+
   stateContainer: {
-    alignItems: 'center', justifyContent: 'center', padding: 25,
-    backgroundColor: '#FFFFFF', borderRadius: 16, marginVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 25,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginVertical: 10,
   },
+
   stateText: {
-    fontSize: 13, color: '#64748B', lineHeight: 20,
-    textAlign: 'center', marginTop: 9,
+    fontSize: 13,
+    color: '#64748B',
+    lineHeight: 20,
+    textAlign: 'center',
+    marginTop: 9,
   },
+
   emptyTitle: {
-    fontSize: 16, fontWeight: '800', color: '#123B5D', marginTop: 12,
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#123B5D',
+    marginTop: 12,
     textAlign: 'center',
   },
+
   resourceCard: {
-    backgroundColor: '#FFFFFF', borderRadius: 17, padding: 16,
-    marginBottom: 13, borderWidth: 1, borderColor: '#E2E8F0',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 17,
+    padding: 16,
+    marginBottom: 13,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
-  resourceHeader: { flexDirection: 'row', alignItems: 'center', gap: 11 },
+
+  resourceHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 11,
+  },
+
   resourceIcon: {
-    width: 45, height: 45, borderRadius: 13, backgroundColor: '#DBEAFE',
-    alignItems: 'center', justifyContent: 'center',
+    width: 45,
+    height: 45,
+    borderRadius: 13,
+    backgroundColor: '#DBEAFE',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  resourceTitle: { fontSize: 15, fontWeight: '800', color: '#1E293B' },
-  category: { fontSize: 12, color: '#2563EB', marginTop: 4, fontWeight: '600' },
-  description: { fontSize: 13, lineHeight: 20, color: '#475569', marginTop: 13 },
-  detailRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginTop: 11 },
-  detailText: { flex: 1, color: '#64748B', fontSize: 12, lineHeight: 18 },
-  distanceRow: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 12 },
-  distanceText: { fontSize: 12, color: '#1769AA', fontWeight: '700' },
-  actionRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 9, marginTop: 15 },
-  secondaryButton: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 7, borderWidth: 1, borderColor: '#93C5FD', borderRadius: 10,
-    paddingHorizontal: 15, paddingVertical: 10,
+
+  resourceHeading: {
+    flex: 1,
   },
-  secondaryButtonText: { color: '#1769AA', fontWeight: '700', fontSize: 12 },
+
+  resourceTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#1E293B',
+  },
+
+  category: {
+    fontSize: 12,
+    color: '#2563EB',
+    marginTop: 4,
+    fontWeight: '600',
+  },
+
+  description: {
+    fontSize: 13,
+    lineHeight: 20,
+    color: '#475569',
+    marginTop: 13,
+  },
+
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    marginTop: 11,
+  },
+
+  detailText: {
+    flex: 1,
+    color: '#64748B',
+    fontSize: 12,
+    lineHeight: 18,
+  },
+
+  actionRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 15,
+  },
+
   primaryButton: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 7, backgroundColor: '#2563EB', borderRadius: 10,
-    paddingHorizontal: 15, paddingVertical: 10, marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 7,
+    backgroundColor: '#2563EB',
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 11,
+    marginTop: 12,
   },
-  primaryButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 12 },
+
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 12,
+  },
+
+  noContact: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    paddingVertical: 10,
+  },
+
+  noContactText: {
+    fontSize: 12,
+    color: '#94A3B8',
+  },
+
   notice: {
-    flexDirection: 'row', alignItems: 'flex-start', gap: 9,
-    backgroundColor: '#FFFBEB', borderRadius: 12, padding: 13,
-    marginTop: 8, borderWidth: 1, borderColor: '#FDE68A',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 9,
+    backgroundColor: '#FFFBEB',
+    borderRadius: 12,
+    padding: 13,
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
   },
-  noticeText: { flex: 1, color: '#92400E', fontSize: 12, lineHeight: 18 },
+
+  noticeText: {
+    flex: 1,
+    color: '#92400E',
+    fontSize: 12,
+    lineHeight: 18,
+  },
 });
