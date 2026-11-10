@@ -1,3 +1,4 @@
+
 import { supabase } from '@/src/services/supabase';
 import { Feather } from '@expo/vector-icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -5,6 +6,7 @@ import {
   Alert,
   Animated,
   Modal,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -55,7 +57,11 @@ export default function DisasterAppUI() {
   // Animations
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideUpAnim = useRef(new Animated.Value(30)).current;
-    const router = useRouter();
+
+  const router = useRouter();
+
+  // Pull-to-refresh
+  const [refreshing, setRefreshing] = useState(false);
 
   // User
   const [userName, setUserName] = useState('User');
@@ -90,44 +96,54 @@ export default function DisasterAppUI() {
     (item) => !readNotificationIds.includes(item.notification_id)
   ).length;
 
+  // ========================================
   // FETCH USER INFORMATION
+  // ========================================
 
+  const fetchUser = useCallback(async () => {
+    try {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
 
+      if (authError || !user) {
+        console.error(
+          'Error fetching authenticated user:',
+          authError?.message
+        );
+        setUserName('User');
+        return;
+      }
 
-const fetchUser = useCallback(async () => {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
+      const { data: profile, error: profileError } = await supabase
+        .from('users')
+        .select('fullname')
+        .eq('id', user.id)
+        .maybeSingle();
 
-  if (authError || !user) {
-    console.error('Error fetching authenticated user:', authError?.message);
-    setUserName('User');
-    return;
-  }
+      if (profileError) {
+        console.error('Error fetching profile:', profileError.message);
+        setUserName('User');
+        return;
+      }
 
-  const { data: profile, error: profileError } = await supabase
-    .from('users')
-    .select('fullname')
-    .eq('id', user.id)
-    .maybeSingle();
+      if (!profile) {
+        console.error('No matching profile found for Auth ID:', user.id);
+        setUserName('User');
+        return;
+      }
 
-  if (profileError) {
-    console.error('Error fetching profile:', profileError.message);
-    setUserName('User');
-    return;
-  }
+      setUserName(profile.fullname?.trim() || 'User');
+    } catch (error) {
+      console.error('Unexpected user fetch error:', error);
+      setUserName('User');
+    }
+  }, []);
 
-  if (!profile) {
-    console.error('No matching profile found for Auth ID:', user.id);
-    setUserName('User');
-    return;
-  }
-
-  setUserName(profile.fullname?.trim() || 'User');
-}, []);
-
+  // ========================================
   // FETCH COMMUNITY ACTIVITIES
+  // ========================================
 
   const fetchActivities = useCallback(async () => {
     setActivitiesLoading(true);
@@ -158,7 +174,9 @@ const fetchUser = useCallback(async () => {
     }
   }, []);
 
+  // ========================================
   // FETCH NOTIFICATIONS
+  // ========================================
 
   const fetchNotifications = useCallback(async () => {
     setNotificationLoading(true);
@@ -231,7 +249,31 @@ const fetchUser = useCallback(async () => {
     }
   }, []);
 
+  // ========================================
+  // PULL DOWN TO REFRESH
+  // ========================================
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    try {
+      // Refresh all home screen data simultaneously
+      await Promise.all([
+        fetchUser(),
+        fetchActivities(),
+        fetchNotifications(),
+      ]);
+    } catch (error) {
+      console.error('Error refreshing home screen:', error);
+    } finally {
+      // Always stop the refresh spinner
+      setRefreshing(false);
+    }
+  };
+
+  // ========================================
   // INITIAL SCREEN SETUP
+  // ========================================
 
   useEffect(() => {
     Animated.parallel([
@@ -265,7 +307,9 @@ const fetchUser = useCallback(async () => {
     fetchNotifications,
   ]);
 
+  // ========================================
   // MARK NOTIFICATION AS READ
+  // ========================================
 
   const markNotificationAsRead = async (
     notificationId: string
@@ -283,7 +327,7 @@ const fetchUser = useCallback(async () => {
       return false;
     }
 
-    // Already read on this device/session
+    // Already read
     if (readNotificationIds.includes(notificationId)) {
       return true;
     }
@@ -302,7 +346,10 @@ const fetchUser = useCallback(async () => {
       );
 
     if (error) {
-      console.error('Error marking notification as read:', error.message);
+      console.error(
+        'Error marking notification as read:',
+        error.message
+      );
 
       Alert.alert(
         'Error',
@@ -321,7 +368,9 @@ const fetchUser = useCallback(async () => {
     return true;
   };
 
+  // ========================================
   // SOS BUTTON LOGIC
+  // ========================================
 
   const handlePressIn = () => {
     let count = 5;
@@ -379,7 +428,9 @@ const fetchUser = useCallback(async () => {
     setHoldProgress(5);
   };
 
+  // ========================================
   // RENDER SCREEN
+  // ========================================
 
   return (
     <SafeAreaView style={styles.container}>
@@ -390,13 +441,23 @@ const fetchUser = useCallback(async () => {
           transform: [{ translateY: slideUpAnim }],
         }}
       >
-        <StatusBar
-          barStyle="dark-content"
-        />
+        <StatusBar barStyle="dark-content" />
 
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+
+          // Pull-to-refresh control
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#25A5FE']}
+              tintColor="#25A5FE"
+              title="Refreshing home..."
+              titleColor="#64748B"
+            />
+          }
         >
           {/* HEADER */}
 
@@ -494,6 +555,7 @@ const fetchUser = useCallback(async () => {
 
           <View style={styles.quickActionsContainer}>
             {/* SOS */}
+
             <TouchableOpacity
               style={styles.sosCard}
               onPress={() => setIsSosExpanded(true)}
@@ -519,9 +581,10 @@ const fetchUser = useCallback(async () => {
 
             <View style={styles.rightActionsColumn}>
               {/* Hotlines */}
+
               <TouchableOpacity
                 style={styles.actionCard}
-              onPress={() => router.push('/hotlines')}
+                onPress={() => router.push('/hotlines')}
               >
                 <View style={styles.actionIconContainer}>
                   <Feather
@@ -536,9 +599,10 @@ const fetchUser = useCallback(async () => {
               </TouchableOpacity>
 
               {/* Shelters */}
+
               <TouchableOpacity
                 style={styles.actionCard}
-              onPress={() => router.push('/map')}
+                onPress={() => router.push('/map')}
               >
                 <View style={styles.actionIconContainer}>
                   <Feather
@@ -549,7 +613,9 @@ const fetchUser = useCallback(async () => {
                 </View>
 
                 <Text style={styles.actionTitle}>Shelters</Text>
-                <Text style={styles.actionSub}>View nearby centers</Text>
+                <Text style={styles.actionSub}>
+                  View nearby centers
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -563,6 +629,7 @@ const fetchUser = useCallback(async () => {
           </View>
 
           {/* Loading */}
+
           {activitiesLoading ? (
             <View style={styles.activityCard}>
               <Text style={styles.activityDesc}>
@@ -571,6 +638,7 @@ const fetchUser = useCallback(async () => {
             </View>
           ) : activitiesError ? (
             /* Error */
+
             <View style={styles.activityCard}>
               <Feather
                 name="alert-circle"
@@ -588,6 +656,7 @@ const fetchUser = useCallback(async () => {
             </View>
           ) : activities.length === 0 ? (
             /* Empty state */
+
             <View style={styles.activityCard}>
               <Feather
                 name="calendar"
@@ -610,8 +679,12 @@ const fetchUser = useCallback(async () => {
             </View>
           ) : (
             /* Activity cards */
+
             activities.map((item) => (
-              <View key={item.activity_id} style={styles.activityCard}>
+              <View
+                key={item.activity_id}
+                style={styles.activityCard}
+              >
                 <View style={styles.activityCardHeader}>
                   <View style={styles.timeContainer}>
                     <Feather
@@ -699,6 +772,7 @@ const fetchUser = useCallback(async () => {
             }}
           >
             {/* Modal header */}
+
             <View
               style={{
                 flexDirection: 'row',
@@ -724,12 +798,14 @@ const fetchUser = useCallback(async () => {
             </View>
 
             {/* Loading */}
+
             {notificationLoading ? (
               <Text style={styles.activityDesc}>
                 Loading notifications...
               </Text>
             ) : notificationError ? (
               /* Error */
+
               <View style={styles.activityCard}>
                 <Text style={styles.activityDesc}>
                   {notificationError}
@@ -741,6 +817,7 @@ const fetchUser = useCallback(async () => {
               </View>
             ) : notifications.length === 0 ? (
               /* Empty state */
+
               <View style={styles.activityCard}>
                 <Feather
                   name="bell"
@@ -759,12 +836,15 @@ const fetchUser = useCallback(async () => {
               </View>
             ) : (
               /* Notification list */
+
               <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 20 }}
               >
                 {notifications.map((item) => {
-                  const isRead = readNotificationIds.includes(item.notification_id);
+                  const isRead = readNotificationIds.includes(
+                    item.notification_id
+                  );
 
                   return (
                     <View
@@ -778,6 +858,7 @@ const fetchUser = useCallback(async () => {
                       ]}
                     >
                       {/* Notification title */}
+
                       <View
                         style={{
                           flexDirection: 'row',
@@ -812,11 +893,13 @@ const fetchUser = useCallback(async () => {
                       </View>
 
                       {/* Notification message */}
+
                       <Text style={styles.activityDesc}>
                         {item.message}
                       </Text>
 
                       {/* Notification date */}
+
                       <Text
                         style={[
                           styles.activityDesc,
@@ -827,10 +910,13 @@ const fetchUser = useCallback(async () => {
                       </Text>
 
                       {/* View activity */}
+
                       <TouchableOpacity
                         onPress={async () => {
                           const markedRead =
-                            await markNotificationAsRead(item.notification_id);
+                            await markNotificationAsRead(
+                              item.notification_id
+                            );
 
                           if (!markedRead) {
                             return;
