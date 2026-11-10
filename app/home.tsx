@@ -94,6 +94,7 @@ export default function DisasterAppUI() {
   // FETCH USER INFORMATION
 
 
+
 const fetchUser = useCallback(async () => {
   const {
     data: { user },
@@ -101,7 +102,7 @@ const fetchUser = useCallback(async () => {
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    console.error('Error fetching user:', authError?.message);
+    console.error('Error fetching authenticated user:', authError?.message);
     setUserName('User');
     return;
   }
@@ -110,19 +111,21 @@ const fetchUser = useCallback(async () => {
     .from('users')
     .select('fullname')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
   if (profileError) {
     console.error('Error fetching profile:', profileError.message);
-    setUserName(user.email?.split('@')[0] || 'User');
+    setUserName('User');
     return;
   }
 
-  setUserName(
-    profile?.fullname ||
-    user.email?.split('@')[0] ||
-    'User'
-  );
+  if (!profile) {
+    console.error('No matching profile found for Auth ID:', user.id);
+    setUserName('User');
+    return;
+  }
+
+  setUserName(profile.fullname?.trim() || 'User');
 }, []);
 
   // FETCH COMMUNITY ACTIVITIES
