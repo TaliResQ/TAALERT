@@ -41,15 +41,21 @@ export default function ProfileScreen() {
         .eq('id', user.id)
         .single();
 
-      if (!profileError && profile) {
-        setUserName(profile.fullname || user.email?.split('@')[0] || 'User');
-        setBarangay(profile.barangay || 'Update your address');
-        setVerificationStatus(profile.verification_status?.toUpperCase() || 'PENDING');
-      } else {
-        // Fallback if profile fetch fails
-        setUserName(user.email?.split('@')[0] || 'User');
-        setBarangay('No barangay set');
-      }
+if (!profileError && profile) {
+  setUserName(profile.fullname || 'User');
+  setBarangay(profile.barangay || 'Update your address');
+  setVerificationStatus(
+    profile.verification_status?.toUpperCase() || 'PENDING'
+  );
+} else {
+  console.error('Profile fetch error:', profileError?.message);
+  setUserName(
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    'User'
+  );
+  setBarangay('No barangay set');
+}
 
       // 3. Get the incident (report) count
       const { count, error: countError } = await supabase

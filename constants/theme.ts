@@ -480,6 +480,11 @@ export const ProfileStyles = StyleSheet.create({
     elevation: 2,
     shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10,
   },
+    nameText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: COLORS.textDark,
+  },
   avatar: {
     width: 70,
     height: 70,

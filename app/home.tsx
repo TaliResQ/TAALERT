@@ -93,29 +93,37 @@ export default function DisasterAppUI() {
 
   // FETCH USER INFORMATION
 
-  const fetchUser = useCallback(async () => {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
 
-    if (error) {
-      console.error('Error fetching user:', error.message);
-      return;
-    }
+const fetchUser = useCallback(async () => {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-    if (!user) {
-      setUserName('User');
-      return;
-    }
+  if (authError || !user) {
+    console.error('Error fetching user:', authError?.message);
+    setUserName('User');
+    return;
+  }
 
-    setUserName(
-      user.user_metadata?.full_name ||
-        user.user_metadata?.name ||
-        user.email?.split('@')[0] ||
-        'User'
-    );
-  }, []);
+  const { data: profile, error: profileError } = await supabase
+    .from('users')
+    .select('fullname')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError) {
+    console.error('Error fetching profile:', profileError.message);
+    setUserName(user.email?.split('@')[0] || 'User');
+    return;
+  }
+
+  setUserName(
+    profile?.fullname ||
+    user.email?.split('@')[0] ||
+    'User'
+  );
+}, []);
 
   // FETCH COMMUNITY ACTIVITIES
 
