@@ -19,7 +19,9 @@ import { useRouter } from 'expo-router';
 import BottomNavbar from '../components/BottomNavbar';
 import { COLORS, IndexStyles as styles } from '../constants/theme';
 
+// ========================================
 // TYPES
+// ========================================
 
 type CommunityActivity = {
   activity_id: string;
@@ -37,7 +39,9 @@ type ActivityNotification = {
   created_at: string;
 };
 
+// ========================================
 // DATE FORMATTER
+// ========================================
 
 const formatActivityDate = (dateString: string) => {
   const [year, month, day] = dateString.split('-').map(Number);
@@ -51,47 +55,73 @@ const formatActivityDate = (dateString: string) => {
   });
 };
 
+// ========================================
 // MAIN SCREEN
+// ========================================
 
 export default function DisasterAppUI() {
-  // Animations
+  const router = useRouter();
+
+  // ========================================
+  // ANIMATIONS
+  // ========================================
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideUpAnim = useRef(new Animated.Value(30)).current;
 
-  const router = useRouter();
+  // ========================================
+  // REFRESH
+  // ========================================
 
-  // Pull-to-refresh
   const [refreshing, setRefreshing] = useState(false);
 
-  // User
+  // ========================================
+  // USER
+  // ========================================
+
   const [userName, setUserName] = useState('User');
 
-  // Community activities
+  // ========================================
+  // COMMUNITY ACTIVITIES
+  // ========================================
+
   const [activities, setActivities] = useState<CommunityActivity[]>([]);
   const [activitiesLoading, setActivitiesLoading] = useState(true);
-  const [activitiesError, setActivitiesError] = useState<string | null>(
-    null
-  );
+  const [activitiesError, setActivitiesError] = useState<string | null>(null);
 
-  // Notifications
-  const [notifications, setNotifications] = useState<
-    ActivityNotification[]
-  >([]);
-  const [readNotificationIds, setReadNotificationIds] = useState<string[]>(
-    []
-  );
+  // ========================================
+  // NOTIFICATIONS
+  // ========================================
+
+  const [notifications, setNotifications] = useState<ActivityNotification[]>([]);
+  const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
+
   const [notificationsVisible, setNotificationsVisible] = useState(false);
   const [notificationLoading, setNotificationLoading] = useState(false);
-  const [notificationError, setNotificationError] = useState<string | null>(
-    null
-  );
+  const [notificationError, setNotificationError] = useState<string | null>(null);
 
+  // ========================================
+  // ACTIVITY DETAILS MODAL
+  // ========================================
+
+  const [selectedActivity, setSelectedActivity] =
+    useState<CommunityActivity | null>(null);
+
+  const [activityModalVisible, setActivityModalVisible] = useState(false);
+
+  // ========================================
   // SOS
+  // ========================================
+
   const [isSosExpanded, setIsSosExpanded] = useState(false);
   const [holdProgress, setHoldProgress] = useState(5);
+
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Number of unread notifications
+  // ========================================
+  // UNREAD NOTIFICATION COUNT
+  // ========================================
+
   const unreadCount = notifications.filter(
     (item) => !readNotificationIds.includes(item.notification_id)
   ).length;
@@ -112,6 +142,7 @@ export default function DisasterAppUI() {
           'Error fetching authenticated user:',
           authError?.message
         );
+
         setUserName('User');
         return;
       }
@@ -135,6 +166,7 @@ export default function DisasterAppUI() {
       }
 
       setUserName(profile.fullname?.trim() || 'User');
+
     } catch (error) {
       console.error('Unexpected user fetch error:', error);
       setUserName('User');
@@ -166,9 +198,11 @@ export default function DisasterAppUI() {
       }
 
       setActivities(data ?? []);
+
     } catch (error) {
       console.error('Unexpected activity error:', error);
       setActivitiesError('Something went wrong. Please try again.');
+
     } finally {
       setActivitiesLoading(false);
     }
@@ -191,16 +225,20 @@ export default function DisasterAppUI() {
       if (userError || !user) {
         setNotifications([]);
         setReadNotificationIds([]);
+
         setNotificationError(
           'Please sign in to view your notifications.'
         );
+
         return;
       }
 
       const [notificationResult, readResult] = await Promise.all([
         supabase
           .from('activity_notifications')
-          .select('notification_id, activity_id, title, message, created_at')
+          .select(
+            'notification_id, activity_id, title, message, created_at'
+          )
           .order('created_at', { ascending: false })
           .limit(30),
 
@@ -229,6 +267,7 @@ export default function DisasterAppUI() {
         setNotificationError(
           'Unable to load notification read status.'
         );
+
         return;
       }
 
@@ -239,15 +278,171 @@ export default function DisasterAppUI() {
           (item) => item.notification_id
         )
       );
+
     } catch (error) {
       console.error('Unexpected notification error:', error);
+
       setNotificationError(
         'Something went wrong while loading notifications.'
       );
+
     } finally {
       setNotificationLoading(false);
     }
   }, []);
+
+  // ========================================
+  // OPEN ACTIVITY DETAILS
+  // ========================================
+
+  const openActivity = (activity: CommunityActivity) => {
+    setSelectedActivity(activity);
+    setActivityModalVisible(true);
+  };
+
+  // ========================================
+  // CLOSE ACTIVITY DETAILS
+  // ========================================
+
+  const closeActivity = () => {
+    setActivityModalVisible(false);
+  };
+
+  // ========================================
+  // MARK NOTIFICATION AS READ
+  // ========================================
+
+  const markNotificationAsRead = async (
+    notificationId: string
+  ): Promise<boolean> => {
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        Alert.alert(
+          'Sign in required',
+          'Please sign in to update your notification.'
+        );
+
+        return false;
+      }
+
+      // Already read
+      if (readNotificationIds.includes(notificationId)) {
+        return true;
+      }
+
+      const { error } = await supabase
+        .from('user_notification_reads')
+        .upsert(
+          {
+            notification_id: notificationId,
+            user_id: user.id,
+          },
+          {
+            onConflict: 'notification_id,user_id',
+            ignoreDuplicates: true,
+          }
+        );
+
+      if (error) {
+        console.error(
+          'Error marking notification as read:',
+          error.message
+        );
+
+        Alert.alert(
+          'Error',
+          'Could not update notification status. Please try again.'
+        );
+
+        return false;
+      }
+
+      setReadNotificationIds((previous) =>
+        previous.includes(notificationId)
+          ? previous
+          : [...previous, notificationId]
+      );
+
+      return true;
+
+    } catch (error) {
+      console.error('Unexpected notification update error:', error);
+
+      Alert.alert(
+        'Error',
+        'Something went wrong while updating the notification.'
+      );
+
+      return false;
+    }
+  };
+
+  // ========================================
+  // OPEN ACTIVITY FROM NOTIFICATION
+  // ========================================
+
+  const handleNotificationPress = async (
+    notification: ActivityNotification
+  ) => {
+    // Mark notification as read first
+    const markedRead = await markNotificationAsRead(
+      notification.notification_id
+    );
+
+    if (!markedRead) {
+      return;
+    }
+
+    try {
+      // Retrieve the corresponding community activity
+      const { data, error } = await supabase
+        .from('community_activities')
+        .select(
+          'activity_id, title, activity_date, description, target_area'
+        )
+        .eq('activity_id', notification.activity_id)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error retrieving activity:', error.message);
+
+        Alert.alert(
+          'Error',
+          'Unable to retrieve the community activity.'
+        );
+
+        return;
+      }
+
+      if (!data) {
+        Alert.alert(
+          'Activity unavailable',
+          'This community activity could not be found or is no longer available.'
+        );
+
+        return;
+      }
+
+      // Close notifications modal
+      setNotificationsVisible(false);
+
+      // Open expanded activity card
+      openActivity(data as CommunityActivity);
+
+    } catch (error) {
+      console.error('Unexpected activity retrieval error:', error);
+
+      Alert.alert(
+        'Error',
+        'Something went wrong while opening the activity.'
+      );
+    }
+  };
 
   // ========================================
   // PULL DOWN TO REFRESH
@@ -257,16 +452,16 @@ export default function DisasterAppUI() {
     setRefreshing(true);
 
     try {
-      // Refresh all home screen data simultaneously
       await Promise.all([
         fetchUser(),
         fetchActivities(),
         fetchNotifications(),
       ]);
+
     } catch (error) {
       console.error('Error refreshing home screen:', error);
+
     } finally {
-      // Always stop the refresh spinner
       setRefreshing(false);
     }
   };
@@ -282,6 +477,7 @@ export default function DisasterAppUI() {
         duration: 600,
         useNativeDriver: true,
       }),
+
       Animated.spring(slideUpAnim, {
         toValue: 0,
         friction: 6,
@@ -308,67 +504,6 @@ export default function DisasterAppUI() {
   ]);
 
   // ========================================
-  // MARK NOTIFICATION AS READ
-  // ========================================
-
-  const markNotificationAsRead = async (
-    notificationId: string
-  ): Promise<boolean> => {
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      Alert.alert(
-        'Sign in required',
-        'Please sign in to update your notification.'
-      );
-      return false;
-    }
-
-    // Already read
-    if (readNotificationIds.includes(notificationId)) {
-      return true;
-    }
-
-    const { error } = await supabase
-      .from('user_notification_reads')
-      .upsert(
-        {
-          notification_id: notificationId,
-          user_id: user.id,
-        },
-        {
-          onConflict: 'notification_id,user_id',
-          ignoreDuplicates: true,
-        }
-      );
-
-    if (error) {
-      console.error(
-        'Error marking notification as read:',
-        error.message
-      );
-
-      Alert.alert(
-        'Error',
-        'Could not update notification status. Please try again.'
-      );
-
-      return false;
-    }
-
-    setReadNotificationIds((previous) =>
-      previous.includes(notificationId)
-        ? previous
-        : [...previous, notificationId]
-    );
-
-    return true;
-  };
-
-  // ========================================
   // SOS BUTTON LOGIC
   // ========================================
 
@@ -387,6 +522,7 @@ export default function DisasterAppUI() {
 
       if (count > 0) {
         setHoldProgress(count);
+
       } else {
         if (timerRef.current) {
           clearInterval(timerRef.current);
@@ -446,8 +582,6 @@ export default function DisasterAppUI() {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
-
-          // Pull-to-refresh control
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -459,12 +593,18 @@ export default function DisasterAppUI() {
             />
           }
         >
-          {/* HEADER */}
+
+          {/* ========================================
+              HEADER
+          ======================================== */}
 
           <View style={styles.header}>
             <View>
               <Text style={styles.greetingText}>Hello,</Text>
-              <Text style={styles.nameText}>{userName} 👋</Text>
+
+              <Text style={styles.nameText}>
+                {userName} 👋
+              </Text>
             </View>
 
             <TouchableOpacity
@@ -510,7 +650,9 @@ export default function DisasterAppUI() {
             </TouchableOpacity>
           </View>
 
-          {/* VOLCANO STATUS CARD */}
+          {/* ========================================
+              VOLCANO STATUS CARD
+          ======================================== */}
 
           <View style={styles.statusCard}>
             <View style={styles.statusHeader}>
@@ -519,12 +661,15 @@ export default function DisasterAppUI() {
                 color={COLORS.white}
                 size={16}
               />
+
               <Text style={styles.statusHeaderText}>
                 CURRENT STATUS
               </Text>
             </View>
 
-            <Text style={styles.volcanoName}>Taal Volcano</Text>
+            <Text style={styles.volcanoName}>
+              Taal Volcano
+            </Text>
 
             <Text style={styles.alertLevel}>
               Alert Level 1 · Normal conditions
@@ -544,16 +689,24 @@ export default function DisasterAppUI() {
                   size={14}
                   style={{ marginRight: 4 }}
                 />
-                <Text style={styles.statusBadgeText}>SW wind</Text>
+
+                <Text style={styles.statusBadgeText}>
+                  SW wind
+                </Text>
               </View>
             </View>
           </View>
 
-          {/* QUICK ACTIONS */}
+          {/* ========================================
+              QUICK ACTIONS
+          ======================================== */}
 
-          <Text style={styles.sectionTitle}>QUICK ACTIONS</Text>
+          <Text style={styles.sectionTitle}>
+            QUICK ACTIONS
+          </Text>
 
           <View style={styles.quickActionsContainer}>
+
             {/* SOS */}
 
             <TouchableOpacity
@@ -570,7 +723,7 @@ export default function DisasterAppUI() {
 
               <View>
                 <Text style={styles.sosTitle}>
-                  Emergency{'\n'}SOS
+                  Emergency{'\\n'}SOS
                 </Text>
 
                 <Text style={styles.sosSub}>
@@ -580,6 +733,7 @@ export default function DisasterAppUI() {
             </TouchableOpacity>
 
             <View style={styles.rightActionsColumn}>
+
               {/* Hotlines */}
 
               <TouchableOpacity
@@ -594,8 +748,13 @@ export default function DisasterAppUI() {
                   />
                 </View>
 
-                <Text style={styles.actionTitle}>Hotlines</Text>
-                <Text style={styles.actionSub}>911 · PHIVOLCS</Text>
+                <Text style={styles.actionTitle}>
+                  Hotlines
+                </Text>
+
+                <Text style={styles.actionSub}>
+                  911 · PHIVOLCS
+                </Text>
               </TouchableOpacity>
 
               {/* Shelters */}
@@ -612,15 +771,21 @@ export default function DisasterAppUI() {
                   />
                 </View>
 
-                <Text style={styles.actionTitle}>Shelters</Text>
+                <Text style={styles.actionTitle}>
+                  Shelters
+                </Text>
+
                 <Text style={styles.actionSub}>
                   View nearby centers
                 </Text>
               </TouchableOpacity>
+
             </View>
           </View>
 
-          {/* RECENT ACTIVITIES */}
+          {/* ========================================
+              RECENT ACTIVITIES
+          ======================================== */}
 
           <View style={styles.activityHeader}>
             <Text style={styles.sectionTitleDark}>
@@ -636,7 +801,9 @@ export default function DisasterAppUI() {
                 Loading community activities...
               </Text>
             </View>
+
           ) : activitiesError ? (
+
             /* Error */
 
             <View style={styles.activityCard}>
@@ -651,10 +818,14 @@ export default function DisasterAppUI() {
               </Text>
 
               <TouchableOpacity onPress={fetchActivities}>
-                <Text style={styles.seeAllText}>Try again</Text>
+                <Text style={styles.seeAllText}>
+                  Try again
+                </Text>
               </TouchableOpacity>
             </View>
+
           ) : activities.length === 0 ? (
+
             /* Empty state */
 
             <View style={styles.activityCard}>
@@ -674,17 +845,24 @@ export default function DisasterAppUI() {
               </Text>
 
               <TouchableOpacity onPress={fetchActivities}>
-                <Text style={styles.seeAllText}>Refresh</Text>
+                <Text style={styles.seeAllText}>
+                  Refresh
+                </Text>
               </TouchableOpacity>
             </View>
+
           ) : (
-            /* Activity cards */
+
+            /* Activity Cards */
 
             activities.map((item) => (
-              <View
+              <TouchableOpacity
                 key={item.activity_id}
                 style={styles.activityCard}
+                activeOpacity={0.75}
+                onPress={() => openActivity(item)}
               >
+
                 <View style={styles.activityCardHeader}>
                   <View style={styles.timeContainer}>
                     <Feather
@@ -698,6 +876,12 @@ export default function DisasterAppUI() {
                       {formatActivityDate(item.activity_date)}
                     </Text>
                   </View>
+
+                  <Feather
+                    name="chevron-right"
+                    color="#94A3B8"
+                    size={20}
+                  />
                 </View>
 
                 <Text style={styles.activityTitle}>
@@ -705,7 +889,10 @@ export default function DisasterAppUI() {
                 </Text>
 
                 {!!item.description && (
-                  <Text style={styles.activityDesc}>
+                  <Text
+                    style={styles.activityDesc}
+                    numberOfLines={2}
+                  >
                     {item.description}
                   </Text>
                 )}
@@ -734,19 +921,36 @@ export default function DisasterAppUI() {
                     </Text>
                   </View>
                 )}
-              </View>
+
+                <Text
+                  style={{
+                    color: COLORS.primaryBlue,
+                    fontSize: 12,
+                    fontWeight: '600',
+                    marginTop: 12,
+                  }}
+                >
+                  Tap to view details
+                </Text>
+
+              </TouchableOpacity>
             ))
           )}
 
           <View style={{ height: 100 }} />
+
         </ScrollView>
       </Animated.View>
 
-      {/* BOTTOM NAVIGATION */}
+      {/* ========================================
+          BOTTOM NAVIGATION
+      ======================================== */}
 
       <BottomNavbar activeTab="home" />
 
-      {/* NOTIFICATIONS MODAL */}
+      {/* ========================================
+          NOTIFICATIONS MODAL
+      ======================================== */}
 
       <Modal
         visible={notificationsVisible}
@@ -771,7 +975,8 @@ export default function DisasterAppUI() {
               minHeight: 200,
             }}
           >
-            {/* Modal header */}
+
+            {/* Modal Header */}
 
             <View
               style={{
@@ -800,10 +1005,13 @@ export default function DisasterAppUI() {
             {/* Loading */}
 
             {notificationLoading ? (
+
               <Text style={styles.activityDesc}>
                 Loading notifications...
               </Text>
+
             ) : notificationError ? (
+
               /* Error */
 
               <View style={styles.activityCard}>
@@ -812,10 +1020,14 @@ export default function DisasterAppUI() {
                 </Text>
 
                 <TouchableOpacity onPress={fetchNotifications}>
-                  <Text style={styles.seeAllText}>Try again</Text>
+                  <Text style={styles.seeAllText}>
+                    Try again
+                  </Text>
                 </TouchableOpacity>
               </View>
+
             ) : notifications.length === 0 ? (
+
               /* Empty state */
 
               <View style={styles.activityCard}>
@@ -834,8 +1046,10 @@ export default function DisasterAppUI() {
                   here when published.
                 </Text>
               </View>
+
             ) : (
-              /* Notification list */
+
+              /* Notification List */
 
               <ScrollView
                 showsVerticalScrollIndicator={false}
@@ -847,8 +1061,10 @@ export default function DisasterAppUI() {
                   );
 
                   return (
-                    <View
+                    <TouchableOpacity
                       key={item.notification_id}
+                      activeOpacity={0.75}
+                      onPress={() => handleNotificationPress(item)}
                       style={[
                         styles.activityCard,
                         !isRead && {
@@ -857,7 +1073,8 @@ export default function DisasterAppUI() {
                         },
                       ]}
                     >
-                      {/* Notification title */}
+
+                      {/* Notification Header */}
 
                       <View
                         style={{
@@ -874,7 +1091,10 @@ export default function DisasterAppUI() {
                         <Text
                           style={[
                             styles.activityTitle,
-                            { marginLeft: 8, flex: 1 },
+                            {
+                              marginLeft: 8,
+                              flex: 1,
+                            },
                           ]}
                         >
                           {item.title}
@@ -892,67 +1112,323 @@ export default function DisasterAppUI() {
                         )}
                       </View>
 
-                      {/* Notification message */}
+                      {/* Notification Message */}
 
                       <Text style={styles.activityDesc}>
                         {item.message}
                       </Text>
 
-                      {/* Notification date */}
+                      {/* Notification Date */}
 
                       <Text
                         style={[
                           styles.activityDesc,
-                          { marginTop: 6, fontSize: 12 },
+                          {
+                            marginTop: 6,
+                            fontSize: 12,
+                          },
                         ]}
                       >
                         {new Date(item.created_at).toLocaleString()}
                       </Text>
 
-                      {/* View activity */}
+                      {/* View Activity */}
 
-                      <TouchableOpacity
-                        onPress={async () => {
-                          const markedRead =
-                            await markNotificationAsRead(
-                              item.notification_id
-                            );
-
-                          if (!markedRead) {
-                            return;
-                          }
-
-                          setNotificationsVisible(false);
-
-                          Alert.alert(
-                            'Community Activity',
-                            'Check Recent Activities on your home screen for the published activity.',
-                            [{ text: 'OK' }]
-                          );
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          marginTop: 12,
                         }}
                       >
                         <Text
                           style={[
                             styles.seeAllText,
                             {
-                              marginTop: 12,
                               fontWeight: 'bold',
                             },
                           ]}
                         >
-                          View Activity →
+                          View Activity
                         </Text>
-                      </TouchableOpacity>
-                    </View>
+
+                        <Feather
+                          name="arrow-right"
+                          size={15}
+                          color={COLORS.primaryBlue}
+                          style={{ marginLeft: 5 }}
+                        />
+                      </View>
+
+                    </TouchableOpacity>
                   );
                 })}
               </ScrollView>
             )}
+
           </View>
         </View>
       </Modal>
 
-      {/* SOS CONFIRMATION MODAL */}
+      {/* ========================================
+          EXPANDED ACTIVITY DETAILS MODAL
+      ======================================== */}
+
+      <Modal
+        visible={activityModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={closeActivity}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.45)',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: COLORS.background,
+              borderTopLeftRadius: 28,
+              borderTopRightRadius: 28,
+              maxHeight: '85%',
+              overflow: 'hidden',
+            }}
+          >
+
+            {/* Modal Content */}
+
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                padding: 24,
+                paddingBottom: 35,
+              }}
+            >
+
+              {/* Modal Header */}
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 24,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Feather
+                    name="calendar"
+                    size={20}
+                    color={COLORS.primaryBlue}
+                  />
+
+                  <Text
+                    style={{
+                      marginLeft: 8,
+                      fontSize: 15,
+                      fontWeight: 'bold',
+                      color: COLORS.primaryBlue,
+                      letterSpacing: 0.5,
+                    }}
+                  >
+                    COMMUNITY ACTIVITY
+                  </Text>
+                </View>
+
+                <TouchableOpacity
+                  accessibilityLabel="Close activity details"
+                  onPress={closeActivity}
+                  style={{
+                    padding: 5,
+                  }}
+                >
+                  <Feather
+                    name="x"
+                    size={24}
+                    color="#64748B"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {selectedActivity && (
+                <>
+
+
+                  {/* Activity Date */}
+
+                  <View
+                    style={{
+                      backgroundColor: '#E8F4FF',
+                      paddingHorizontal: 12,
+                      paddingVertical: 8,
+                      borderRadius: 10,
+                      alignSelf: 'flex-start',
+                      marginBottom: 16,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: COLORS.primaryBlue,
+                        fontSize: 13,
+                        fontWeight: '600',
+                      }}
+                    >
+                      {formatActivityDate(
+                        selectedActivity.activity_date
+                      )}
+                    </Text>
+                  </View>
+
+                  {/* Activity Title */}
+
+                  <Text
+                    style={{
+                      fontSize: 23,
+                      fontWeight: 'bold',
+                      color: '#1E293B',
+                      marginBottom: 22,
+                      lineHeight: 31,
+                    }}
+                  >
+                    {selectedActivity.title}
+                  </Text>
+
+                  {/* Divider */}
+
+                  <View
+                    style={{
+                      height: 1,
+                      backgroundColor: '#E2E8F0',
+                      marginBottom: 22,
+                    }}
+                  />
+
+                  {/* Description */}
+
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 'bold',
+                      color: '#64748B',
+                      marginBottom: 10,
+                      letterSpacing: 0.5,
+                    }}
+                  >
+                    ABOUT THIS ACTIVITY
+                  </Text>
+
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      lineHeight: 25,
+                      color: '#475569',
+                      marginBottom: 25,
+                    }}
+                  >
+                    {selectedActivity.description ||
+                      'No additional description is available for this activity.'}
+                  </Text>
+
+                  {/* Target Area */}
+
+                  <View
+                    style={{
+                      backgroundColor: '#F1F5F9',
+                      borderRadius: 14,
+                      padding: 16,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginBottom: 25,
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 42,
+                        height: 42,
+                        borderRadius: 12,
+                        backgroundColor: '#E0F0FF',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Feather
+                        name="map-pin"
+                        size={21}
+                        color={COLORS.primaryBlue}
+                      />
+                    </View>
+
+                    <View
+                      style={{
+                        marginLeft: 12,
+                        flex: 1,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: '#64748B',
+                          marginBottom: 5,
+                          fontWeight: '600',
+                        }}
+                      >
+                        TARGET AREA
+                      </Text>
+
+                      <Text
+                        style={{
+                          fontSize: 15,
+                          fontWeight: '600',
+                          color: '#1E293B',
+                        }}
+                      >
+                        {selectedActivity.target_area ||
+                          'Not specified'}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Close Button */}
+
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={closeActivity}
+                    style={{
+                      backgroundColor: COLORS.primaryBlue,
+                      paddingVertical: 15,
+                      borderRadius: 12,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: COLORS.white,
+                        fontSize: 15,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      Close
+                    </Text>
+                  </TouchableOpacity>
+
+                </>
+              )}
+
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ========================================
+          SOS CONFIRMATION MODAL
+      ======================================== */}
 
       <Modal
         visible={isSosExpanded}
@@ -962,6 +1438,7 @@ export default function DisasterAppUI() {
       >
         <View style={styles.sosModalOverlay}>
           <View style={styles.sosModalContent}>
+
             <Feather
               name="alert-triangle"
               color={COLORS.danger}
@@ -996,11 +1473,15 @@ export default function DisasterAppUI() {
               style={styles.cancelSosBtn}
               onPress={cancelSos}
             >
-              <Text style={styles.cancelSosText}>Cancel</Text>
+              <Text style={styles.cancelSosText}>
+                Cancel
+              </Text>
             </TouchableOpacity>
+
           </View>
         </View>
       </Modal>
+
     </SafeAreaView>
   );
 }
