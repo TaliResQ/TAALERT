@@ -1,12 +1,14 @@
 
 import { supabase } from '@/src/services/supabase';
 import { Feather } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
     KeyboardAvoidingView,
+    Modal,
     Platform,
     SafeAreaView,
     ScrollView,
@@ -17,15 +19,62 @@ import {
     View,
 } from 'react-native';
 
+const BARANGAYS = [
+  'Poblacion Barangay 1',
+  'Poblacion Barangay 2',
+  'Poblacion Barangay 3',
+  'Poblacion Barangay 4',
+  'Poblacion Barangay 5',
+  'Poblacion Barangay 6',
+  'Poblacion Barangay 7',
+  'Poblacion Barangay 8',
+  'Aya',
+  'Balas',
+  'Banga',
+  'Buco',
+  'Caloocan',
+  'Leynes',
+  'Miranda',
+  'Quiling',
+  'Sampaloc',
+  'San Guillermo',
+  'Santa Maria',
+  'Tranca',
+  'Tumaway',
+];
+
 export default function EditProfileScreen() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+
+    const [showBarangayModal, setShowBarangayModal] = useState(false);
+const [showDatePicker, setShowDatePicker] = useState(false);
+
+const [tempBirthdate, setTempBirthdate] = useState(new Date());
 
     const [fullname, setFullname] = useState('');
     const [contactNumber, setContactNumber] = useState('');
     const [barangay, setBarangay] = useState('');
     const [address, setAddress] = useState('');
     const [birthdate, setBirthdate] = useState('');
+
+// Convert date to YYYY-MM-DD
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+};
+
+// Convert stored birthdate to a local Date object
+const getBirthdateDate = () => {
+  if (!birthdate) return new Date();
+
+  const [year, month, day] = birthdate.split('-').map(Number);
+
+  return new Date(year, month - 1, day);
+};
 
     useEffect(() => {
         fetchProfile();
@@ -193,13 +242,34 @@ export default function EditProfileScreen() {
                             keyboardType="phone-pad"
                         />
 
-                        <ProfileInput
-                            label="Barangay"
-                            value={barangay}
-                            onChangeText={setBarangay}
-                            placeholder="Enter your barangay"
-                            icon="map-pin"
-                        />
+<View style={styles.inputGroup}>
+  <Text style={styles.inputLabel}>Barangay</Text>
+
+  <TouchableOpacity
+    style={styles.inputWrapper}
+    onPress={() => setShowBarangayModal(true)}
+    activeOpacity={0.7}
+  >
+    <Feather
+      name="map-pin"
+      size={18}
+      color="#64748B"
+      style={styles.inputIcon}
+    />
+
+    <Text
+      style={{
+        flex: 1,
+        fontSize: 14,
+        color: barangay ? '#1E293B' : '#94A3B8',
+      }}
+    >
+      {barangay || 'Select your barangay'}
+    </Text>
+
+    <Feather name="chevron-down" size={18} color="#64748B" />
+  </TouchableOpacity>
+</View>
 
                         <ProfileInput
                             label="Complete Address"
@@ -210,13 +280,37 @@ export default function EditProfileScreen() {
                             multiline
                         />
 
-                        <ProfileInput
-                            label="Birthdate"
-                            value={birthdate}
-                            onChangeText={setBirthdate}
-                            placeholder="YYYY-MM-DD (e.g. 2004-06-07)"
-                            icon="calendar"
-                        />
+<View style={styles.inputGroup}>
+  <Text style={styles.inputLabel}>Birthdate</Text>
+
+  <TouchableOpacity
+    style={styles.inputWrapper}
+    onPress={() => {
+      setTempBirthdate(getBirthdateDate());
+      setShowDatePicker(true);
+    }}
+    activeOpacity={0.7}
+  >
+    <Feather
+      name="calendar"
+      size={18}
+      color="#64748B"
+      style={styles.inputIcon}
+    />
+
+    <Text
+      style={{
+        flex: 1,
+        fontSize: 14,
+        color: birthdate ? '#1E293B' : '#94A3B8',
+      }}
+    >
+      {birthdate || 'Select your birthdate'}
+    </Text>
+
+    <Feather name="calendar" size={18} color="#25A5FE" />
+  </TouchableOpacity>
+</View>
 
                         <Text style={styles.helperText}>
                             Please use YYYY-MM-DD format for your birthdate.
@@ -248,6 +342,133 @@ export default function EditProfileScreen() {
 
                     <View style={{ height: 40 }} />
                 </ScrollView>
+                {/* Barangay Dropdown Modal */}
+<Modal
+  visible={showBarangayModal}
+  transparent
+  animationType="slide"
+  onRequestClose={() => setShowBarangayModal(false)}
+>
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalContent}>
+      <View style={styles.modalHeader}>
+        <View>
+          <Text style={styles.modalTitle}>Select Barangay</Text>
+          <Text style={styles.modalSubtitle}>
+            Choose your barangay in Talisay
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => setShowBarangayModal(false)}
+        >
+          <Feather name="x" size={23} color="#64748B" />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        nestedScrollEnabled
+      >
+        {BARANGAYS.map((item, index) => (
+          <TouchableOpacity
+            key={item}
+            style={[
+              styles.barangayOption,
+              barangay === item && styles.selectedBarangay,
+            ]}
+            onPress={() => {
+              setBarangay(item);
+              setShowBarangayModal(false);
+            }}
+          >
+            <Text
+              style={[
+                styles.barangayText,
+                barangay === item && styles.selectedBarangayText,
+              ]}
+            >
+              {item}
+            </Text>
+
+            {barangay === item && (
+              <Feather name="check-circle" size={18} color="#25A5FE" />
+            )}
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  </View>
+</Modal>
+
+{/* Birthdate Calendar Picker */}
+{Platform.OS === 'ios' ? (
+  <Modal
+    visible={showDatePicker}
+    transparent
+    animationType="fade"
+    onRequestClose={() => setShowDatePicker(false)}
+  >
+    <View style={styles.modalOverlay}>
+      <View style={styles.datePickerContent}>
+        <View style={styles.modalHeader}>
+          <Text style={styles.modalTitle}>Select Birthdate</Text>
+
+          <TouchableOpacity
+            onPress={() => setShowDatePicker(false)}
+          >
+            <Feather name="x" size={23} color="#64748B" />
+          </TouchableOpacity>
+        </View>
+
+<DateTimePicker
+  value={tempBirthdate}
+  mode="date"
+  display="inline"
+  themeVariant="light"
+  accentColor="#25A5FE"
+  textColor="#1E293B"
+  maximumDate={new Date()}
+  onChange={(_, selectedDate) => {
+    if (selectedDate) {
+      setTempBirthdate(selectedDate);
+    }
+  }}
+  style={{
+    width: '100%',
+    height: 350,
+  }}
+/>
+
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={() => {
+            setBirthdate(formatDate(tempBirthdate));
+            setShowDatePicker(false);
+          }}
+        >
+          <Text style={styles.saveButtonText}>Confirm Birthdate</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </Modal>
+) : (
+  showDatePicker && (
+    <DateTimePicker
+      value={tempBirthdate}
+      mode="date"
+      display="calendar"
+      maximumDate={new Date()}
+      onChange={(event, selectedDate) => {
+        setShowDatePicker(false);
+
+        if (event.type === 'set' && selectedDate) {
+          setBirthdate(formatDate(selectedDate));
+        }
+      }}
+    />
+  )
+)}
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
@@ -463,4 +684,72 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
     },
+
+    // Modal styles
+modalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(15, 23, 42, 0.45)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: 20,
+},
+
+modalContent: {
+  backgroundColor: '#FFFFFF',
+  width: '100%',
+  maxHeight: '75%',
+  borderRadius: 18,
+  padding: 20,
+},
+
+datePickerContent: {
+  backgroundColor: '#FFFFFF',
+  width: '100%',
+  borderRadius: 18,
+  padding: 20,
+},
+
+modalHeader: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: 18,
+},
+
+modalTitle: {
+  fontSize: 18,
+  fontWeight: '700',
+  color: '#1E293B',
+},
+
+modalSubtitle: {
+  fontSize: 12,
+  color: '#64748B',
+  marginTop: 4,
+},
+
+barangayOption: {
+  minHeight: 50,
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingHorizontal: 12,
+  borderBottomWidth: 1,
+  borderBottomColor: '#F1F5F9',
+},
+
+selectedBarangay: {
+  backgroundColor: '#EFF6FF',
+  borderRadius: 8,
+},
+
+barangayText: {
+  fontSize: 14,
+  color: '#334155',
+},
+
+selectedBarangayText: {
+  color: '#25A5FE',
+  fontWeight: '700',
+},
 });
