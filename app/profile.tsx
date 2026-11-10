@@ -1,63 +1,75 @@
+
 import { supabase } from '@/src/services/supabase';
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
   View
 } from 'react-native';
+
 import BottomNavbar from '../components/BottomNavbar';
 import { ProfileStyles as styles } from '../constants/theme';
 
 export default function ProfileScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideUpAnim = useRef(new Animated.Value(30)).current;
-  
-  // State variables for dynamic user data
+
+  // Refresh state
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Dynamic user data
   const [userName, setUserName] = useState('Loading...');
   const [barangay, setBarangay] = useState('Loading...');
   const [verificationStatus, setVerificationStatus] = useState('PENDING');
   const [reportCount, setReportCount] = useState(0);
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
-      Animated.spring(slideUpAnim, { toValue: 0, friction: 6, useNativeDriver: true }),
-    ]).start();
+  // Fetch user profile and report count
+  const fetchUserData = useCallback(async () => {
+    try {
+      // 1. Get authenticated user
+      const {
+        data: { user },
+        error: authError
+      } = await supabase.auth.getUser();
 
-    const fetchUserData = async () => {
-      // 1. Get the authenticated user ID
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      if (authError || !user) return;
+      if (authError || !user) {
+        console.error('Authentication error:', authError?.message);
+        return;
+      }
 
-      // 2. Fetch the user's public profile from the `users` table we created
+      // 2. Fetch user profile
       const { data: profile, error: profileError } = await supabase
         .from('users')
         .select('fullname, barangay, verification_status')
         .eq('id', user.id)
         .single();
 
-if (!profileError && profile) {
-  setUserName(profile.fullname || 'User');
-  setBarangay(profile.barangay || 'Update your address');
-  setVerificationStatus(
-    profile.verification_status?.toUpperCase() || 'PENDING'
-  );
-} else {
-  console.error('Profile fetch error:', profileError?.message);
-  setUserName(
-    user.user_metadata?.full_name ||
-    user.user_metadata?.name ||
-    'User'
-  );
-  setBarangay('No barangay set');
-}
+      if (!profileError && profile) {
+        setUserName(profile.fullname || 'User');
+        setBarangay(profile.barangay || 'Update your address');
 
-      // 3. Get the incident (report) count
+        setVerificationStatus(
+          profile.verification_status?.toUpperCase() || 'PENDING'
+        );
+      } else {
+        console.error('Profile fetch error:', profileError?.message);
+
+        setUserName(
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          'User'
+        );
+
+        setBarangay('No barangay set');
+      }
+
+      // 3. Fetch total submitted reports
       const { count, error: countError } = await supabase
         .from('incidents')
         .select('*', { count: 'exact', head: true })
@@ -65,140 +77,289 @@ if (!profileError && profile) {
 
       if (!countError) {
         setReportCount(count || 0);
+      } else {
+        console.error('Report count error:', countError.message);
       }
-    };
+
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+  }, []);
+
+  // Pull-down-to-refresh function
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    try {
+      await fetchUserData();
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  // Initial load and animations
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true
+      }),
+
+      Animated.spring(slideUpAnim, {
+        toValue: 0,
+        friction: 6,
+        useNativeDriver: true
+      }),
+    ]).start();
 
     fetchUserData();
-  }, []);
+  }, [fetchUserData, fadeAnim, slideUpAnim]);
 
   return (
     <SafeAreaView style={styles.container}>
+
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profile</Text>
-<TouchableOpacity
-  style={styles.settingsBtn}
-  onPress={() => router.push('/edit-profile')}
->
-  <Feather name="settings" size={20} color="#1E293B" />
-</TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.settingsBtn}
+          onPress={() => router.push('/edit-profile')}
+        >
+          <Feather
+            name="settings"
+            size={20}
+            color="#1E293B"
+          />
+        </TouchableOpacity>
       </View>
 
-      <Animated.View style={{ flex: 1, opacity: fadeAnim, transform: [{ translateY: slideUpAnim }] }}>
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <Animated.View
+        style={{
+          flex: 1,
+          opacity: fadeAnim,
+          transform: [{ translateY: slideUpAnim }]
+        }}
+      >
+
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+
+          // Pull down to refresh
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#25A5FE']}
+              tintColor="#25A5FE"
+              title="Refreshing profile..."
+              titleColor="#64748B"
+            />
+          }
+        >
 
           {/* Main Profile Card */}
           <View style={styles.profileCard}>
+
             <View style={styles.avatar}>
-              {/* Dynamically show the first letter of the user's name */}
               <Text style={styles.avatarText}>
-                {userName !== 'Loading...' ? userName.charAt(0).toUpperCase() : ''}
+                {userName !== 'Loading...'
+                  ? userName.charAt(0).toUpperCase()
+                  : ''}
               </Text>
             </View>
+
             <View style={styles.profileInfo}>
-              <Text style={styles.userName}>{userName}</Text>
+
+              <Text style={styles.userName}>
+                {userName}
+              </Text>
+
               <View style={styles.locationRow}>
-                <Feather name="map-pin" size={14} color="#64748B" />
+                <Feather
+                  name="map-pin"
+                  size={14}
+                  color="#64748B"
+                />
+
                 <Text style={styles.locationText}>
-                  {barangay !== 'Update your address' && barangay !== 'Loading...' 
-                    ? `Brgy. ${barangay}, Talisay, Batangas` 
+                  {barangay !== 'Update your address' &&
+                   barangay !== 'Loading...' &&
+                   barangay !== 'No barangay set'
+                    ? `Brgy. ${barangay}, Talisay, Batangas`
                     : barangay}
                 </Text>
               </View>
-              <View style={[
-                  styles.badge, 
-                  // Optional: Change badge color if approved
-                  verificationStatus === 'APPROVED' && { backgroundColor: '#DCFCE7' }
-                ]}>
-                <Text style={[
-                  styles.badgeText, 
-                  verificationStatus === 'APPROVED' && { color: '#16A34A' }
-                ]}>
+
+              {/* Verification Badge */}
+              <View
+                style={[
+                  styles.badge,
+                  verificationStatus === 'APPROVED' && {
+                    backgroundColor: '#DCFCE7'
+                  }
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.badgeText,
+                    verificationStatus === 'APPROVED' && {
+                      color: '#16A34A'
+                    }
+                  ]}
+                >
                   {verificationStatus} RESIDENT
                 </Text>
               </View>
+
             </View>
           </View>
 
           {/* Stats Row */}
           <View style={styles.statsRow}>
-            <StatCard value={reportCount} label="REPORTS" />
-            <StatCard value="0" label="ALERTS" />
-            <StatCard value="0" label="SAFE DAYS" />
+            <StatCard
+              value={reportCount}
+              label="REPORTS"
+            />
+
+            <StatCard
+              value="0"
+              label="ALERTS"
+            />
+
+            <StatCard
+              value="0"
+              label="SAFE DAYS"
+            />
           </View>
 
+          {/* Menu List */}
+          <View style={styles.menuContainer}>
 
-{/* Menu List */}
-<View style={styles.menuContainer}>
-  <MenuItem
-    icon="file-text"
-    label="My Reports"
-    sub={`View and track your ${reportCount} submitted reports`}
-    color="#25A5FE"
-    bg="#E0F2FE"
-    onPress={() => router.push('/my-reports')}
-  />
+            <MenuItem
+              icon="file-text"
+              label="My Reports"
+              sub={`View and track your ${reportCount} submitted reports`}
+              color="#25A5FE"
+              bg="#E0F2FE"
+              onPress={() => router.push('/my-reports')}
+            />
 
-  <MenuItem
-    icon="bell"
-    label="Notification preferences"
-    color="#25A5FE"
-    bg="#E0F2FE"
-    onPress={() => {}}
-  />
+            <MenuItem
+              icon="bell"
+              label="Notification preferences"
+              color="#25A5FE"
+              bg="#E0F2FE"
+              onPress={() => {}}
+            />
 
-  <MenuItem
-    icon="shield"
-    label="Emergency contacts"
-    color="#25A5FE"
-    bg="#E0F2FE"
-    onPress={() => {}}
-  />
+            <MenuItem
+              icon="shield"
+              label="Emergency contacts"
+              color="#25A5FE"
+              bg="#E0F2FE"
+              onPress={() => {}}
+            />
 
-  <MenuItem
-    icon="log-out"
-    label="Sign out"
-    color="#EF4444"
-    bg="#FEE2E2"
-    isLast
-    onPress={async () => {
-      await supabase.auth.signOut();
-      router.replace('/');
-    }}
-  />
-</View>
+            <MenuItem
+              icon="log-out"
+              label="Sign out"
+              color="#EF4444"
+              bg="#FEE2E2"
+              isLast
+              onPress={async () => {
+                await supabase.auth.signOut();
+                router.replace('/');
+              }}
+            />
 
+          </View>
 
+          {/* Bottom Spacing */}
           <View style={{ height: 100 }} />
+
         </ScrollView>
       </Animated.View>
 
+      {/* Bottom Navigation */}
       <BottomNavbar activeTab="profile" />
+
     </SafeAreaView>
   );
 }
 
-// Stat Card
+// ========================================
+// STAT CARD COMPONENT
+// ========================================
 const StatCard = ({ value, label }: any) => (
   <View style={styles.statCard}>
-    <Text style={styles.statValue}>{value}</Text>
-    <Text style={styles.statLabel}>{label}</Text>
+    <Text style={styles.statValue}>
+      {value}
+    </Text>
+
+    <Text style={styles.statLabel}>
+      {label}
+    </Text>
   </View>
 );
 
-// Menu Item
-const MenuItem = ({ icon, label, sub, color, bg, isLast, onPress }: any) => (
-  <TouchableOpacity 
-    style={[styles.menuItem, isLast && { borderBottomWidth: 0 }]}
+// ========================================
+// MENU ITEM COMPONENT
+// ========================================
+const MenuItem = ({
+  icon,
+  label,
+  sub,
+  color,
+  bg,
+  isLast,
+  onPress
+}: any) => (
+  <TouchableOpacity
+    style={[
+      styles.menuItem,
+      isLast && { borderBottomWidth: 0 }
+    ]}
     onPress={onPress}
   >
-    <View style={[styles.menuIconBox, { backgroundColor: bg }]}>
-      <Feather name={icon} size={18} color={color} />
+
+    <View
+      style={[
+        styles.menuIconBox,
+        { backgroundColor: bg }
+      ]}
+    >
+      <Feather
+        name={icon}
+        size={18}
+        color={color}
+      />
     </View>
+
     <View style={styles.menuTextContainer}>
-      <Text style={[styles.menuLabel, icon === 'log-out' && { color: '#EF4444' }]}>{label}</Text>
-      {sub && <Text style={styles.menuSubText}>{sub}</Text>}
+      <Text
+        style={[
+          styles.menuLabel,
+          icon === 'log-out' && { color: '#EF4444' }
+        ]}
+      >
+        {label}
+      </Text>
+
+      {sub && (
+        <Text style={styles.menuSubText}>
+          {sub}
+        </Text>
+      )}
     </View>
-    <Feather name="chevron-right" size={18} color="#CBD5E1" />
+
+    <Feather
+      name="chevron-right"
+      size={18}
+      color="#CBD5E1"
+    />
+
   </TouchableOpacity>
 );
