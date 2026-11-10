@@ -131,6 +131,7 @@ export default function ResourcesScreen() {
               icon="home"
               iconColor="#059669"
               iconBg="#D1FAE5"
+              onPress={() => router.push('/evacuation-plan')}
             />
             <ResourceItem
               title="First Aid Basics"
@@ -138,7 +139,7 @@ export default function ResourcesScreen() {
               icon="heart"
               iconColor="#DC2626"
               iconBg="#FEE2E2"
-                            onPress={() => router.push('/first-aid-basics')}
+              onPress={() => router.push('/first-aid-basics')}
 
             />
           </View>
