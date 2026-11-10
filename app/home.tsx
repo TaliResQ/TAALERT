@@ -17,8 +17,6 @@ import { useRouter } from 'expo-router';
 import BottomNavbar from '../components/BottomNavbar';
 import { COLORS, IndexStyles as styles } from '../constants/theme';
 
-const router = useRouter();
-
 // TYPES
 
 type CommunityActivity = {
@@ -57,6 +55,7 @@ export default function DisasterAppUI() {
   // Animations
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideUpAnim = useRef(new Animated.Value(30)).current;
+    const router = useRouter();
 
   // User
   const [userName, setUserName] = useState('User');
@@ -539,12 +538,7 @@ const fetchUser = useCallback(async () => {
               {/* Shelters */}
               <TouchableOpacity
                 style={styles.actionCard}
-                onPress={() =>
-                  Alert.alert(
-                    'Evacuation Shelters',
-                    'Connect this button to your evacuation center screen to view nearby shelters.'
-                  )
-                }
+              onPress={() => router.push('/map')}
               >
                 <View style={styles.actionIconContainer}>
                   <Feather
