@@ -138,6 +138,8 @@ export default function ResourcesScreen() {
               icon="heart"
               iconColor="#DC2626"
               iconBg="#FEE2E2"
+                            onPress={() => router.push('/first-aid-basics')}
+
             />
           </View>
 
