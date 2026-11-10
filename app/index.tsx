@@ -71,13 +71,13 @@ export default function WelcomeScreen() {
 
           <View style={styles.resourcesContainer}>
             
-            <TouchableOpacity style={styles.resourceCard} onPress={() => navigation.navigate('CommunityPreparedness')}>
+            <TouchableOpacity style={styles.resourceCard} onPress={() => router.push('/evacuation-plan')}>
               <View style={[styles.resourceIconBox, { backgroundColor: '#E8F1FF' }]}>
                 <Feather name="users" color={COLORS.primaryBlue} size={24} />
               </View>
               <View style={styles.resourceTextContent}>
                 <Text style={styles.resourceTitle}>Community Preparedness</Text>
-                <Text style={styles.resourceDesc}>Local guides, hazard maps, and readiness protocols.</Text>
+                <Text style={styles.resourceDesc}>Local guides and readiness protocols.</Text>
               </View>
               <Feather name="chevron-right" color={COLORS.textMuted} size={20} />
             </TouchableOpacity>
@@ -93,7 +93,7 @@ export default function WelcomeScreen() {
               <Feather name="chevron-right" color={COLORS.textMuted} size={20} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.resourceCard} onPress={() => navigation.navigate('EmergencyContacts')}>
+            <TouchableOpacity style={styles.resourceCard} onPress={() => router.push('/hotlines')}>
               <View style={[styles.resourceIconBox, { backgroundColor: '#FEE2E2' }]}>
                 <Feather name="phone-call" color={COLORS.danger} size={24} />
               </View>

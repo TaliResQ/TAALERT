@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Animated,
-  Image,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
@@ -169,7 +168,7 @@ export default function SignUpScreen() {
           >
             {/* Header Texts */}
             <View style={styles.headerContainer}>
-              <Text style={styles.titleText}>Create Account ✨</Text>
+              <Text style={styles.titleText}>Create Account</Text>
               <Text style={styles.subText}>Sign up to get real-time disaster alerts and stay protected.</Text>
             </View>
 
@@ -226,26 +225,7 @@ export default function SignUpScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Profile Photo Upload */}
-              <Text style={styles.uploadLabel}>Profile Photo (Optional)</Text>
-              <TouchableOpacity
-                style={[styles.photoBox, image && { padding: 0, overflow: 'hidden' }]}
-                onPress={pickImage}
-              >
-                {image ? (
-                  <>
-                    <Image source={{ uri: image.uri }} style={{ width: '100%', height: 100 }} />
-                    <View style={styles.editIconContainer}>
-                      <Feather name="edit-2" size={20} color="#fff" />
-                    </View>
-                  </>
-                ) : (
-                  <>
-                    <Feather name="camera" size={24} color={COLORS.primaryBlue} />
-                    <Text style={styles.photoText}>Tap to upload photo</Text>
-                  </>
-                )}
-              </TouchableOpacity>
+
 
               {/* Sign Up Button */}
               <TouchableOpacity 
