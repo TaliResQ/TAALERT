@@ -723,7 +723,7 @@ export default function DisasterAppUI() {
 
               <View>
                 <Text style={styles.sosTitle}>
-                  Emergency{'\\n'}SOS
+                  Emergency SOS
                 </Text>
 
                 <Text style={styles.sosSub}>
