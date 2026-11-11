@@ -89,9 +89,9 @@ if (
         $pdo->beginTransaction();
 
         $check = $pdo->prepare(
-            'SELECT id
+            'SELECT incident_id
              FROM public.incidents
-             WHERE id::text = ?
+             WHERE incident_id::text = ?
              FOR UPDATE'
         );
 
@@ -110,7 +110,7 @@ if (
                      escalation_reason = ?,
                      escalated_at = NOW(),
                      updated_at = NOW()
-                 WHERE id::text = ?'
+                 WHERE incident_id::text = ?'
             );
 
             $update->execute([
@@ -199,9 +199,9 @@ if (
         $pdo->beginTransaction();
 
         $check = $pdo->prepare(
-            'SELECT id
+            'SELECT incident_id
              FROM public.incidents
-             WHERE id::text = ?
+             WHERE incident_id::text = ?
              FOR UPDATE'
         );
 
@@ -219,7 +219,7 @@ if (
                      latest_update = ?,
                      updated_at = NOW(),
                      resolved_at = COALESCE(resolved_at, NOW())
-                 WHERE id::text = ?'
+                 WHERE incident_id::text = ?'
             );
         } else {
             $update = $pdo->prepare(
@@ -228,7 +228,7 @@ if (
                      latest_update = ?,
                      updated_at = NOW(),
                      resolved_at = NULL
-                 WHERE id::text = ?'
+                 WHERE incident_id::text = ?'
             );
         }
 
@@ -289,7 +289,7 @@ if (
                 'UPDATE public.incidents
                  SET resolved_at = NOW(),
                      updated_at = NOW()
-                 WHERE id::text = ?
+                 WHERE incident_id::text = ?
                    AND resolved_at IS NULL'
             );
 
@@ -382,7 +382,7 @@ try {
         } elseif ($statusFilter === 'Active') {
             $where[] = 'resolved_at IS NULL';
         } else {
-            $where[] = 'status = ?';
+            $where[] = 'resident_status = ?';
             $params[] = $statusFilter;
         }
     }
@@ -738,7 +738,7 @@ function displayDate($value): string
                         <?php foreach ($incidents as $incident): ?>
 
                             <?php
-                            $incidentId = (string) $incident['id'];
+                            $incidentId = (string) $incident['incident_id'];
 
                             $priority = $incident['priority_level'] ?? 'Medium';
 

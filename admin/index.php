@@ -1,26 +1,4 @@
 <?php
-/*
-|--------------------------------------------------------------------------
-| TALIRESQ DASHBOARD
-|--------------------------------------------------------------------------
-| PHP 7.4+
-| Required: PDO_PGSQL, cURL, DOM
-| Database: Supabase PostgreSQL transaction pooler
-|--------------------------------------------------------------------------
-*/
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-date_default_timezone_set('Asia/Manila');
-
-/*
-|--------------------------------------------------------------------------
-| DATABASE CONFIGURATION
-|--------------------------------------------------------------------------
-*/
-
 $host = 'aws-1-ap-northeast-1.pooler.supabase.com';
 $port = '6543';
 $dbname = 'postgres';
@@ -1029,23 +1007,24 @@ try {
             try {
                 $pdo->beginTransaction();
 
-                $activityStmt = $pdo->prepare("
-                    INSERT INTO public.community_activities (
-                        title,
-                        description,
-                        activity_date,
-                        target_area,
-                        is_published
-                    )
-                    VALUES (
-                        :title,
-                        :description,
-                        :activity_date,
-                        :target_area,
-                        TRUE
-                    )
-                    RETURNING id
-                ");
+try {
+    $stmt = $activityPdo->prepare("
+        INSERT INTO public.community_activities (
+            title,
+            description,
+            activity_date,
+            target_area,
+            is_published
+        )
+        VALUES (
+            :title,
+            :description,
+            :activity_date,
+            :target_area,
+            TRUE
+        )
+        RETURNING id
+    ");
 
                 $activityStmt->execute([
                     ':title' => $title,
@@ -1136,83 +1115,57 @@ try {
 
                 error_log('Activity creation error: ' . $e->getMessage());
 
-                $activity_error =
-                    'Unable to publish activity. Check the database error log.';
-            }
+            $activity_error =
+                'Unable to publish activity. Check your server error log.';
         }
     }
+}
 
-    /*
-    |--------------------------------------------------------------------------
-    | REGISTERED USERS
-    |--------------------------------------------------------------------------
-    */
+$reports = [];
+$incidentTypes = [];
+$reportsOverTime = [];
+$totalReports = 0;
+$totalUsers = 0;
+$error_message = null;
 
-    try {
-        $stmt = $pdo->query("
-            SELECT public.get_registered_users() AS total
-        ");
+try {
 
-        $userResult = $stmt->fetch();
-        $totalUsers = (int)($userResult['total'] ?? 0);
-
-    } catch (Throwable $e) {
-        error_log('Registered users query error: ' . $e->getMessage());
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | TOTAL REPORTS
-    |--------------------------------------------------------------------------
-    */
-
-    $totalReports = dashboardCount(
-        $pdo,
-        "SELECT COUNT(*) FROM public.incidents"
+    $pdo = new PDO(
+        $dsn,
+        $user,
+        $password,
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        ]
     );
 
-    /*
-    |--------------------------------------------------------------------------
-    | ACTIVE INCIDENTS
-    |--------------------------------------------------------------------------
-    */
-
-    $totalActiveIncidents = dashboardCount(
-        $pdo,
-        "SELECT COUNT(*) FROM public.incidents WHERE resolved_at IS NULL"
-    );
-
-    /*
-    |--------------------------------------------------------------------------
-    | ALERTS SENT TODAY
-    |--------------------------------------------------------------------------
-    */
-
-    $totalAlertsToday = dashboardCount(
-        $pdo,
-        "SELECT COUNT(*) FROM public.alerts
-         WHERE is_published = TRUE
-         AND created_at::date = CURRENT_DATE"
-    );
-
-    /*
-    |--------------------------------------------------------------------------
-    | RECENT INCIDENT REPORTS
-    |--------------------------------------------------------------------------
-    */
-
+    // Total registered users
     $stmt = $pdo->query("
-        SELECT
-            id,
-            created_at,
-            category,
-            location,
-            status,
-            description,
-            photo_url
-        FROM public.incidents
-        ORDER BY created_at DESC
-        LIMIT 10
+        SELECT public.get_registered_users() AS total
+    ");
+    $totalUsers = $stmt->fetch()['total'];
+
+    // Total incidents (reports)
+    $stmt = $pdo->query("
+        SELECT COUNT(*) AS total
+        FROM incidents
+    ");
+    $totalReports = $stmt->fetch()['total'];
+
+    // Recent incidents
+    $stmt = $pdo->query("
+    SELECT
+        id,
+        created_at,
+        category,  -- Changed from 'type' to 'category'
+        location,
+        status,    -- Added 'status' to display dynamically
+        description,
+        photo_url
+    FROM incidents
+    ORDER BY created_at DESC
+    LIMIT 10
     ");
 
     $reports = $stmt->fetchAll();
@@ -1676,320 +1629,95 @@ if (!empty($_SESSION['activity_success'])) {
                 <p class="stat-number"><?= (int)$totalAlertsToday ?></p>
             </div>
 
-            <!-- RECENT INCIDENT REPORTS -->
-
-            <div class="dash-card span-6">
-
-                <div class="card-header-flex">
-                    <h3 class="card-title">RECENT INCIDENT REPORTS</h3>
-                    <a href="records.php" class="view-all">View all</a>
-                </div>
-
-                <div class="inner-box mt-1">
-                    <div class="table-responsive">
-
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>CATEGORY</th>
-                                    <th>LOCATION</th>
-                                    <th>STATUS</th>
-                                    <th>DATE</th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="incidentTableBody">
-
-                                <?php if ($error_message): ?>
+                <!-- ROW 2 (Table, Chart, Form) -->
+                <div class="dash-card span-6">
+                    <div class="card-header-flex">
+                        <h3 class="card-title">RECENT INCIDENT REPORTS</h3>
+                        <a href="#" class="view-all">View all</a>
+                    </div>
+                    <div class="inner-box mt-1">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
                                     <tr>
-                                        <td colspan="5">
-                                            Unable to load incident reports.
-                                        </td>
+                                        <th>ID</th>
+                                        <th>CATEGORY</th>
+                                        <th>LOCATION</th>
+                                        <th>STATUS</th>
+                                        <th>DATE</th>
                                     </tr>
-
-                                <?php elseif (empty($reports)): ?>
-                                    <tr>
-                                        <td colspan="5" class="no-data-msg">
-                                            No reports found.
-                                        </td>
-                                    </tr>
-
-                                <?php else: ?>
-
-                                    <?php foreach ($reports as $report): ?>
+                                </thead>
+                                <tbody id="incidentTableBody">
+                                    <?php if ($error_message): ?>
                                         <tr>
-                                            <td><?= h($report['id']) ?></td>
-                                            <td><?= h($report['category'] ?? '') ?></td>
-                                            <td><?= h($report['location'] ?? '') ?></td>
-                                            <td style="font-weight:600;">
-                                                <?= h(ucfirst((string)($report['status'] ?? ''))) ?>
+                                            <td colspan="5">
+                                                Database Error:
+                                                <?php echo htmlspecialchars($error_message); ?>
                                             </td>
-                                            <td><?= h(safeDate($report['created_at'] ?? null)) ?></td>
                                         </tr>
-                                    <?php endforeach; ?>
-
-                                <?php endif; ?>
-
-                            </tbody>
-                        </table>
-
+                                    <?php elseif (count($reports) === 0): ?>
+                                        <tr>
+                                            <td colspan="5" class="no-data-msg">
+                                                No reports found.
+                                            </td>
+                                        </tr>
+                                    <?php else: ?>
+                                        <?php foreach ($reports as $report): ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($report['id']); ?></td>
+                                                <td>
+                                                    <!-- Updated to category -->
+                                                    <?php echo htmlspecialchars($report['category']); ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo htmlspecialchars($report['location']); ?>
+                                                </td>
+                                                <td style="font-weight: 600;">
+                                                    <!-- Dynamically showing status and capitalizing the first letter -->
+                                                    <?php echo ucfirst(htmlspecialchars($report['status'])); ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo date(
+                                                        'M d, Y',
+                                                        strtotime($report['created_at'])
+                                                    ); ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-
-            </div>
-
-            <!-- OFFICIAL ADVISORIES -->
-
-            <div class="dash-card span-6 advisory-card">
-
-                <div class="card-header-flex">
-                    <h3 class="card-title">OFFICIAL DISASTER ADVISORIES</h3>
-
-                    <span class="official-label">
-                        <i class="bi bi-shield-check"></i>
-                        Verified sources
-                    </span>
-                </div>
-
-                <div class="advisory-toolbar">
-                    <span class="advisory-updated">
-                        <i class="bi bi-clock-history me-1"></i>
-                        Official agency updates
-                    </span>
-
-                    <a
-                        href="<?= h($_SERVER['PHP_SELF']) ?>?refresh_advisories=1"
-                        class="advisory-refresh">
-
-                        <i class="bi bi-arrow-clockwise"></i>
-                        Refresh
-
-                    </a>
-                </div>
-
-                <div class="advisory-list">
-
-                    <?php if (!empty($officialAdvisories)): ?>
-
-                        <?php foreach ($officialAdvisories as $advisory): ?>
-
-                            <?php
-                            $priority = advisoryPriority($advisory);
-
-                            $itemClass = $priority === 1
-                                ? 'advisory-critical'
-                                : ($priority === 2
-                                    ? 'advisory-warning'
-                                    : 'advisory-normal');
-
-                            $icon = ($advisory['agency'] ?? '') === 'PAGASA'
-                                ? 'bi-cloud-lightning-rain'
-                                : 'bi-globe-asia-australia';
-
-                            $description = trim($advisory['message'] ?? '');
-                            $sourceUrl = $advisory['url'] ?? '#';
+                <div class="dash-card span-3">
+                    <h3 class="card-title mb-2">INCIDENT BY TYPE</h3>
+                    <div class="chart-container">
+                        <canvas id="donutChart"></canvas>
+                    </div>
+                    <div class="donut-legend">
+                        <?php
+                        $colors = [
+                            '#d9534f',
+                            '#f0ad4e',
+                            '#5cb85c',
+                            '#5bc0de',
+                            '#9370DB',
+                            '#FF7F50',
+                            '#20B2AA',
+                            '#708090'
+                        ];
+                        foreach ($incidentTypes as $index => $item):
                             ?>
-
-                            <div class="advisory-item <?= h($itemClass) ?>">
-
-                                <div class="advisory-info">
-
-                                    <div class="advisory-icon">
-                                        <i class="bi <?= h($icon) ?>"></i>
-                                    </div>
-
-                                    <div class="advisory-details">
-
-                                        <span class="advisory-badge">
-                                            <?= h($advisory['agency'] ?? '') ?>
-                                            ·
-                                            <?= h($advisory['kind'] ?? '') ?>
-                                        </span>
-
-                                        <h6>
-                                            <?= h($advisory['title'] ?? '') ?>
-
-                                            <span class="advisory-severity">
-                                                <?= h($advisory['severity'] ?? 'Advisory') ?>
-                                            </span>
-                                        </h6>
-
-                                        <?php if ($description !== ''): ?>
-                                            <p><?= h($description) ?></p>
-                                        <?php endif; ?>
-
-                                        <div class="advisory-meta">
-
-                                            <?php if (!empty($advisory['area'])): ?>
-                                                <span>
-                                                    <i class="bi bi-geo-alt me-1"></i>
-                                                    <?= h($advisory['area']) ?>
-                                                </span>
-                                            <?php endif; ?>
-
-                                            <?php if (!empty($advisory['issued'])): ?>
-                                                <span>
-                                                    <i class="bi bi-clock me-1"></i>
-                                                    <?= h(displayAdvisoryDate($advisory['issued'])) ?>
-                                                </span>
-                                            <?php endif; ?>
-
-                                            <?php if (!empty($advisory['expires'])): ?>
-                                                <span>
-                                                    <i class="bi bi-hourglass me-1"></i>
-                                                    Expires
-                                                    <?= h(displayAdvisoryDate($advisory['expires'])) ?>
-                                                </span>
-                                            <?php endif; ?>
-
-                                        </div>
-
-                                    </div>
-
+                            <div class="legend-item">
+                                <div class="dot" style="background-color: <?php echo $colors[$index % count($colors)]; ?>">
                                 </div>
-
-                                <?php if (filter_var($sourceUrl, FILTER_VALIDATE_URL)): ?>
-                                    <a
-                                        href="<?= h($sourceUrl) ?>"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="advisory-link">
-
-                                        View
-                                        <i class="bi bi-box-arrow-up-right"></i>
-
-                                    </a>
-                                <?php endif; ?>
-
+                                <!-- Updated to category -->
+                                <?php echo htmlspecialchars($item['category']); ?>
+                                (<?php echo $item['total']; ?>)
                             </div>
-
                         <?php endforeach; ?>
-
-                    <?php else: ?>
-
-                        <div class="advisory-empty">
-                            <i class="bi bi-cloud-slash fs-4 d-block mb-2"></i>
-                            <strong>No live advisories retrieved.</strong>
-
-                            <div>
-                                This does not necessarily mean there are no active hazards.
-                                Check the official agency websites for the latest updates.
-                            </div>
-                        </div>
-
-                    <?php endif; ?>
-
-                </div>
-
-                <div class="agency-status-grid">
-
-                    <div class="agency-status">
-                        <strong>PHIVOLCS · LAVA</strong>
-
-                        <span class="<?= $phivolcsFeed['ok'] ? 'feed-status' : 'feed-unavailable' ?>">
-                            <?= $phivolcsFeed['ok']
-                                ? count($phivolcsFeed['items']) . ' item(s) retrieved'
-                                : 'Source unavailable' ?>
-
-                            <?= !empty($phivolcsFeed['stale']) ? ' · Cached' : '' ?>
-                        </span>
                     </div>
-
-                    <div class="agency-status">
-                        <strong>PAGASA · CAP</strong>
-
-                        <span class="<?= $pagasaFeed['ok'] ? 'feed-status' : 'feed-unavailable' ?>">
-                            <?= $pagasaFeed['ok']
-                                ? count($pagasaFeed['items']) . ' item(s) retrieved'
-                                : 'Source unavailable' ?>
-
-                            <?= !empty($pagasaFeed['stale']) ? ' · Cached' : '' ?>
-                        </span>
-                    </div>
-
-                </div>
-
-                <div class="advisory-note">
-                    <i class="bi bi-info-circle"></i>
-
-                    <span>
-                        Only retrieved official items are displayed as live advisories.
-                        Hazard susceptibility data is not an evacuation order.
-                        Always follow the latest instructions from local authorities.
-                    </span>
-                </div>
-
-                <div class="advisory-sources">
-                    Sources:
-
-                    <a
-                        href="https://publicalert.pagasa.dost.gov.ph/feeds/"
-                        target="_blank"
-                        rel="noopener noreferrer">PAGASA</a>
-
-                    ·
-
-                    <a
-                        href="https://volcano.phivolcs.dost.gov.ph/"
-                        target="_blank"
-                        rel="noopener noreferrer">PHIVOLCS</a>
-
-                    ·
-
-                    <a
-                        href="https://monitoring-dashboard.ndrrmc.gov.ph/page/situations"
-                        target="_blank"
-                        rel="noopener noreferrer">NDRRMC</a>
-                </div>
-
-            </div>
-
-            <!-- INCIDENT BY TYPE -->
-
-            <div class="dash-card span-3">
-
-                <h3 class="card-title mb-2">INCIDENT BY TYPE</h3>
-
-                <div class="chart-container">
-                    <canvas id="donutChart"></canvas>
-                </div>
-
-                <div class="donut-legend">
-
-                    <?php
-                    $colors = [
-                        '#d9534f',
-                        '#f0ad4e',
-                        '#5cb85c',
-                        '#5bc0de',
-                        '#9370DB',
-                        '#FF7F50',
-                        '#20B2AA',
-                        '#708090'
-                    ];
-
-                    foreach ($incidentTypes as $index => $item):
-                    ?>
-
-                        <div class="legend-item">
-                            <div
-                                class="dot"
-                                style="background-color:<?= h($colors[$index % count($colors)]) ?>;">
-                            </div>
-
-                            <?= h($item['category'] ?? 'Uncategorized') ?>
-                            (<?= (int)$item['total'] ?>)
-                        </div>
-
-                    <?php endforeach; ?>
-
-                    <?php if (empty($incidentTypes)): ?>
-                        <div class="no-data-msg">
-                            No incident categories available.
-                        </div>
-                    <?php endif; ?>
-
                 </div>
 
             </div>

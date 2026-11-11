@@ -4,19 +4,19 @@ import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    RefreshControl,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import BottomNavbar from '../components/BottomNavbar';
 
 type AssistanceRequest = {
-  id: string;
+  request_id: string;
   request_category: string;
   barangay: string | null;
   address: string | null;
@@ -242,7 +242,7 @@ export default function MyAssistanceRequestsScreen() {
       const { data, error: queryError } = await supabase
         .from('assistance_requests')
         .select(
-          'id, request_category, barangay, address, description, status, admin_notes, created_at, updated_at'
+          'request_id, request_category, barangay, address, description, status, admin_notes, created_at, updated_at'
         )
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
@@ -352,7 +352,7 @@ export default function MyAssistanceRequestsScreen() {
             };
 
             return (
-              <View key={request.id} style={styles.requestCard}>
+              <View key={request.request_id} style={styles.requestCard}>
                 <View style={styles.requestHeader}>
                   <View style={styles.categoryIcon}>
                     <Feather

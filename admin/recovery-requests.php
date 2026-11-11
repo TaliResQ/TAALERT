@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 
@@ -40,7 +39,7 @@ function escapeHtml($value): string
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['csrf_token'] ?? '';
-    $id = trim($_POST['id'] ?? '');
+    $requestId = trim($_POST['request_id'] ?? '');
     $status = $_POST['status'] ?? '';
     $notes = trim($_POST['admin_notes'] ?? '');
 
@@ -54,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!preg_match(
         '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i',
-        $id
+        $requestId
     )) {
         http_response_code(400);
         exit('Invalid request ID.');
@@ -78,23 +77,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              SET status = :status,
                  admin_notes = :admin_notes,
                  updated_at = NOW()
-             WHERE id = :id'
+             WHERE request_id = :request_id'
         );
 
         $stmt->execute([
             'status' => $status,
             'admin_notes' => $notes,
-            'id' => $id,
+            'request_id' => $requestId,
         ]);
 
         if ($stmt->rowCount() === 0) {
             $check = $pdo->prepare(
                 'SELECT 1
                  FROM public.assistance_requests
-                 WHERE id = :id'
+                 WHERE request_id = :request_id'
             );
 
-            $check->execute(['id' => $id]);
+            $check->execute(['request_id' => $requestId]);
 
             if (!$check->fetchColumn()) {
                 $pdo->rollBack();
@@ -128,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 try {
     $stmt = $pdo->query(
-        'SELECT id, request_category, barangay, address,
+        'SELECT request_id, request_category, barangay, address,
                 description, contact_number, status, admin_notes,
                 created_at
          FROM public.assistance_requests
@@ -226,7 +225,7 @@ function getStatusClass($status): string
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
     >
 
-    <!-- Existing dashboard stylesheet, if available -->
+    <!-- Existing dashboard stylesheet -->
     <link rel="stylesheet" href="assets/style.css">
 
     <style>
@@ -842,10 +841,6 @@ function getStatusClass($status): string
 <body>
 
     <?php
-    /*
-     * Load the existing sidebar when this page is in the same
-     * directory as sidebar.php. Otherwise, the page still works.
-     */
     if (is_file(__DIR__ . '/sidebar.php')) {
         include __DIR__ . '/sidebar.php';
     }
@@ -1016,7 +1011,8 @@ function getStatusClass($status): string
                                 <?php foreach ($requests as $request): ?>
 
                                     <?php
-                                    $formId = 'update-' . $request['id'];
+                                    $requestId = $request['request_id'];
+                                    $formId = 'update-' . $requestId;
                                     $currentStatus = $request['status'] ?? '';
                                     ?>
 
@@ -1067,19 +1063,19 @@ function getStatusClass($status): string
 
                                                 <input
                                                     type="hidden"
-                                                    name="id"
-                                                    value="<?= escapeHtml($request['id']) ?>"
+                                                    name="request_id"
+                                                    value="<?= escapeHtml($requestId) ?>"
                                                 >
 
                                                 <label
                                                     class="field-label"
-                                                    for="status-<?= escapeHtml($request['id']) ?>"
+                                                    for="status-<?= escapeHtml($requestId) ?>"
                                                 >
                                                     Update Status
                                                 </label>
 
                                                 <select
-                                                    id="status-<?= escapeHtml($request['id']) ?>"
+                                                    id="status-<?= escapeHtml($requestId) ?>"
                                                     name="status"
                                                     required
                                                 >
@@ -1105,14 +1101,14 @@ function getStatusClass($status): string
 
                                             <label
                                                 class="field-label"
-                                                for="notes-<?= escapeHtml($request['id']) ?>"
+                                                for="notes-<?= escapeHtml($requestId) ?>"
                                                 style="display:block; margin-bottom:8px;"
                                             >
                                                 Administrative Notes
                                             </label>
 
                                             <textarea
-                                                id="notes-<?= escapeHtml($request['id']) ?>"
+                                                id="notes-<?= escapeHtml($requestId) ?>"
                                                 name="admin_notes"
                                                 form="<?= escapeHtml($formId) ?>"
                                                 maxlength="5000"

@@ -480,6 +480,11 @@ export const ProfileStyles = StyleSheet.create({
     elevation: 2,
     shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10,
   },
+    nameText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: COLORS.textDark,
+  },
   avatar: {
     width: 70,
     height: 70,
@@ -763,6 +768,79 @@ export const ReportStyles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
+
+
+locationDropdown: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
+    paddingHorizontal: 13,
+    minHeight: 50,
+},
+
+locationModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+},
+
+locationModalContent: {
+    backgroundColor: '#FFFFFF',
+    width: '100%',
+    maxHeight: '75%',
+    borderRadius: 18,
+    padding: 20,
+},
+
+locationModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 18,
+},
+
+locationModalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1E293B',
+},
+
+locationModalSubtitle: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 4,
+},
+
+locationOption: {
+    minHeight: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+},
+
+selectedLocation: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 8,
+},
+
+locationOptionText: {
+    fontSize: 14,
+    color: '#334155',
+},
+
+selectedLocationText: {
+    color: '#25A5FE',
+    fontWeight: '700',
+},
+
 });
 
 
@@ -1127,4 +1205,119 @@ export const WelcomeStyles = StyleSheet.create({
     color: COLORS.textMuted,
     lineHeight: 18,
   },
+});
+
+/* For Hotlines */
+
+export const HotlineStyles = StyleSheet.create({
+
+
+container: {
+    flex: 1,
+    backgroundColor: '#F0F9FF',
+},
+
+header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 15,
+},
+
+backBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#E0F2FE',
+    justifyContent: 'center',
+    alignItems: 'center',
+},
+
+headerTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginLeft: 15,
+},
+
+scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+    paddingTop: 10,
+},
+
+
+hotlineGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 12,
+    marginTop: 16,
+},
+
+hotlineCard: {
+    width: '48%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    elevation: 2,
+    minHeight: 155,
+},
+
+hotlineIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+},
+
+hotlineTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1F2937',
+    textAlign: 'center',
+    marginBottom: 5,
+},
+
+hotlineNumber: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginBottom: 10,
+},
+
+callIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#25A5FE',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 5,
+},
+
+callText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+},
+
+sectionDescription: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginBottom: 4,
+},
+
+hotlineLogo: {
+    width: 48,
+    height: 48,
+    resizeMode: 'contain',
+},
 });

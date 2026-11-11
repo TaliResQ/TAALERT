@@ -29,7 +29,7 @@ export default function ResourcesScreen() {
 
       return () => {
       };
-    }, [fadeAnim, slideUpAnim]) 
+    }, [fadeAnim, slideUpAnim])
   );
 
   return (
@@ -53,51 +53,55 @@ export default function ResourcesScreen() {
             <Text style={styles.featuredLabel}>FEATURED</Text>
             <Text style={styles.featuredTitle}>Understanding Taal's 5 Alert Levels</Text>
             <Text style={styles.featuredSub}>5 min read · PHIVOLCS Official</Text>
-            <TouchableOpacity style={styles.readBtn}>
+
+            <TouchableOpacity
+              style={styles.readBtn}
+              onPress={() => router.push('/taal-alert')}
+            >
               <Text style={styles.readBtnText}>Read guide</Text>
             </TouchableOpacity>
           </View>
 
           {/* Resource List */}
 
-{/* Recovery Assistance Card */}
-<TouchableOpacity
-  activeOpacity={0.85}
-  onPress={() => router.push('/recovery-assistance')}
-  style={styles.recoveryCard}
->
-  <View style={styles.recoveryCardHeader}>
-    <View style={styles.recoveryIconBox}>
-      <Feather name="life-buoy" size={25} color="#2563EB" />
-    </View>
+          {/* Recovery Assistance Card */}
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => router.push('/recovery-assistance')}
+            style={styles.recoveryCard}
+          >
+            <View style={styles.recoveryCardHeader}>
+              <View style={styles.recoveryIconBox}>
+                <Feather name="life-buoy" size={25} color="#2563EB" />
+              </View>
 
-    <View style={styles.recoveryCardText}>
-      <Text style={styles.recoveryCardTitle}>
-        Recovery Assistance
-      </Text>
+              <View style={styles.recoveryCardText}>
+                <Text style={styles.recoveryCardTitle}>
+                  Recovery Assistance
+                </Text>
 
-      <Text style={styles.recoveryCardDescription}>
-        Find help, request assistance, and explore recovery resources.
-      </Text>
-    </View>
+                <Text style={styles.recoveryCardDescription}>
+                  Find help, request assistance, and explore recovery resources.
+                </Text>
+              </View>
 
-    <Feather name="chevron-right" size={22} color="#2563EB" />
-  </View>
+              <Feather name="chevron-right" size={22} color="#2563EB" />
+            </View>
 
-  <View style={styles.recoveryTags}>
-    <View style={styles.recoveryTag}>
-      <Text style={styles.recoveryTagText}>Find Assistance</Text>
-    </View>
+            <View style={styles.recoveryTags}>
+              <View style={styles.recoveryTag}>
+                <Text style={styles.recoveryTagText}>Find Assistance</Text>
+              </View>
 
-    <View style={styles.recoveryTag}>
-      <Text style={styles.recoveryTagText}>Request Help</Text>
-    </View>
+              <View style={styles.recoveryTag}>
+                <Text style={styles.recoveryTagText}>Request Help</Text>
+              </View>
 
-    <View style={styles.recoveryTag}>
-      <Text style={styles.recoveryTagText}>Recovery Resources</Text>
-    </View>
-  </View>
-</TouchableOpacity>
+              <View style={styles.recoveryTag}>
+                <Text style={styles.recoveryTagText}>Recovery Resources</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
 
           <View style={styles.listContainer}>
             <ResourceItem
@@ -122,6 +126,8 @@ export default function ResourcesScreen() {
               icon="briefcase"
               iconColor="#2563EB"
               iconBg="#DBEAFE"
+              onPress={() => router.push('/emergency-go-bag')}
+
             />
             <ResourceItem
               title="Evacuation Plan"
@@ -129,6 +135,7 @@ export default function ResourcesScreen() {
               icon="home"
               iconColor="#059669"
               iconBg="#D1FAE5"
+              onPress={() => router.push('/evacuation-plan')}
             />
             <ResourceItem
               title="First Aid Basics"
@@ -136,6 +143,8 @@ export default function ResourcesScreen() {
               icon="heart"
               iconColor="#DC2626"
               iconBg="#FEE2E2"
+              onPress={() => router.push('/first-aid-basics')}
+
             />
           </View>
 
