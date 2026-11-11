@@ -1007,24 +1007,23 @@ try {
             try {
                 $pdo->beginTransaction();
 
-try {
-    $stmt = $activityPdo->prepare("
-        INSERT INTO public.community_activities (
-            title,
-            description,
-            activity_date,
-            target_area,
-            is_published
-        )
-        VALUES (
-            :title,
-            :description,
-            :activity_date,
-            :target_area,
-            TRUE
-        )
-        RETURNING id
-    ");
+                $activityStmt = $pdo->prepare("
+                    INSERT INTO public.community_activities (
+                        title,
+                        description,
+                        activity_date,
+                        target_area,
+                        is_published
+                    )
+                    VALUES (
+                        :title,
+                        :description,
+                        :activity_date,
+                        :target_area,
+                        TRUE
+                    )
+                    RETURNING id
+                ");
 
                 $activityStmt->execute([
                     ':title' => $title,
@@ -1105,7 +1104,6 @@ try {
                     true,
                     303
                 );
-
                 exit;
 
             } catch (Throwable $e) {
@@ -1114,11 +1112,14 @@ try {
                 }
 
                 error_log('Activity creation error: ' . $e->getMessage());
-
-            $activity_error =
-                'Unable to publish activity. Check your server error log.';
+                $activity_error =
+                    'Unable to publish activity. Check your server error log.';
+            }
         }
     }
+} catch (Throwable $e) {
+    error_log('Dashboard initial database connection error: ' . $e->getMessage());
+    $activity_error = 'Database connection failed. Check your Supabase credentials and server error log.';
 }
 
 $reports = [];
@@ -1151,7 +1152,23 @@ try {
         SELECT COUNT(*) AS total
         FROM incidents
     ");
-    $totalReports = $stmt->fetch()['total'];
+    $totalReports = (int)$stmt->fetch()['total'];
+
+    // Active incidents: resolved_at is the archive marker in this project.
+    $stmt = $pdo->query("
+        SELECT COUNT(*) AS total
+        FROM public.incidents
+        WHERE resolved_at IS NULL
+    ");
+    $totalActiveIncidents = (int)$stmt->fetchColumn();
+
+    // Alerts created today (Philippine local database date).
+    $stmt = $pdo->query("
+        SELECT COUNT(*) AS total
+        FROM public.alerts
+        WHERE created_at::date = CURRENT_DATE
+    ");
+    $totalAlertsToday = (int)$stmt->fetchColumn();
 
     // Recent incidents
     $stmt = $pdo->query("

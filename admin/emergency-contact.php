@@ -15,7 +15,7 @@ if (isset($_POST['update_contact'])) {
         UPDATE hotlines
         SET
 
-            title = ?,
+            title = ?,git
             contact_number = ?,
             description = ?,
             updated_at = NOW()
