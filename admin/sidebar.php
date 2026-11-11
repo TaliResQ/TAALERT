@@ -25,17 +25,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </a>
         </li>
 
-        <li class="nav-item <?php echo ($current_page == 'emergency-contact.php') ? 'active' : ''; ?>">
-            <a href="emergency-contact.php" class="nav-link">
-                <i class="bi bi-person-lines-fill"></i>
-                <span>Emergency Contacts</span>
-            </a>
-        </li>
-
         <li class="nav-item <?php echo ($current_page == 'safety-info.php') ? 'active' : ''; ?>">
             <a href="safety-info.php" class="nav-link">
-                <i class="bi bi-shield-check"></i>
-                <span>Safety Info</span>
+                <i class="bi bi-person-lines-fill"></i>
+                <span>Safety Informations</span>
             </a>
         </li>
 

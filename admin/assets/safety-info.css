@@ -1,0 +1,525 @@
+
+/* ==========================================
+   EMERGENCY CONTACT & SAFETY INFORMATION
+========================================== */
+
+.page-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #4da8da;
+}
+
+.page-subtitle {
+    color: #718096;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+/* OVERVIEW CARDS */
+
+.overview-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e8edf3;
+    height: 100%;
+}
+
+.overview-card span {
+    color: #718096;
+    font-size: 12px;
+}
+
+.overview-card h3 {
+    font-size: 25px;
+    font-weight: 700;
+    color: #052241;
+    margin: 3px 0 0;
+}
+
+.overview-icon,
+.section-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.hotline-icon {
+    background: #fff0ed;
+    color: #e36b55;
+}
+
+.guide-icon {
+    background: #eaf4ff;
+    color: #287bb7;
+}
+
+.published-icon {
+    background: #e9f8f0;
+    color: #299568;
+}
+
+/* SECTIONS */
+
+.content-section {
+    background: #fff;
+    padding: 24px;
+    border: 1px solid #e8edf3;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 12px rgba(5, 34, 65, 0.035);
+}
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.section-title-group {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.section-title-group h4 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #052241;
+    margin: 0;
+}
+
+.section-title-group p {
+    color: #8492a6;
+    font-size: 12px;
+    margin: 4px 0 0;
+}
+
+.primary-action {
+    background: #052f59;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.primary-action:hover {
+    background: #0d4f8b;
+    color: white;
+}
+
+/* HOTLINE TABLE */
+
+.hotline-table {
+    margin-bottom: 0;
+}
+
+.hotline-table thead th {
+    background: #f5f8fc;
+    color: #68788d;
+    font-size: 10px;
+    letter-spacing: .7px;
+    padding: 14px;
+    border: none;
+}
+
+.hotline-table tbody td {
+    padding: 15px 14px;
+    font-size: 12px;
+    border-bottom: 1px solid #edf1f5;
+}
+
+.agency-name {
+    color: #052241;
+    font-weight: 650;
+}
+
+.contact-number {
+    color: #176aab;
+    font-weight: 650;
+}
+
+.description-text {
+    color: #718096;
+}
+
+.edit-action {
+    color: #2478b6;
+    background: #edf6ff;
+    border: none;
+}
+
+.edit-action:hover {
+    background: #dceeff;
+    color: #052241;
+}
+
+.delete-action {
+    color: #d9534f;
+    background: #fff0ef;
+    border: none;
+}
+
+.delete-action:hover {
+    background: #ffe0de;
+    color: #b52c27;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 35px !important;
+    color: #8a98a9;
+}
+
+.empty-state i {
+    display: block;
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+/* PHASE NAVIGATION */
+
+.phase-navigation {
+    display: flex;
+    gap: 10px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #edf1f5;
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.phase-tab {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    white-space: nowrap;
+    padding: 11px 15px;
+    border: 1px solid #e5eaf0;
+    border-radius: 8px;
+    background: #fff;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.phase-tab span {
+    background: #edf1f5;
+    color: #64748b;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-size: 10px;
+}
+
+.phase-tab:hover,
+.phase-tab.active {
+    background: #052f59;
+    border-color: #052f59;
+    color: #fff;
+}
+
+.phase-tab.active span {
+    background: rgba(255,255,255,.18);
+    color: #fff;
+}
+
+/* PHASE INTRODUCTION */
+
+.phase-introduction {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.phase-introduction h5 {
+    font-size: 13px;
+    font-weight: 750;
+    margin: 0 0 5px;
+}
+
+.phase-introduction p {
+    font-size: 12px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.phase-intro-icon {
+    font-size: 27px;
+    flex-shrink: 0;
+}
+
+.phase-introduction.before {
+    background: #edf6ff;
+    color: #176aab;
+}
+
+.phase-introduction.during {
+    background: #fff5e9;
+    color: #b87519;
+}
+
+.phase-introduction.after {
+    background: #eaf8f0;
+    color: #25865c;
+}
+
+/* GUIDE PANELS */
+
+.guide-panel {
+    display: none;
+}
+
+.guide-panel.active {
+    display: block;
+}
+
+.guide-card {
+    height: 100%;
+    padding: 20px;
+    border: 1px solid #e8edf3;
+    border-radius: 11px;
+    background: #fff;
+    transition: .2s;
+}
+
+.guide-card:hover {
+    border-color: #b8d7ef;
+    box-shadow: 0 5px 18px rgba(5, 34, 65, .06);
+}
+
+.guide-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.hazard-badge {
+    background: #edf5fc;
+    color: #287bb7;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 650;
+}
+
+.publish-status {
+    font-size: 10px;
+    font-weight: 650;
+    padding: 5px 9px;
+    border-radius: 20px;
+}
+
+.publish-status.published {
+    color: #248357;
+    background: #e7f7ef;
+}
+
+.publish-status.unpublished {
+    color: #a16a19;
+    background: #fff4df;
+}
+
+.guide-card h5 {
+    font-size: 15px;
+    color: #052241;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.guide-content {
+    color: #718096;
+    font-size: 12px;
+    line-height: 1.8;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.guide-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding-top: 14px;
+    margin-top: 12px;
+    border-top: 1px solid #edf1f5;
+}
+
+.guide-card-footer small {
+    color: #9aa6b5;
+    font-size: 10px;
+}
+
+.guide-actions {
+    display: flex;
+    gap: 5px;
+}
+
+/* SEARCH */
+
+.guide-search {
+    position: relative;
+}
+
+.guide-search i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+.guide-search input {
+    padding: 11px 15px 11px 40px;
+    font-size: 12px;
+    border: 1px solid #e5eaf0;
+    border-radius: 8px;
+}
+
+.guide-search input:focus {
+    border-color: #4da8da;
+    box-shadow: 0 0 0 3px rgba(77,168,218,.12);
+}
+
+/* EMPTY GUIDE */
+
+.empty-guide {
+    text-align: center;
+    padding: 40px 20px;
+    background: #f8fafc;
+    border: 1px dashed #d9e2ec;
+    border-radius: 10px;
+}
+
+.empty-guide i {
+    font-size: 32px;
+    color: #94a3b8;
+}
+
+.empty-guide h6 {
+    color: #052241;
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+.empty-guide p {
+    color: #8492a6;
+    font-size: 12px;
+    margin: 0;
+}
+
+/* MODALS */
+
+.modal-content {
+    border: none;
+    border-radius: 13px;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 20px 22px;
+    border-bottom: 1px solid #edf1f5;
+}
+
+.modal-title {
+    font-size: 16px;
+    color: #052241;
+    font-weight: 700;
+}
+
+.modal-body {
+    padding: 22px;
+}
+
+.modal-body label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: #52647a;
+    letter-spacing: .5px;
+    margin-bottom: 7px;
+}
+
+.modal-body .form-control,
+.modal-body .form-select {
+    font-size: 12px;
+    border-color: #dfe6ee;
+    border-radius: 7px;
+    padding: 10px 12px;
+}
+
+.modal-footer {
+    padding: 15px 22px;
+    border-top: 1px solid #edf1f5;
+}
+
+.modal-footer .btn {
+    font-size: 12px;
+    padding: 9px 16px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .section-heading .btn {
+        width: 100%;
+    }
+
+    .content-section {
+        padding: 16px;
+    }
+
+    .page-heading {
+        align-items: flex-start;
+    }
+
+    .overview-card {
+        padding: 15px;
+    }
+
+    .phase-navigation {
+        gap: 7px;
+    }
+
+    .phase-tab {
+        font-size: 11px;
+        padding: 10px;
+    }
+
+    .guide-card-footer {
+        align-items: flex-start;
+    }
+
+}

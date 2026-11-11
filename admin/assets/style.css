@@ -317,7 +317,7 @@ tr:last-child td {
 .dash-card .form-control,
 .dash-card .form-select {
     background-color: transparent;
-    border: 1px solid rgba(255,255,255,.3);
+    border: 1px solid rgba(255, 255, 255, .3);
     color: var(--white);
 }
 
@@ -699,7 +699,7 @@ MODAL BUTTONS
 .dash-card .form-select {
 
     background-color: transparent;
-    border: 1px solid rgba(255,255,255,.3);
+    border: 1px solid rgba(255, 255, 255, .3);
     color: var(--white);
 
     font-size: .85rem;
@@ -709,13 +709,13 @@ MODAL BUTTONS
 
 .dash-card .form-control::placeholder {
 
-    color: rgba(255,255,255,.5) !important;
+    color: rgba(255, 255, 255, .5) !important;
 }
 
 .dash-card .form-control:focus,
 .dash-card .form-select:focus {
 
-    background-color: rgba(255,255,255,.05);
+    background-color: rgba(255, 255, 255, .05);
     color: var(--white);
 
     box-shadow: none;
@@ -811,7 +811,7 @@ MODAL BUTTONS
 
     border-color: #223868 !important;
 
-    box-shadow: 0 0 0 .15rem rgba(34,56,104,.15);
+    box-shadow: 0 0 0 .15rem rgba(34, 56, 104, .15);
 }
 
 #addHotlineModal .modal-footer {
@@ -1174,8 +1174,7 @@ MODAL BUTTONS
     border-color: #0d6efd;
 
     box-shadow:
-        0 0 0 0.15rem
-        rgba(13, 110, 253, 0.15);
+        0 0 0 0.15rem rgba(13, 110, 253, 0.15);
 }
 
 
@@ -1343,7 +1342,7 @@ MODAL BUTTONS
    ARCHIVE TABLE
    ========================================================== */
 
-.archive-info + .dash-card {
+.archive-info+.dash-card {
     margin-top: 5px;
 }
 
@@ -1508,7 +1507,8 @@ MODAL BUTTONS
     position: fixed;
     top: 0;
     left: 0;
-    width: 250px; /* Match your existing sidebar width */
+    width: 250px;
+    /* Match your existing sidebar width */
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
@@ -1517,7 +1517,8 @@ MODAL BUTTONS
 
 /* Main content scrolls independently */
 .main-content {
-    margin-left: 250px; /* Match the sidebar width */
+    margin-left: 250px;
+    /* Match the sidebar width */
     width: calc(100% - 250px);
     min-height: 100vh;
     height: auto;
@@ -1544,4 +1545,24 @@ body {
         margin-left: 220px;
         width: calc(100% - 220px);
     }
+}
+
+.form-control,
+.form-select,
+textarea {
+    color: #212529 !important;
+    background-color: #fff !important;
+}
+
+.form-control::placeholder,
+textarea::placeholder {
+    color: #000000 !important;
+    opacity: 1;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+    color: #212529 !important;
+    background-color: #fff !important;
 }
