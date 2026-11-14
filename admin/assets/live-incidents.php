@@ -1,4 +1,3 @@
-
 <?php
 declare(strict_types=1);
 
@@ -25,17 +24,16 @@ try {
 
     $sql = "
         SELECT
-            id,
+            incident_id AS id,
             category,
             location,
-            latitude,
-            longitude,
+            NULL::numeric AS latitude,
+            NULL::numeric AS longitude,
             priority_level,
-            incident_status,
+            status AS incident_status,
             created_at
         FROM public.incidents
-        WHERE LOWER(COALESCE(incident_status::text, ''))
-              NOT IN ('resolved', 'closed')
+        WHERE resolved_at IS NULL
         ORDER BY created_at DESC
         LIMIT 500
     ";
