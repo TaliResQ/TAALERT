@@ -398,6 +398,22 @@
     border-color: #c8e0eb;
 }
 
+.incident-list-item-static {
+    cursor: default;
+}
+
+.incident-list-item-static:hover {
+    background: #fff;
+    border-color: #edf1f5;
+}
+
+.incident-coordinate-note {
+    align-self: center;
+    color: #8290a0;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
 .place-list-item > i:first-child {
     margin-top: 2px;
     color: #147d92;
@@ -708,16 +724,17 @@
    FIX: MAP CONTENT OVERLAPPING THE SIDEBAR
    ========================================= */
 
-/*
-   If your sidebar is fixed on the left, reserve space
-   for it instead of letting the map use the full screen.
-*/
+/* Keep the map aligned with the dashboard's fixed sidebar. */
+.sidebar {
+    width: 225px;
+    min-width: 225px;
+}
 
 .map-page {
     width: auto;
     min-width: 0;
     max-width: none;
-    margin-left: 260px; /* Change to your sidebar's actual width */
+    margin-left: 225px;
     padding: 28px;
     overflow-x: clip;
 }
@@ -747,7 +764,7 @@
 /* Medium screens */
 @media (max-width: 1100px) {
     .map-page {
-        margin-left: 240px;
+        margin-left: 225px;
         padding: 20px;
     }
 
@@ -756,11 +773,11 @@
     }
 }
 
-/* Mobile: sidebar is commonly collapsed or converted to a drawer */
+/* Match the dashboard's sidebar width at tablet sizes. */
 @media (max-width: 800px) {
     .map-page {
-        margin-left: 0;
-        width: 100%;
+        margin-left: 225px;
+        width: calc(100% - 225px);
         padding: 16px;
     }
 
@@ -770,5 +787,49 @@
 
     .map-summary {
         grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px !important;
+        min-width: 70px !important;
+        padding: 18px 9px 12px;
+    }
+
+    .sidebar .logo-container {
+        justify-content: center !important;
+        margin: 3px 0 15px;
+        padding: 4px 0 12px;
+    }
+
+    .sidebar .sidebar-brand-copy,
+    .sidebar .nav-link span,
+    .sidebar .nav-section-label {
+        display: none;
+    }
+
+    .sidebar .nav-item {
+        display: flex;
+        justify-content: center;
+    }
+
+    .sidebar .nav-link {
+        justify-content: center;
+        width: 46px;
+        min-height: 44px;
+        padding: 6px;
+    }
+
+    .map-page {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+        padding: 16px;
+    }
+}
+
+@media (max-width: 560px) {
+    .map-page {
+        padding: 14px;
     }
 }
