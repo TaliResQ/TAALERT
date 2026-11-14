@@ -143,7 +143,7 @@ $contacts = $stmt->fetchAll();
 
 
 
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/style.css?v=20261114i">
     <link rel="stylesheet" href="assets/add-hotline.css">
     <link rel="icon" type="image/png" href="assets/log.png">
 
@@ -175,7 +175,7 @@ $contacts = $stmt->fetchAll();
 
 
 
-            <h2 class="dashboard-title">
+            <h2 class="dashboard-title admin-page-title">
 
                 EMERGENCY CONTACTS
 

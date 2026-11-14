@@ -75,7 +75,7 @@ try {
        'hotline_id', 'area_name', 'title', 'contact_number', 'description', 'is_emergency', 'created_by', 'created_at', 'updated_at'
     ]);
 
-    // Your screenshot confirms public.safety_guides uses id (not guide_id).
+    // Use the table's primary-key columns in all record queries.
     $guidesTable = resolveTable($pdo, 'safety_guides', [
        'guide_id', 'hazard_type', 'phase', 'title', 'content', 'is_published', 'created_at', 'updated_at', 'created_by'
     ]);
@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                      contact_number = :contact_number,
                      description = :description,
                      updated_at = NOW()
-                 WHERE id = :id'
+                 WHERE hotline_id = :id'
             );
             $stmt->execute([
                 ':area_name' => $agency,
@@ -188,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $stmt = $pdo->prepare(
-                'DELETE FROM ' . $hotlinesTable . ' WHERE id = :id'
+                'DELETE FROM ' . $hotlinesTable . ' WHERE hotline_id = :id'
             );
             $stmt->execute([':id' => (int)$id]);
 
@@ -254,7 +254,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                      content = :content,
                      is_published = :is_published,
                      updated_at = NOW()
-                 WHERE id = :id'
+                 WHERE guide_id = :id'
             );
             $stmt->bindValue(':title', $title);
             $stmt->bindValue(':phase', $phase);
@@ -275,7 +275,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $stmt = $pdo->prepare(
-                'DELETE FROM ' . $guidesTable . ' WHERE id = :id'
+                'DELETE FROM ' . $guidesTable . ' WHERE guide_id = :id'
             );
             $stmt->execute([':id' => (int)$id]);
 
@@ -304,16 +304,16 @@ $guides = [];
 
 try {
     $stmt = $pdo->query(
-        'SELECT id, area_name, title, contact_number, description
+        'SELECT hotline_id, area_name, title, contact_number, description
          FROM ' . $hotlinesTable . '
          WHERE is_emergency = TRUE
-         ORDER BY id ASC'
+         ORDER BY hotline_id ASC'
     );
     $contacts = $stmt->fetchAll();
 
     // IMPORTANT: concatenate the resolved table name outside the SQL string.
     $guideSql = "
-        SELECT id, title, phase, hazard_type, content,
+        SELECT guide_id, title, phase, hazard_type, content,
                is_published, created_at, updated_at
         FROM " . $guidesTable . "
         ORDER BY
@@ -376,7 +376,7 @@ $publishedCount = count(array_filter($guides, function ($guide) {
     <title>Emergency Hotlines &amp; Safety Information | TaliResq</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/style.css?v=20261114i">
     <link rel="stylesheet" href="assets/safety-info.css">
     <link rel="icon" type="image/png" href="assets/log.png">
 </head>
@@ -390,7 +390,7 @@ $publishedCount = count(array_filter($guides, function ($guide) {
     <div class="page-heading">
         <div>
             <span class="page-eyebrow">TALIRESQ MANAGEMENT</span>
-            <h2 class="dashboard-title">EMERGENCY HOTLINES &amp; SAFETY INFORMATION</h2>
+            <h2 class="dashboard-title admin-page-title">EMERGENCY HOTLINES &amp; SAFETY INFORMATION</h2>
             <p class="page-subtitle">Manage emergency contacts and disaster preparedness information for the community.</p>
         </div>
     </div>
@@ -453,19 +453,19 @@ $publishedCount = count(array_filter($guides, function ($guide) {
                         <td><span class="contact-number"><?= e($contact['contact_number']) ?></span></td>
                         <td><span class="description-text"><?= e($contact['description']) ?></span></td>
                         <td class="text-center">
-                            <button class="btn btn-sm edit-action" data-bs-toggle="modal" data-bs-target="#editHotline<?= (int)$contact['id'] ?>" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-sm edit-action" data-bs-toggle="modal" data-bs-target="#editHotline<?= (int)$contact['hotline_id'] ?>" title="Edit"><i class="bi bi-pencil-square"></i></button>
                             <form method="POST" class="d-inline" onsubmit="return confirm('Delete this emergency hotline?');">
-                                <input type="hidden" name="id" value="<?= (int)$contact['id'] ?>">
+                                <input type="hidden" name="id" value="<?= (int)$contact['hotline_id'] ?>">
                                 <button type="submit" name="delete_hotline" class="btn btn-sm delete-action" title="Delete"><i class="bi bi-trash"></i></button>
                             </form>
                         </td>
                     </tr>
-                    <div class="modal fade" id="editHotline<?= (int)$contact['id'] ?>" tabindex="-1">
+                    <div class="modal fade" id="editHotline<?= (int)$contact['hotline_id'] ?>" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
                             <form method="POST">
                                 <div class="modal-header"><h5 class="modal-title">Edit Emergency Hotline</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                                 <div class="modal-body">
-                                    <input type="hidden" name="id" value="<?= (int)$contact['id'] ?>">
+                                    <input type="hidden" name="id" value="<?= (int)$contact['hotline_id'] ?>">
                                     <label>AGENCY</label>
                                     <input type="text" name="agency" class="form-control mb-3" value="<?= e($contact['title'] ?: $contact['area_name']) ?>" required>
                                     <label>CONTACT NUMBER</label>
@@ -530,9 +530,9 @@ $publishedCount = count(array_filter($guides, function ($guide) {
                                 <div class="guide-card-footer">
                                     <small><i class="bi bi-calendar3 me-1"></i><?= !empty($guide['created_at']) ? date('M d, Y', strtotime($guide['created_at'])) : '' ?></small>
                                     <div class="guide-actions">
-                                        <button class="btn btn-sm edit-action" data-bs-toggle="modal" data-bs-target="#editGuide<?= (int)$guide['id'] ?>"><i class="bi bi-pencil-square"></i>Edit</button>
+                                        <button class="btn btn-sm edit-action" data-bs-toggle="modal" data-bs-target="#editGuide<?= (int)$guide['guide_id'] ?>"><i class="bi bi-pencil-square"></i>Edit</button>
                                         <form method="POST" class="d-inline" onsubmit="return confirm('Delete this safety guide?');">
-                                            <input type="hidden" name="id" value="<?= (int)$guide['id'] ?>">
+                                            <input type="hidden" name="id" value="<?= (int)$guide['guide_id'] ?>">
                                             <button type="submit" name="delete_guide" class="btn btn-sm delete-action"><i class="bi bi-trash"></i></button>
                                         </form>
                                     </div>
@@ -540,12 +540,12 @@ $publishedCount = count(array_filter($guides, function ($guide) {
                             </div>
                         </div>
 
-                        <div class="modal fade" id="editGuide<?= (int)$guide['id'] ?>" tabindex="-1">
+                        <div class="modal fade" id="editGuide<?= (int)$guide['guide_id'] ?>" tabindex="-1">
                             <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content">
                                 <form method="POST">
                                     <div class="modal-header"><h5 class="modal-title">Edit Safety Information</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                                     <div class="modal-body">
-                                        <input type="hidden" name="id" value="<?= (int)$guide['id'] ?>">
+                                        <input type="hidden" name="id" value="<?= (int)$guide['guide_id'] ?>">
                                         <label>GUIDE TITLE</label>
                                         <input type="text" name="title" class="form-control mb-3" value="<?= e($guide['title']) ?>" required>
                                         <div class="row">
@@ -567,8 +567,8 @@ $publishedCount = count(array_filter($guides, function ($guide) {
                                         <label>SAFETY INSTRUCTIONS</label>
                                         <textarea name="content" class="form-control mb-3" rows="6" required><?= e($guide['content']) ?></textarea>
                                         <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="publish<?= (int)$guide['id'] ?>" name="is_published" <?= $guidePublished ? 'checked' : '' ?>>
-                                            <label class="form-check-label" for="publish<?= (int)$guide['id'] ?>">Publish this safety guide</label>
+                                            <input type="checkbox" class="form-check-input" id="publish<?= (int)$guide['guide_id'] ?>" name="is_published" <?= $guidePublished ? 'checked' : '' ?>>
+                                            <label class="form-check-label" for="publish<?= (int)$guide['guide_id'] ?>">Publish this safety guide</label>
                                         </div>
                                     </div>
                                     <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button><button type="submit" name="update_guide" class="btn btn-primary">Save Changes</button></div>

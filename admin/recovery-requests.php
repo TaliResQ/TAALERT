@@ -106,7 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         header('Location: recovery-requests.php?updated=1');
         exit;
-
     } catch (PDOException $e) {
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
@@ -135,7 +134,6 @@ try {
     );
 
     $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 } catch (PDOException $e) {
     error_log('Recovery requests query failed: ' . $e->getMessage());
 
@@ -161,8 +159,12 @@ foreach ($requests as $request) {
 
 $totalRequests = count($requests);
 $pendingRequests = $statusCounts['pending'];
+$inProgressRequests = $statusCounts['under_review']
+    + $statusCounts['verified']
+    + $statusCounts['assistance_coordinated'];
 $completedRequests = $statusCounts['completed'];
 $needsAttention = $statusCounts['needs_more_information'];
+$rejectedRequests = $statusCounts['rejected'];
 
 /*
 |--------------------------------------------------------------------------
@@ -208,34 +210,25 @@ function getStatusClass($status): string
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+        content="width=device-width, initial-scale=1.0">
 
     <title>Recovery Assistance Requests | TAALERT</title>
 
     <!-- Bootstrap -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
 
     <!-- Bootstrap Icons -->
     <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-    >
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <!-- Existing dashboard stylesheet -->
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/style.css?v=20261114i">
+    <link rel="icon" type="image/png" href="assets/log.png">
 
     <style>
-        @font-face {
-            font-family: 'Retro Floral';
-            src: url('Capstone/assets/retro-floral.regular.ttf')
-                format('truetype');
-            font-display: swap;
-        }
-
         :root {
             --primary-blue: #223868;
             --card-blue: #223868;
@@ -835,6 +828,415 @@ function getStatusClass($status): string
                 min-height: 85px;
             }
         }
+
+        .dashboard-title,
+        .stat-heading,
+        .stat-value,
+        .card-title,
+        .requests-table thead th {
+            font-family: var(--font-main);
+        }
+
+        .dashboard-title {
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .stat-card {
+            min-height: 104px;
+            padding: 17px 19px;
+        }
+
+        .stat-heading {
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            line-height: 1.4;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 750;
+        }
+
+        .stat-caption {
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 11px;
+            line-height: 1.4;
+            margin-top: 6px;
+        }
+
+        .toolbar {
+            display: grid;
+            grid-template-columns: minmax(220px, 1.5fr) repeat(2, minmax(160px, 0.8fr)) auto;
+            align-items: center;
+        }
+
+        .clear-filter-button,
+        .pagination-button {
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 650;
+            padding: 10px 13px;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .clear-filter-button:hover,
+        .pagination-button:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .clear-filter-button:focus-visible,
+        .pagination-button:focus-visible,
+        .filter-select:focus-visible,
+        .search-input:focus-visible,
+        .page-size-select:focus-visible {
+            outline: 3px solid var(--accent-yellow);
+            outline-offset: 2px;
+        }
+
+        .request-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .request-card {
+            min-width: 0;
+            padding: 17px;
+            border: 1px solid #e0e5ee;
+            border-radius: 11px;
+            background: #fff;
+            color: #252d3b;
+            box-shadow: 0 2px 8px rgba(10, 28, 62, 0.08);
+        }
+
+        .request-card[hidden],
+        .empty-state[hidden] {
+            display: none;
+        }
+
+        .request-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .request-category {
+            margin: 0;
+            color: var(--primary-blue);
+            font-size: 17px;
+            font-weight: 750;
+            line-height: 1.35;
+            overflow-wrap: anywhere;
+        }
+
+        .request-submitted {
+            margin: 5px 0 0;
+            color: #687386;
+            font-size: 12px;
+        }
+
+        .request-summary-grid {
+            display: grid;
+            grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.4fr);
+            gap: 12px;
+        }
+
+        .request-detail {
+            min-width: 0;
+            padding: 12px 14px;
+            border-radius: 9px;
+            background: #f5f7fb;
+        }
+
+        .request-detail-label,
+        .editor-field>span {
+            display: block;
+            margin-bottom: 6px;
+            color: #667287;
+            font-size: 10px;
+            font-weight: 750;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .request-detail p {
+            margin: 0;
+            color: #303949;
+            font-size: 13px;
+            line-height: 1.55;
+            overflow-wrap: anywhere;
+        }
+
+        .request-detail p+.request-detail-label,
+        .request-detail .request-contact {
+            margin-top: 10px;
+        }
+
+        .request-description {
+            white-space: pre-wrap;
+        }
+
+        .request-contact {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #164b98;
+            font-size: 13px;
+            font-weight: 650;
+            text-decoration: none;
+        }
+
+        .request-contact:hover {
+            text-decoration: underline;
+        }
+
+        .request-admin-note {
+            display: -webkit-box;
+            margin: 10px 0 0 !important;
+            overflow: hidden;
+            color: #536077 !important;
+            font-size: 12px !important;
+            line-height: 1.45 !important;
+            overflow-wrap: anywhere;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+        }
+
+        .request-admin-note strong {
+            color: #33425d;
+        }
+
+        .request-editor {
+            margin-top: 13px;
+            border-top: 1px solid #e7eaf0;
+        }
+
+        .request-editor summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px 2px 0;
+            color: var(--primary-blue);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .request-editor summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .request-editor summary::after {
+            content: "Edit";
+            color: #667287;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .request-editor[open] summary::after {
+            content: "Close";
+        }
+
+        .request-editor summary:focus-visible {
+            outline: 3px solid #f5b041;
+            outline-offset: 3px;
+        }
+
+        .request-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: end;
+            gap: 12px;
+            padding-top: 14px;
+        }
+
+        .request-form-fields {
+            display: grid;
+            grid-template-columns: minmax(180px, 0.8fr) minmax(0, 1.2fr);
+            gap: 12px;
+        }
+
+        .editor-field {
+            display: block;
+            min-width: 0;
+            margin: 0;
+        }
+
+        .editor-field select,
+        .editor-field textarea {
+            width: 100%;
+            min-width: 0;
+            border: 1px solid #d5dce7;
+            border-radius: 8px;
+            background: #fff;
+            color: #303744;
+            padding: 9px 10px;
+            font: inherit;
+            font-size: 13px;
+        }
+
+        .editor-field select:focus,
+        .editor-field textarea:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(34, 56, 104, 0.12);
+            outline: none;
+        }
+
+        .editor-field textarea {
+            min-height: 72px;
+            resize: vertical;
+        }
+
+        .save-button {
+            width: auto;
+            min-width: 142px;
+            min-height: 40px;
+        }
+
+        .empty-state {
+            padding: 34px 18px;
+            border: 1px dashed rgba(255, 255, 255, 0.35);
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.82);
+            text-align: center;
+        }
+
+        .empty-state i {
+            display: block;
+            margin-bottom: 9px;
+            color: var(--accent-yellow);
+            font-size: 25px;
+        }
+
+        .empty-state strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .request-list .empty-state {
+            padding: 34px 18px !important;
+            border: 1px dashed rgba(255, 255, 255, 0.35);
+            color: rgba(255, 255, 255, 0.82) !important;
+        }
+
+        .request-list .empty-state strong {
+            color: #fff !important;
+        }
+
+        .table-footer {
+            align-items: center;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .page-size-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        .page-size-select {
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 7px;
+            background: var(--card-blue);
+            color: #fff;
+            font: inherit;
+            padding: 7px 9px;
+        }
+
+        .pagination-button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .page-indicator {
+            min-width: 75px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .toolbar {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .search-wrapper {
+                grid-column: 1 / -1;
+            }
+
+            .request-summary-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .request-form-fields {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .request-form {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .save-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .toolbar {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .search-wrapper {
+                grid-column: auto;
+            }
+
+            .clear-filter-button {
+                width: 100%;
+            }
+
+            .request-card {
+                padding: 13px;
+            }
+
+            .request-card-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .pagination-controls {
+                justify-content: flex-start;
+            }
+        }
     </style>
 </head>
 
@@ -850,7 +1252,7 @@ function getStatusClass($status): string
 
         <div class="dashboard-wrapper">
 
-            <h1 class="dashboard-title">
+            <h1 class="dashboard-title admin-page-title">
                 RECOVERY ASSISTANCE
             </h1>
 
@@ -861,7 +1263,7 @@ function getStatusClass($status): string
 
             <!-- STATISTICS -->
 
-            <section class="stats-grid">
+            <section class="stats-grid" aria-label="Recovery request summary">
 
                 <div class="stat-card">
                     <h2 class="stat-heading">
@@ -887,6 +1289,18 @@ function getStatusClass($status): string
 
                 <div class="stat-card">
                     <h2 class="stat-heading">
+                        <i class="bi bi-arrow-repeat stat-icon"></i>
+                        IN PROGRESS
+                    </h2>
+
+                    <p class="stat-value">
+                        <?= $inProgressRequests ?>
+                    </p>
+                    <span class="stat-caption">Under review, verified, or coordinated</span>
+                </div>
+
+                <div class="stat-card">
+                    <h2 class="stat-heading">
                         <i class="bi bi-check-circle stat-icon"></i>
                         COMPLETED
                     </h2>
@@ -904,6 +1318,17 @@ function getStatusClass($status): string
 
                     <p class="stat-value">
                         <?= $needsAttention ?>
+                    </p>
+                </div>
+
+                <div class="stat-card">
+                    <h2 class="stat-heading">
+                        <i class="bi bi-x-circle stat-icon"></i>
+                        REJECTED
+                    </h2>
+
+                    <p class="stat-value">
+                        <?= $rejectedRequests ?>
                     </p>
                 </div>
 
@@ -951,16 +1376,14 @@ function getStatusClass($status): string
                             type="search"
                             id="requestSearch"
                             class="search-input"
-                            placeholder="Search category, barangay, address..."
-                            aria-label="Search assistance requests"
-                        >
+                            placeholder="Search category, location, contact, notes..."
+                            aria-label="Search all request details">
                     </div>
 
                     <select
                         id="statusFilter"
                         class="filter-select"
-                        aria-label="Filter requests by status"
-                    >
+                        aria-label="Filter requests by status">
                         <option value="">All Statuses</option>
 
                         <?php foreach ($statuses as $value => $label): ?>
@@ -971,197 +1394,174 @@ function getStatusClass($status): string
 
                     </select>
 
+                    <select
+                        id="sortOrder"
+                        class="filter-select"
+                        aria-label="Sort requests">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                    </select>
+
+                    <button
+                        type="button"
+                        id="clearFilters"
+                        class="clear-filter-button">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                        Clear filters
+                    </button>
+
                 </div>
 
-                <!-- TABLE -->
+                <div class="request-list" id="requestList" aria-label="Assistance requests">
 
-                <div class="table-frame">
+                    <?php foreach ($requests as $request): ?>
 
-                    <table class="requests-table">
+                        <?php
+                        $requestId = (string) $request['request_id'];
+                        $formId = 'update-' . $requestId;
+                        $currentStatus = $request['status'] ?? '';
+                        $timestamp = strtotime((string) ($request['created_at'] ?? ''));
+                        $submittedDate = $timestamp !== false
+                            ? date('M d, Y \a\t h:i A', $timestamp)
+                            : (string) ($request['created_at'] ?? '');
+                        $adminNote = trim((string) ($request['admin_notes'] ?? ''));
+                        $searchText = implode(' ', [
+                            $requestId,
+                            $request['request_category'] ?? '',
+                            $request['barangay'] ?? '',
+                            $request['address'] ?? '',
+                            $request['description'] ?? '',
+                            $request['contact_number'] ?? '',
+                            $statuses[$currentStatus] ?? $currentStatus,
+                            $request['admin_notes'] ?? '',
+                            $request['created_at'] ?? '',
+                        ]);
+                        $phoneNumber = preg_replace(
+                            '/[^0-9+]/',
+                            '',
+                            (string) ($request['contact_number'] ?? '')
+                        );
+                        ?>
 
-                        <thead>
-                            <tr>
-                                <th>Category</th>
-                                <th>Barangay</th>
-                                <th>Address</th>
-                                <th>Description</th>
-                                <th>Contact</th>
-                                <th>Status</th>
-                                <th>Admin Notes</th>
-                                <th>Date Submitted</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
+                        <article
+                            class="request-card"
+                            data-status="<?= escapeHtml($currentStatus) ?>"
+                            data-created-at="<?= $timestamp !== false ? (int) $timestamp : 0 ?>"
+                            data-search="<?= escapeHtml($searchText) ?>">
+                            <header class="request-card-header">
+                                <div>
+                                    <h3 class="request-category">
+                                        <?= escapeHtml($request['request_category'] ?? 'Assistance request') ?>
+                                    </h3>
+                                    <p class="request-submitted">
+                                        <i class="bi bi-clock me-1" aria-hidden="true"></i>
+                                        Submitted <?= escapeHtml($submittedDate) ?>
+                                    </p>
+                                </div>
 
-                        <tbody id="requestTableBody">
+                                <span class="status-badge <?= escapeHtml(getStatusClass($currentStatus)) ?>">
+                                    <?= escapeHtml($statuses[$currentStatus] ?? 'Unknown Status') ?>
+                                </span>
+                            </header>
 
-                            <?php if (empty($requests)): ?>
+                            <div class="request-summary-grid">
+                                <section class="request-detail" aria-label="Request location">
+                                    <span class="request-detail-label">Location</span>
+                                    <p><strong><?= escapeHtml($request['barangay'] ?? 'Barangay not provided') ?></strong></p>
+                                    <p><?= escapeHtml($request['address'] ?? 'Address not provided') ?></p>
+                                </section>
 
-                                <tr class="empty-row">
-                                    <td colspan="9" class="empty-state">
-                                        <i class="bi bi-inbox"></i>
-                                        <strong>No assistance requests found.</strong>
-                                        Requests submitted through the mobile
-                                        app will appear here.
-                                    </td>
-                                </tr>
+                                <section class="request-detail" aria-label="Request details">
+                                    <span class="request-detail-label">What is needed</span>
+                                    <p class="request-description"><?= escapeHtml($request['description'] ?? 'No description provided.') ?></p>
 
-                            <?php else: ?>
-
-                                <?php foreach ($requests as $request): ?>
-
-                                    <?php
-                                    $requestId = $request['request_id'];
-                                    $formId = 'update-' . $requestId;
-                                    $currentStatus = $request['status'] ?? '';
-                                    ?>
-
-                                    <tr
-                                        data-status="<?= escapeHtml($currentStatus) ?>"
-                                    >
-
-                                        <td class="category-cell">
-                                            <?= escapeHtml($request['request_category']) ?>
-                                        </td>
-
-                                        <td class="barangay-cell">
-                                            <?= escapeHtml($request['barangay']) ?>
-                                        </td>
-
-                                        <td class="address-cell">
-                                            <?= escapeHtml($request['address']) ?>
-                                        </td>
-
-                                        <td class="description-cell">
-                                            <?= escapeHtml($request['description']) ?>
-                                        </td>
-
-                                        <td class="contact-cell">
+                                    <?php if ($phoneNumber !== ''): ?>
+                                        <a
+                                            class="request-contact"
+                                            href="tel:<?= escapeHtml($phoneNumber) ?>">
+                                            <i class="bi bi-telephone" aria-hidden="true"></i>
                                             <?= escapeHtml($request['contact_number']) ?>
-                                        </td>
+                                        </a>
+                                    <?php else: ?>
+                                        <p class="request-contact">No contact number provided</p>
+                                    <?php endif; ?>
 
-                                        <td class="status-cell">
+                                    <?php if ($adminNote !== ''): ?>
+                                        <p class="request-admin-note">
+                                            <strong>Admin note:</strong>
+                                            <?= escapeHtml($adminNote) ?>
+                                        </p>
+                                    <?php endif; ?>
+                                </section>
+                            </div>
 
-                                            <div style="margin-bottom: 10px;">
-                                                <span class="status-badge <?= escapeHtml(getStatusClass($currentStatus)) ?>">
-                                                    <?= escapeHtml($statuses[$currentStatus] ?? 'Unknown Status') ?>
-                                                </span>
-                                            </div>
+                            <details class="request-editor">
+                                <summary>
+                                    <span><i class="bi bi-pencil-square me-1" aria-hidden="true"></i> Update status and notes</span>
+                                </summary>
 
-                                            <form
-                                                id="<?= escapeHtml($formId) ?>"
-                                                class="request-form"
-                                                method="POST"
-                                                action="recovery-requests.php"
-                                            >
+                                <form
+                                    id="<?= escapeHtml($formId) ?>"
+                                    class="request-form"
+                                    method="POST"
+                                    action="recovery-requests.php">
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="<?= escapeHtml($_SESSION['csrf_token']) ?>">
+                                    <input
+                                        type="hidden"
+                                        name="request_id"
+                                        value="<?= escapeHtml($requestId) ?>">
 
-                                                <input
-                                                    type="hidden"
-                                                    name="csrf_token"
-                                                    value="<?= escapeHtml($_SESSION['csrf_token']) ?>"
-                                                >
+                                    <div class="request-form-fields">
+                                        <label class="editor-field" for="status-<?= escapeHtml($requestId) ?>">
+                                            <span>Request status</span>
+                                            <select
+                                                id="status-<?= escapeHtml($requestId) ?>"
+                                                name="status"
+                                                required>
+                                                <?php foreach ($statuses as $value => $label): ?>
+                                                    <option
+                                                        value="<?= escapeHtml($value) ?>"
+                                                        <?= $currentStatus === $value ? 'selected' : '' ?>>
+                                                        <?= escapeHtml($label) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </label>
 
-                                                <input
-                                                    type="hidden"
-                                                    name="request_id"
-                                                    value="<?= escapeHtml($requestId) ?>"
-                                                >
-
-                                                <label
-                                                    class="field-label"
-                                                    for="status-<?= escapeHtml($requestId) ?>"
-                                                >
-                                                    Update Status
-                                                </label>
-
-                                                <select
-                                                    id="status-<?= escapeHtml($requestId) ?>"
-                                                    name="status"
-                                                    required
-                                                >
-
-                                                    <?php foreach ($statuses as $value => $label): ?>
-
-                                                        <option
-                                                            value="<?= escapeHtml($value) ?>"
-                                                            <?= $currentStatus === $value ? 'selected' : '' ?>
-                                                        >
-                                                            <?= escapeHtml($label) ?>
-                                                        </option>
-
-                                                    <?php endforeach; ?>
-
-                                                </select>
-
-                                            </form>
-
-                                        </td>
-
-                                        <td class="notes-cell">
-
-                                            <label
-                                                class="field-label"
-                                                for="notes-<?= escapeHtml($requestId) ?>"
-                                                style="display:block; margin-bottom:8px;"
-                                            >
-                                                Administrative Notes
-                                            </label>
-
+                                        <label class="editor-field" for="notes-<?= escapeHtml($requestId) ?>">
+                                            <span>Administrative notes</span>
                                             <textarea
                                                 id="notes-<?= escapeHtml($requestId) ?>"
                                                 name="admin_notes"
-                                                form="<?= escapeHtml($formId) ?>"
                                                 maxlength="5000"
-                                                placeholder="Enter administrative notes..."
-                                            ><?= escapeHtml($request['admin_notes']) ?></textarea>
+                                                placeholder="Add follow-up details or coordination notes..."><?= escapeHtml($request['admin_notes'] ?? '') ?></textarea>
+                                        </label>
+                                    </div>
 
-                                        </td>
+                                    <button type="submit" class="save-button">
+                                        <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                                        Save changes
+                                    </button>
+                                </form>
+                            </details>
+                        </article>
 
-                                        <td class="date-cell">
-                                            <?php
-                                            $timestamp = strtotime(
-                                                $request['created_at'] ?? ''
-                                            );
+                    <?php endforeach; ?>
 
-                                            echo $timestamp !== false
-                                                ? escapeHtml(date('M d, Y', $timestamp))
-                                                    . '<br><small style="color:#7a8290;">'
-                                                    . escapeHtml(date('h:i A', $timestamp))
-                                                    . '</small>'
-                                                : escapeHtml($request['created_at']);
-                                            ?>
-                                        </td>
+                    <div id="noRequestData" class="empty-state" <?= $totalRequests > 0 ? 'hidden' : '' ?>>
+                        <i class="bi bi-inbox" aria-hidden="true"></i>
+                        <strong>No assistance requests yet.</strong>
+                        Requests submitted through the mobile app will appear here.
+                    </div>
 
-                                        <td class="action-cell">
-
-                                            <button
-                                                type="submit"
-                                                form="<?= escapeHtml($formId) ?>"
-                                                class="save-button"
-                                            >
-                                                <i class="bi bi-check2-circle"></i>
-                                                Save Changes
-                                            </button>
-
-                                        </td>
-
-                                    </tr>
-
-                                <?php endforeach; ?>
-
-                                <tr id="noSearchResults" hidden>
-                                    <td colspan="9" class="empty-state">
-                                        <i class="bi bi-search"></i>
-                                        <strong>No matching requests found.</strong>
-                                        Try a different keyword or status.
-                                    </td>
-                                </tr>
-
-                            <?php endif; ?>
-
-                        </tbody>
-
-                    </table>
+                    <div id="noMatchingRequests" class="empty-state" hidden>
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <strong>No matching requests found.</strong>
+                        Try another search or clear the selected filters.
+                    </div>
 
                 </div>
 
@@ -1172,9 +1572,29 @@ function getStatusClass($status): string
                         TAALERT Recovery Request Management
                     </span>
 
-                    <span id="visibleCount">
-                        Showing <?= $totalRequests ?> requests
-                    </span>
+                    <div class="pagination-controls">
+                        <span id="visibleCount" aria-live="polite">
+                            Showing <?= $totalRequests ?> requests
+                        </span>
+
+                        <label class="page-size-label" for="pageSize">
+                            Per page
+                            <select id="pageSize" class="page-size-select" aria-label="Requests per page">
+                                <option value="10" selected>10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="all">All</option>
+                            </select>
+                        </label>
+
+                        <button type="button" id="previousPage" class="pagination-button" aria-label="Previous page">
+                            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                        </button>
+                        <span id="pageIndicator" class="page-indicator">Page 1 of 1</span>
+                        <button type="button" id="nextPage" class="pagination-button" aria-label="Next page">
+                            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
 
                 </div>
 
@@ -1184,70 +1604,161 @@ function getStatusClass($status): string
 
     </main>
 
-    <!-- SEARCH AND STATUS FILTER -->
+    <!-- REQUEST SEARCH, FILTER, AND PAGINATION -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('requestSearch');
             const statusFilter = document.getElementById('statusFilter');
-            const tableBody = document.getElementById('requestTableBody');
+            const sortOrder = document.getElementById('sortOrder');
+            const pageSize = document.getElementById('pageSize');
+            const requestList = document.getElementById('requestList');
             const visibleCount = document.getElementById('visibleCount');
-            const noResults = document.getElementById('noSearchResults');
+            const pageIndicator = document.getElementById('pageIndicator');
+            const previousPage = document.getElementById('previousPage');
+            const nextPage = document.getElementById('nextPage');
+            const clearFilters = document.getElementById('clearFilters');
+            const noRequestData = document.getElementById('noRequestData');
+            const noMatchingRequests = document.getElementById('noMatchingRequests');
 
-            if (!searchInput || !statusFilter || !tableBody) {
+            if (
+                !searchInput ||
+                !statusFilter ||
+                !sortOrder ||
+                !pageSize ||
+                !requestList
+            ) {
                 return;
             }
 
-            function filterRequests() {
-                const keyword = searchInput.value
-                    .trim()
-                    .toLowerCase();
+            const cards = Array.from(
+                requestList.querySelectorAll('.request-card')
+            );
+            let currentPage = 1;
 
+            function renderRequests() {
+                const keyword = searchInput.value.trim().toLocaleLowerCase();
                 const selectedStatus = statusFilter.value;
-
-                const rows = Array.from(
-                    tableBody.querySelectorAll('tr[data-status]')
-                );
-
-                let visible = 0;
-
-                rows.forEach(function (row) {
-                    const rowText = row.textContent.toLowerCase();
-                    const rowStatus = row.dataset.status;
-
-                    const matchesKeyword = rowText.includes(keyword);
-
-                    const matchesStatus =
-                        selectedStatus === '' ||
-                        rowStatus === selectedStatus;
-
-                    const show =
-                        matchesKeyword && matchesStatus;
-
-                    row.hidden = !show;
-
-                    if (show) {
-                        visible++;
-                    }
+                const matchingCards = cards.filter(function(card) {
+                    return (
+                        card.dataset.search.toLocaleLowerCase().includes(keyword) &&
+                        (selectedStatus === '' ||
+                            card.dataset.status === selectedStatus)
+                    );
                 });
 
-                if (noResults) {
-                    noResults.hidden =
-                        rows.length === 0 || visible > 0;
+                matchingCards.sort(function(first, second) {
+                    const firstDate = Number(first.dataset.createdAt) || 0;
+                    const secondDate = Number(second.dataset.createdAt) || 0;
+                    return sortOrder.value === 'oldest' ?
+                        firstDate - secondDate :
+                        secondDate - firstDate;
+                });
+
+                const selectedPageSize = pageSize.value;
+                const rowsPerPage = selectedPageSize === 'all' ?
+                    Math.max(matchingCards.length, 1) :
+                    Math.max(Number.parseInt(selectedPageSize, 10) || 10, 1);
+                const pageCount = Math.max(
+                    Math.ceil(matchingCards.length / rowsPerPage),
+                    1
+                );
+                currentPage = Math.min(currentPage, pageCount);
+
+                const startIndex = (currentPage - 1) * rowsPerPage;
+                const pageCards = new Set(
+                    matchingCards.slice(startIndex, startIndex + rowsPerPage)
+                );
+
+                cards.forEach(function(card) {
+                    card.hidden = !pageCards.has(card);
+                });
+
+                if (noRequestData) {
+                    noRequestData.hidden = cards.length > 0;
+                }
+
+                if (noMatchingRequests) {
+                    noMatchingRequests.hidden =
+                        cards.length === 0 || matchingCards.length > 0;
                 }
 
                 if (visibleCount) {
-                    visibleCount.textContent =
-                        'Showing ' + visible + ' of ' +
-                        rows.length + ' requests';
+                    if (matchingCards.length === 0) {
+                        visibleCount.textContent = cards.length === 0 ?
+                            'No requests to display' :
+                            'No requests match the current filters';
+                    } else {
+                        const lastIndex = Math.min(
+                            startIndex + rowsPerPage,
+                            matchingCards.length
+                        );
+                        visibleCount.textContent =
+                            'Showing ' + (startIndex + 1) + '–' + lastIndex +
+                            ' of ' + matchingCards.length + ' matching requests';
+                    }
+                }
+
+                if (pageIndicator) {
+                    pageIndicator.textContent =
+                        'Page ' + currentPage + ' of ' + pageCount;
+                }
+
+                if (previousPage) {
+                    previousPage.disabled =
+                        currentPage <= 1 || matchingCards.length === 0;
+                }
+
+                if (nextPage) {
+                    nextPage.disabled =
+                        currentPage >= pageCount || matchingCards.length === 0;
                 }
             }
 
-            searchInput.addEventListener('input', filterRequests);
+            searchInput.addEventListener('input', function() {
+                currentPage = 1;
+                renderRequests();
+            });
 
-            statusFilter.addEventListener('change', filterRequests);
+            statusFilter.addEventListener('change', function() {
+                currentPage = 1;
+                renderRequests();
+            });
+
+            sortOrder.addEventListener('change', function() {
+                currentPage = 1;
+                renderRequests();
+            });
+
+            pageSize.addEventListener('change', function() {
+                currentPage = 1;
+                renderRequests();
+            });
+
+            previousPage.addEventListener('click', function() {
+                currentPage = Math.max(currentPage - 1, 1);
+                renderRequests();
+            });
+
+            nextPage.addEventListener('click', function() {
+                currentPage += 1;
+                renderRequests();
+            });
+
+            clearFilters.addEventListener('click', function() {
+                searchInput.value = '';
+                statusFilter.value = '';
+                sortOrder.value = 'newest';
+                pageSize.value = '10';
+                currentPage = 1;
+                renderRequests();
+                searchInput.focus();
+            });
+
+            renderRequests();
         });
     </script>
 
 </body>
+
 </html>

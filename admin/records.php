@@ -322,6 +322,8 @@ $categoryFilter = trim((string) ($_GET['category'] ?? ''));
 $priorityFilter = trim((string) ($_GET['priority'] ?? ''));
 $extremityFilter = trim((string) ($_GET['extremity'] ?? ''));
 $statusFilter = trim((string) ($_GET['status'] ?? ''));
+$searchQuery = trim((string) ($_GET['q'] ?? ''));
+$searchQuery = mb_substr($searchQuery, 0, 100);
 
 /*
 |--------------------------------------------------------------------------
@@ -387,7 +389,61 @@ try {
         }
     }
 
+    if ($searchQuery !== '') {
+        $searchTerm = '%' . $searchQuery . '%';
+        $where[] = "(
+            incident_id::text ILIKE ?
+            OR COALESCE(category, '') ILIKE ?
+            OR COALESCE(location, '') ILIKE ?
+            OR COALESCE(priority_level, '') ILIKE ?
+            OR COALESCE(severity, '') ILIKE ?
+            OR COALESCE(resident_status, '') ILIKE ?
+        )";
+        array_push(
+            $params,
+            $searchTerm,
+            $searchTerm,
+            $searchTerm,
+            $searchTerm,
+            $searchTerm,
+            $searchTerm
+        );
+    }
+
     $whereSQL = 'WHERE ' . implode(' AND ', $where);
+
+    $statsQuery = "
+        SELECT
+            COUNT(*) AS total_records,
+            COUNT(*) FILTER (
+                WHERE priority_level IN ('Critical', 'High')
+            ) AS urgent_records,
+            COUNT(*) FILTER (
+                WHERE is_escalated IS TRUE
+            ) AS escalated_records
+        FROM public.incidents
+        $whereSQL
+    ";
+
+    $statsStmt = $pdo->prepare($statsQuery);
+    $statsStmt->execute($params);
+    $recordStats = $statsStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+    $totalRecords = (int) ($recordStats['total_records'] ?? 0);
+    $urgentRecords = (int) ($recordStats['urgent_records'] ?? 0);
+    $escalatedRecords = (int) ($recordStats['escalated_records'] ?? 0);
+
+    $pageSize = 15;
+    $requestedPage = filter_var(
+        $_GET['page'] ?? 1,
+        FILTER_VALIDATE_INT,
+        ['options' => ['min_range' => 1]]
+    );
+    $totalPages = max(1, (int) ceil($totalRecords / $pageSize));
+    $currentPage = min(
+        $requestedPage === false ? 1 : $requestedPage,
+        $totalPages
+    );
+    $offset = ($currentPage - 1) * $pageSize;
 
     $query = "
         SELECT *
@@ -402,17 +458,35 @@ try {
                 ELSE 5
             END,
             created_at DESC
+        LIMIT ?
+        OFFSET ?
     ";
 
     $stmt = $pdo->prepare($query);
-    $stmt->execute($params);
+    $stmt->execute(array_merge($params, [$pageSize, $offset]));
     $incidents = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $recordRangeStart = $totalRecords > 0 ? $offset + 1 : 0;
+    $recordRangeEnd = min($offset + count($incidents), $totalRecords);
 
 } catch (Throwable $e) {
     error_log('Fetch incidents failed: ' . $e->getMessage());
 
     http_response_code(500);
     exit('Unable to load incident records. Check the server error log.');
+}
+
+$paginationParams = ['view' => $view];
+
+foreach ([
+    'category' => $categoryFilter,
+    'priority' => $priorityFilter,
+    'extremity' => $extremityFilter,
+    'status' => $statusFilter,
+    'q' => $searchQuery
+] as $key => $value) {
+    if ($value !== '') {
+        $paginationParams[$key] = $value;
+    }
 }
 
 /*
@@ -475,12 +549,7 @@ function displayDate($value): string
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
     >
 
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    >
-
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/style.css?v=20261114i">
 
     <link
         rel="icon"
@@ -489,24 +558,25 @@ function displayDate($value): string
     >
 </head>
 
-<body>
+<body class="records-page">
 
 <?php include 'sidebar.php'; ?>
 
-<main class="main-content">
-    <div class="dashboard-wrapper">
+<main class="main-content records-content">
+    <div class="dashboard-wrapper records-wrapper">
 
         <!-- PAGE HEADER -->
         <div class="records-header">
             <div>
-                <?php if ($view === 'archive'): ?>
-                    <h2 class="dashboard-title mb-1">INCIDENT ARCHIVE</h2>
-                    <div class="archive-info">
-                        Resolved incidents are automatically stored here.
-                    </div>
-                <?php else: ?>
-                    <h2 class="dashboard-title mb-1">INCIDENT RECORDS</h2>
-                <?php endif; ?>
+                <p class="records-eyebrow">INCIDENT MANAGEMENT</p>
+                <h1 class="records-title admin-page-title">
+                    <?= $view === 'archive' ? 'Incident archive' : 'Incident records'; ?>
+                </h1>
+                <p class="records-subtitle">
+                    <?= $view === 'archive'
+                        ? 'Review resolved reports and their resolution dates.'
+                        : 'Review, prioritize, and update reports from residents.'; ?>
+                </p>
             </div>
 
             <div class="records-header-actions">
@@ -567,18 +637,62 @@ function displayDate($value): string
             </div>
         <?php endif; ?>
 
+        <section class="records-stats" aria-label="Incident record summary">
+            <article class="records-stat-card">
+                <span class="records-stat-icon">
+                    <i class="bi bi-clipboard-data" aria-hidden="true"></i>
+                </span>
+                <div>
+                    <p>Matching incidents</p>
+                    <strong><?= number_format($totalRecords); ?></strong>
+                </div>
+            </article>
+            <article class="records-stat-card records-stat-urgent">
+                <span class="records-stat-icon">
+                    <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                </span>
+                <div>
+                    <p>High / critical</p>
+                    <strong><?= number_format($urgentRecords); ?></strong>
+                </div>
+            </article>
+            <article class="records-stat-card records-stat-escalated">
+                <span class="records-stat-icon">
+                    <i class="bi bi-arrow-up-right-circle" aria-hidden="true"></i>
+                </span>
+                <div>
+                    <p>Escalated</p>
+                    <strong><?= number_format($escalatedRecords); ?></strong>
+                </div>
+            </article>
+        </section>
+
         <!-- FILTER CARD -->
         <div class="filter-card">
-            <form method="GET" action="records.php">
+            <form method="GET" action="records.php" role="search" aria-label="Search and filter incidents">
                 <input
                     type="hidden"
                     name="view"
                     value="<?= h($view); ?>"
                 >
 
-                <div class="row g-3">
+                <div class="row g-3 align-items-end">
+                    <div class="col-12">
+                        <label class="filter-label" for="filter-search">
+                            Search records
+                        </label>
+                        <input
+                            id="filter-search"
+                            name="q"
+                            type="search"
+                            class="form-control records-search-input"
+                            value="<?= h($searchQuery); ?>"
+                            maxlength="100"
+                            placeholder="ID, incident, location, or status"
+                        >
+                    </div>
 
-                    <div class="col-md-3">
+                    <div class="col-6 col-lg-3">
                         <label class="filter-label" for="filter-category">
                             Incident
                         </label>
@@ -601,7 +715,7 @@ function displayDate($value): string
                         </select>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-6 col-lg-3">
                         <label class="filter-label" for="filter-priority">
                             Priority Level
                         </label>
@@ -624,7 +738,7 @@ function displayDate($value): string
                         </select>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-6 col-lg-3">
                         <label class="filter-label" for="filter-extremity">
                             Extremity
                         </label>
@@ -647,9 +761,9 @@ function displayDate($value): string
                         </select>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-6 col-lg-3">
                         <label class="filter-label" for="filter-status">
-                            Status
+                            Resident status
                         </label>
 
                         <select
@@ -664,26 +778,15 @@ function displayDate($value): string
                             <?php else: ?>
                                 <option value="">All Active Statuses</option>
 
-                                <option
-                                    value="Pending"
-                                    <?= $statusFilter === 'Pending' ? 'selected' : ''; ?>
-                                >
-                                    Pending
-                                </option>
-
-                                <option
-                                    value="In Progress"
-                                    <?= $statusFilter === 'In Progress' ? 'selected' : ''; ?>
-                                >
-                                    In Progress
-                                </option>
-
-                                <option
-                                    value="Active"
-                                    <?= $statusFilter === 'Active' ? 'selected' : ''; ?>
-                                >
-                                    Active
-                                </option>
+                                <?php foreach ($residentStatuses as $statusOption): ?>
+                                    <?php if ($statusOption === 'Resolved') continue; ?>
+                                    <option
+                                        value="<?= h($statusOption); ?>"
+                                        <?= $statusFilter === $statusOption ? 'selected' : ''; ?>
+                                    >
+                                        <?= h($statusOption); ?>
+                                    </option>
+                                <?php endforeach; ?>
                             <?php endif; ?>
                         </select>
                     </div>
@@ -710,24 +813,36 @@ function displayDate($value): string
         </div>
 
         <!-- INCIDENT TABLE -->
-        <div class="dash-card">
+        <section class="records-table-card" aria-labelledby="records-list-title">
+            <div class="records-table-header">
+                <div>
+                    <h2 id="records-list-title">Incident list</h2>
+                    <p>Review the key details, then open Manage to make changes.</p>
+                </div>
+                <span class="records-page-count">
+                    Page <?= number_format($currentPage); ?> of <?= number_format($totalPages); ?>
+                </span>
+            </div>
+
             <div class="table-responsive">
-                <table class="table table-bordered table-striped incident-table">
+                <table class="table table-hover incident-table">
+                    <caption class="visually-hidden">
+                        <?= $view === 'archive' ? 'Archived incidents' : 'Active incidents'; ?>
+                    </caption>
 
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Incident</th>
-                            <th>Location</th>
-                            <th>Priority Level</th>
-                            <th>Extremity</th>
-                            <th>Status</th>
-                            <th>Date Reported</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Incident / location</th>
+                            <th scope="col">Priority</th>
+                            <th scope="col">Extremity</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date reported</th>
 
                             <?php if ($view === 'archive'): ?>
-                                <th>Date Resolved</th>
+                                <th scope="col">Date resolved</th>
                             <?php else: ?>
-                                <th>Action</th>
+                                <th scope="col">Actions</th>
                             <?php endif; ?>
                         </tr>
                     </thead>
@@ -792,13 +907,15 @@ function displayDate($value): string
                                 <td>#<?= h($incidentId); ?></td>
 
                                 <td>
-                                    <strong>
-                                        <?= h($incident['category'] ?? 'Unknown'); ?>
-                                    </strong>
-                                </td>
-
-                                <td>
-                                    <?= h($incident['location'] ?? 'Unknown'); ?>
+                                    <div class="incident-summary">
+                                        <strong>
+                                            <?= h($incident['category'] ?? 'Unknown'); ?>
+                                        </strong>
+                                        <span>
+                                            <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                                            <?= h($incident['location'] ?? 'Unknown'); ?>
+                                        </span>
+                                    </div>
                                 </td>
 
                                 <td>
@@ -840,150 +957,191 @@ function displayDate($value): string
 
                                 <?php else: ?>
 
-                                    <td style="min-width: 280px;">
+                                    <td class="records-action-cell">
+                                    <button
+                                        type="button"
+                                        class="records-action-toggle"
+                                        data-record-dialog-open="record-actions-<?= h($incidentId); ?>"
+                                        aria-controls="record-actions-<?= h($incidentId); ?>"
+                                        aria-haspopup="dialog"
+                                        aria-label="Manage incident #<?= h($incidentId); ?>"
+                                    >
+                                        <i class="bi bi-sliders" aria-hidden="true"></i>
+                                        Manage
+                                    </button>
 
-                                        <!-- RESIDENT STATUS FORM -->
-                                        <form method="POST" class="incident-status-form">
-                                            <input
-                                                type="hidden"
-                                                name="incident_id"
-                                                value="<?= h($incidentId); ?>"
-                                            >
-
-                                            <label
-                                                class="form-label"
-                                                for="resident-status-<?= h($incidentId); ?>"
-                                            >
-                                                Resident Status
-                                            </label>
-
-                                            <select
-                                                class="form-select mb-2"
-                                                id="resident-status-<?= h($incidentId); ?>"
-                                                name="resident_status"
-                                                required
-                                            >
-                                                <?php foreach ($residentStatuses as $statusOption): ?>
-                                                    <option
-                                                        value="<?= h($statusOption); ?>"
-                                                        <?= $selectedResidentStatus === $statusOption
-                                                            ? 'selected'
-                                                            : ''; ?>
-                                                    >
-                                                        <?= h($statusOption); ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-
-                                            <label
-                                                class="form-label"
-                                                for="latest-update-<?= h($incidentId); ?>"
-                                            >
-                                                Update Message
-                                            </label>
-
-                                            <textarea
-                                                class="form-control mb-2"
-                                                id="latest-update-<?= h($incidentId); ?>"
-                                                name="latest_update"
-                                                rows="3"
-                                                maxlength="2000"
-                                                placeholder="Write an update for the resident..."
-                                            ><?= h($incident['latest_update'] ?? ''); ?></textarea>
-
-                                            <button
-                                                type="submit"
-                                                name="update_incident_status"
-                                                value="1"
-                                                class="btn btn-primary btn-sm"
-                                            >
-                                                <i class="bi bi-save"></i>
-                                                Save Update
-                                            </button>
-                                        </form>
-
-                                        <hr class="my-3">
-
-                                        <!-- ESCALATION FORM -->
-                                        <form method="POST" class="incident-escalation-form">
-                                            <input
-                                                type="hidden"
-                                                name="incident_id"
-                                                value="<?= h($incidentId); ?>"
-                                            >
-
-                                            <label
-                                                class="form-label"
-                                                for="priority-level-<?= h($incidentId); ?>"
-                                            >
-                                                Priority Level
-                                            </label>
-
-                                            <select
-                                                class="form-select mb-2"
-                                                id="priority-level-<?= h($incidentId); ?>"
-                                                name="priority_level"
-                                                required
-                                            >
-                                                <?php foreach ($escalationPriorityOptions as $priorityOption): ?>
-                                                    <option
-                                                        value="<?= h($priorityOption); ?>"
-                                                        <?= $selectedPriority === $priorityOption
-                                                            ? 'selected'
-                                                            : ''; ?>
-                                                    >
-                                                        <?= h($priorityOption); ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-
-                                            <div class="form-check mb-2">
-                                                <input
-                                                    class="form-check-input"
-                                                    type="checkbox"
-                                                    name="is_escalated"
-                                                    value="1"
-                                                    id="is-escalated-<?= h($incidentId); ?>"
-                                                    <?= !empty($incident['is_escalated'])
-                                                        ? 'checked'
-                                                        : ''; ?>
-                                                >
-
-                                                <label
-                                                    class="form-check-label"
-                                                    for="is-escalated-<?= h($incidentId); ?>"
-                                                >
-                                                    Escalate this incident
-                                                </label>
+                                    <dialog
+                                        class="records-action-dialog"
+                                        id="record-actions-<?= h($incidentId); ?>"
+                                        aria-labelledby="record-actions-title-<?= h($incidentId); ?>"
+                                    >
+                                        <div class="records-dialog-header">
+                                            <div>
+                                                <p>INCIDENT #<?= h($incidentId); ?></p>
+                                                <h2 id="record-actions-title-<?= h($incidentId); ?>">
+                                                    Manage incident
+                                                </h2>
                                             </div>
-
-                                            <label
-                                                class="form-label"
-                                                for="escalation-reason-<?= h($incidentId); ?>"
-                                            >
-                                                Escalation Reason
-                                            </label>
-
-                                            <textarea
-                                                class="form-control mb-2"
-                                                id="escalation-reason-<?= h($incidentId); ?>"
-                                                name="escalation_reason"
-                                                rows="2"
-                                                maxlength="2000"
-                                                placeholder="Explain why this incident needs escalation..."
-                                            ><?= h($incident['escalation_reason'] ?? ''); ?></textarea>
-
                                             <button
-                                                type="submit"
-                                                name="save_escalation"
-                                                value="1"
-                                                class="btn btn-warning btn-sm"
+                                                type="button"
+                                                class="records-dialog-close"
+                                                data-record-dialog-close
+                                                aria-label="Close incident actions"
                                             >
-                                                <i class="bi bi-exclamation-triangle"></i>
-                                                Save Escalation
+                                                <i class="bi bi-x-lg" aria-hidden="true"></i>
                                             </button>
-                                        </form>
+                                        </div>
 
+                                        <div class="records-dialog-grid">
+                                            <section class="records-dialog-section">
+                                                <h3>Update resident</h3>
+
+                                                <!-- RESIDENT STATUS FORM -->
+                                                <form method="POST" class="incident-status-form">
+                                                    <input
+                                                        type="hidden"
+                                                        name="incident_id"
+                                                        value="<?= h($incidentId); ?>"
+                                                    >
+
+                                                    <label
+                                                        class="form-label"
+                                                        for="resident-status-<?= h($incidentId); ?>"
+                                                    >
+                                                        Resident Status
+                                                    </label>
+
+                                                    <select
+                                                        class="form-select mb-2"
+                                                        id="resident-status-<?= h($incidentId); ?>"
+                                                        name="resident_status"
+                                                        required
+                                                    >
+                                                        <?php foreach ($residentStatuses as $statusOption): ?>
+                                                            <option
+                                                                value="<?= h($statusOption); ?>"
+                                                                <?= $selectedResidentStatus === $statusOption
+                                                                    ? 'selected'
+                                                                    : ''; ?>
+                                                            >
+                                                                <?= h($statusOption); ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+
+                                                    <label
+                                                        class="form-label"
+                                                        for="latest-update-<?= h($incidentId); ?>"
+                                                    >
+                                                        Update Message
+                                                    </label>
+
+                                                    <textarea
+                                                        class="form-control mb-2"
+                                                        id="latest-update-<?= h($incidentId); ?>"
+                                                        name="latest_update"
+                                                        rows="3"
+                                                        maxlength="2000"
+                                                        placeholder="Write an update for the resident..."
+                                                    ><?= h($incident['latest_update'] ?? ''); ?></textarea>
+
+                                                    <button
+                                                        type="submit"
+                                                        name="update_incident_status"
+                                                        value="1"
+                                                        class="btn btn-primary btn-sm"
+                                                    >
+                                                        <i class="bi bi-save" aria-hidden="true"></i>
+                                                        Save Update
+                                                    </button>
+                                                </form>
+                                            </section>
+
+                                            <section class="records-dialog-section">
+                                                <h3>Priority and escalation</h3>
+
+                                                <!-- ESCALATION FORM -->
+                                                <form method="POST" class="incident-escalation-form">
+                                                    <input
+                                                        type="hidden"
+                                                        name="incident_id"
+                                                        value="<?= h($incidentId); ?>"
+                                                    >
+
+                                                    <label
+                                                        class="form-label"
+                                                        for="priority-level-<?= h($incidentId); ?>"
+                                                    >
+                                                        Priority Level
+                                                    </label>
+
+                                                    <select
+                                                        class="form-select mb-2"
+                                                        id="priority-level-<?= h($incidentId); ?>"
+                                                        name="priority_level"
+                                                        required
+                                                    >
+                                                        <?php foreach ($escalationPriorityOptions as $priorityOption): ?>
+                                                            <option
+                                                                value="<?= h($priorityOption); ?>"
+                                                                <?= $selectedPriority === $priorityOption
+                                                                    ? 'selected'
+                                                                    : ''; ?>
+                                                            >
+                                                                <?= h($priorityOption); ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+
+                                                    <div class="form-check mb-2">
+                                                        <input
+                                                            class="form-check-input"
+                                                            type="checkbox"
+                                                            name="is_escalated"
+                                                            value="1"
+                                                            id="is-escalated-<?= h($incidentId); ?>"
+                                                            <?= !empty($incident['is_escalated'])
+                                                                ? 'checked'
+                                                                : ''; ?>
+                                                        >
+
+                                                        <label
+                                                            class="form-check-label"
+                                                            for="is-escalated-<?= h($incidentId); ?>"
+                                                        >
+                                                            Escalate this incident
+                                                        </label>
+                                                    </div>
+
+                                                    <label
+                                                        class="form-label"
+                                                        for="escalation-reason-<?= h($incidentId); ?>"
+                                                    >
+                                                        Escalation Reason
+                                                    </label>
+
+                                                    <textarea
+                                                        class="form-control mb-2"
+                                                        id="escalation-reason-<?= h($incidentId); ?>"
+                                                        name="escalation_reason"
+                                                        rows="2"
+                                                        maxlength="2000"
+                                                        placeholder="Explain why this incident needs escalation..."
+                                                    ><?= h($incident['escalation_reason'] ?? ''); ?></textarea>
+
+                                                    <button
+                                                        type="submit"
+                                                        name="save_escalation"
+                                                        value="1"
+                                                        class="btn btn-warning btn-sm"
+                                                    >
+                                                        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                                                        Save Escalation
+                                                    </button>
+                                                </form>
+                                            </section>
+                                        </div>
+                                    </dialog>
                                     </td>
 
                                 <?php endif; ?>
@@ -994,7 +1152,7 @@ function displayDate($value): string
                     <?php else: ?>
 
                         <tr>
-                            <td colspan="8" class="text-center empty-records">
+                            <td colspan="7" class="text-center empty-records">
                                 <?php if ($view === 'archive'): ?>
                                     <i class="bi bi-archive" style="font-size: 35px;"></i>
 
@@ -1013,8 +1171,8 @@ function displayDate($value): string
                                     </div>
 
                                     <small>
-                                        All reported incidents have been resolved
-                                        or no incidents match your selected filters.
+                                        No incidents match the current search or filters.
+                                        Try adjusting your search or clearing the filters.
                                     </small>
                                 <?php endif; ?>
                             </td>
@@ -1025,12 +1183,129 @@ function displayDate($value): string
 
                 </table>
             </div>
-        </div>
+            <?php
+            $visiblePageStart = max(1, $currentPage - 2);
+            $visiblePageEnd = min($totalPages, $currentPage + 2);
+            $paginationUrl = static function (int $pageNumber) use ($paginationParams): string {
+                return 'records.php?' . http_build_query(
+                    $paginationParams + ['page' => $pageNumber]
+                );
+            };
+            ?>
+            <nav class="records-pagination" aria-label="Incident records pages">
+                <p class="records-pagination-summary" aria-live="polite">
+                    Showing <?= number_format($recordRangeStart); ?>-<?= number_format($recordRangeEnd); ?>
+                    of <?= number_format($totalRecords); ?>
+                    <?= $totalRecords === 1 ? 'record' : 'records'; ?>
+                </p>
+
+                <?php if ($totalPages > 1): ?>
+                    <div class="records-pagination-links">
+                        <?php if ($currentPage > 1): ?>
+                            <a
+                                class="records-page-link"
+                                href="<?= h($paginationUrl($currentPage - 1)); ?>"
+                                aria-label="Previous page"
+                            >
+                                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                                Previous
+                            </a>
+                        <?php else: ?>
+                            <span class="records-page-link is-disabled" aria-disabled="true">
+                                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                                Previous
+                            </span>
+                        <?php endif; ?>
+
+                        <?php if ($visiblePageStart > 1): ?>
+                            <a class="records-page-link" href="<?= h($paginationUrl(1)); ?>">1</a>
+                            <?php if ($visiblePageStart > 2): ?>
+                                <span class="records-page-ellipsis" aria-hidden="true">...</span>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <?php for ($pageNumber = $visiblePageStart; $pageNumber <= $visiblePageEnd; $pageNumber++): ?>
+                            <a
+                                class="records-page-link <?= $pageNumber === $currentPage ? 'is-current' : ''; ?>"
+                                href="<?= h($paginationUrl($pageNumber)); ?>"
+                                <?= $pageNumber === $currentPage ? 'aria-current="page"' : ''; ?>
+                            >
+                                <?= number_format($pageNumber); ?>
+                            </a>
+                        <?php endfor; ?>
+
+                        <?php if ($visiblePageEnd < $totalPages): ?>
+                            <?php if ($visiblePageEnd < $totalPages - 1): ?>
+                                <span class="records-page-ellipsis" aria-hidden="true">...</span>
+                            <?php endif; ?>
+                            <a class="records-page-link" href="<?= h($paginationUrl($totalPages)); ?>">
+                                <?= number_format($totalPages); ?>
+                            </a>
+                        <?php endif; ?>
+
+                        <?php if ($currentPage < $totalPages): ?>
+                            <a
+                                class="records-page-link"
+                                href="<?= h($paginationUrl($currentPage + 1)); ?>"
+                                aria-label="Next page"
+                            >
+                                Next
+                                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                            </a>
+                        <?php else: ?>
+                            <span class="records-page-link is-disabled" aria-disabled="true">
+                                Next
+                                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </nav>
+        </section>
 
     </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('click', function (event) {
+    if (!(event.target instanceof Element)) {
+        return;
+    }
+
+    const openButton = event.target.closest('[data-record-dialog-open]');
+
+    if (openButton) {
+        const dialog = document.getElementById(
+            openButton.getAttribute('data-record-dialog-open')
+        );
+
+        if (dialog instanceof HTMLDialogElement) {
+            dialog.showModal();
+        }
+
+        return;
+    }
+
+    const closeButton = event.target.closest('[data-record-dialog-close]');
+
+    if (closeButton) {
+        const dialog = closeButton.closest('dialog');
+
+        if (dialog instanceof HTMLDialogElement) {
+            dialog.close();
+        }
+    }
+});
+
+document.querySelectorAll('.records-action-dialog').forEach(function (dialog) {
+    dialog.addEventListener('click', function (event) {
+        if (event.target === dialog) {
+            dialog.close();
+        }
+    });
+});
+</script>
 
 </body>
 </html>
