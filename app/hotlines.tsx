@@ -17,7 +17,7 @@ import { HotlineStyles as styles } from '../constants/theme';
 
 
 const hotlines = [
-    { title: 'MDRRMC Talisay', number: '0939 921 6233', logo: require('../assets/images/hotlines/MDRRMO_Talisay.jpeg'), color: '#DC2626', bg: '#FEE2E2' },
+    { title: 'MDRRMC Talisay', number: '0916 631 4087', logo: require('../assets/images/hotlines/MDRRMO_Talisay.jpeg'), color: '#DC2626', bg: '#FEE2E2' },
     { title: 'Red Cross', number: '0968 240 3829', logo: require('../assets/images/hotlines/Red Cross.jpeg'), color: '#2563EB', bg: '#DBEAFE' },
     { title: 'PNP Talisay', number: '0917 353 4074', logo: require('../assets/images/hotlines/PNP Talisay.jpeg'), color: '#EA580C', bg: '#FFEDD5' },
     { title: 'PHIVOLCS', number: '0960 312 7912', logo: require('../assets/images/hotlines/PHIVOLCS.jpeg'), color: '#DC2626', bg: '#FEE2E2' },

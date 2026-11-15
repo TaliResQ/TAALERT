@@ -12,7 +12,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import BottomNavbar from '../components/BottomNavbar';
@@ -107,58 +107,62 @@ export default function MapScreen() {
   const startHeightRef = useRef(300);
 
   const MIN_MAP_HEIGHT = 100;
-  const MAX_MAP_HEIGHT = 380; const [selectedCenterId, setSelectedCenterId] =
+  const MAX_MAP_HEIGHT = 380;
+
+  const [selectedCenterId, setSelectedCenterId] =
     useState<string | null>(null);
+  const [routeCoordinates, setRouteCoordinates] = useState<Coordinates[]>([]);
+  const [routeDistance, setRouteDistance] = useState<number | null>(null);
+  const [routeDuration, setRouteDuration] = useState<number | null>(null);
+  const [routeLoading, setRouteLoading] = useState(false);
 
   const [locationText, setLocationText] = useState(
     'Allow location access to find the nearest mock center.'
   );
 
+  const panelPanResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
 
-const panelPanResponder = useRef(
-  PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
 
-    onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        startHeightRef.current = mapHeightRef.current;
+      },
 
-    onPanResponderGrant: () => {
-      startHeightRef.current = mapHeightRef.current;
-    },
+      onPanResponderMove: (_, gesture) => {
+        const newHeight = Math.max(
+          MIN_MAP_HEIGHT,
+          Math.min(
+            MAX_MAP_HEIGHT,
+            startHeightRef.current + gesture.dy
+          )
+        );
 
-    onPanResponderMove: (_, gesture) => {
-      const newHeight = Math.max(
-        MIN_MAP_HEIGHT,
-        Math.min(
-          MAX_MAP_HEIGHT,
-          startHeightRef.current + gesture.dy
-        )
-      );
+        mapHeightRef.current = newHeight;
+        setMapHeight(newHeight);
+      },
 
-      mapHeightRef.current = newHeight;
-      setMapHeight(newHeight);
-    },
+      onPanResponderRelease: (_, gesture) => {
+        const finalHeight = Math.max(
+          MIN_MAP_HEIGHT,
+          Math.min(
+            MAX_MAP_HEIGHT,
+            startHeightRef.current + gesture.dy
+          )
+        );
 
-    onPanResponderRelease: (_, gesture) => {
-      const finalHeight = Math.max(
-        MIN_MAP_HEIGHT,
-        Math.min(
-          MAX_MAP_HEIGHT,
-          startHeightRef.current + gesture.dy
-        )
-      );
+        mapHeightRef.current = finalHeight;
+        setMapHeight(finalHeight);
+      },
 
-      mapHeightRef.current = finalHeight;
-      setMapHeight(finalHeight);
-    },
+      onPanResponderTerminate: () => {
+        startHeightRef.current = mapHeightRef.current;
+      },
 
-    onPanResponderTerminate: () => {
-      startHeightRef.current = mapHeightRef.current;
-    },
-
-    onPanResponderTerminationRequest: () => false,
-  })
-).current;
-
+      onPanResponderTerminationRequest: () => false,
+    })
+  ).current;
 
   const requestLocation = useCallback(async () => {
     setLoading(true);
@@ -187,6 +191,10 @@ const panelPanResponder = useRef(
       };
 
       setUserLocation(coordinates);
+      setRouteCoordinates([]);
+      setRouteDistance(null);
+      setRouteDuration(null);
+      setSelectedCenterId(null);
       setLocationText('Your current GPS location has been detected.');
 
       mapRef.current?.animateToRegion(
@@ -217,25 +225,94 @@ const panelPanResponder = useRef(
 
   const nearestCenters = userLocation
     ? evacuationCenters
-      .map((center) => ({
-        ...center,
-        distance: calculateDistance(userLocation, center),
-      }))
-      .sort((a, b) => a.distance - b.distance)
+        .map((center) => ({
+          ...center,
+          distance: calculateDistance(userLocation, center),
+        }))
+        .sort((a, b) => a.distance - b.distance)
     : [];
 
-  const focusOnCenter = (center: EvacuationCenter) => {
+  // Calculates a road route from the user's GPS location to the selected center.
+  // OSRM expects coordinates in longitude,latitude order.
+  const focusOnCenter = async (center: EvacuationCenter) => {
     setSelectedCenterId(center.id);
+    setRouteCoordinates([]);
+    setRouteDistance(null);
+    setRouteDuration(null);
 
-    mapRef.current?.animateToRegion(
-      {
-        latitude: center.latitude,
-        longitude: center.longitude,
-        latitudeDelta: 0.012,
-        longitudeDelta: 0.012,
-      },
-      800
-    );
+    if (!userLocation) {
+      Alert.alert(
+        'Location Required',
+        'Please enable your GPS location first, then select an evacuation center.'
+      );
+      return;
+    }
+
+    setRouteLoading(true);
+
+    try {
+      const url =
+        `https://router.project-osrm.org/route/v1/driving/` +
+        `${userLocation.longitude},${userLocation.latitude};` +
+        `${center.longitude},${center.latitude}` +
+        '?overview=full&geometries=geojson';
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error('The routing service could not be reached.');
+      }
+
+      const data = await response.json();
+
+      if (data.code !== 'Ok' || !data.routes?.length) {
+        throw new Error('No driving route was found for this evacuation center.');
+      }
+
+      const route = data.routes[0];
+      const coordinates: Coordinates[] = route.geometry.coordinates.map(
+        ([longitude, latitude]: [number, number]) => ({
+          latitude,
+          longitude,
+        })
+      );
+
+      if (coordinates.length < 2) {
+        throw new Error('The routing service returned an incomplete route.');
+      }
+
+      setRouteCoordinates(coordinates);
+      setRouteDistance(route.distance / 1000);
+      setRouteDuration(route.duration / 60);
+
+      // Fit both the user's location and the selected destination on screen.
+      mapRef.current?.fitToCoordinates(coordinates, {
+        edgePadding: {
+          top: 90,
+          right: 55,
+          bottom: 90,
+          left: 55,
+        },
+        animated: true,
+      });
+    } catch (error) {
+      console.error('Route calculation error:', error);
+      Alert.alert(
+        'Unable to Calculate Route',
+        error instanceof Error
+          ? error.message
+          : 'Please check your internet connection and try again.'
+      );
+    } finally {
+      setRouteLoading(false);
+    }
+  };
+
+  const clearRoute = () => {
+    setSelectedCenterId(null);
+    setRouteCoordinates([]);
+    setRouteDistance(null);
+    setRouteDuration(null);
   };
 
   const goToMyLocation = async () => {
@@ -260,9 +337,7 @@ const panelPanResponder = useRef(
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-      <StatusBar
-        barStyle="dark-content"
-      />
+      <StatusBar barStyle="dark-content" />
 
       <View style={styles.container}>
         {/* Header stays below the iPhone status bar */}
@@ -290,6 +365,17 @@ const panelPanResponder = useRef(
             showsScale
             mapType="standard"
           >
+            {/* Road route from the user's location to the selected center */}
+            {routeCoordinates.length > 0 && (
+              <Polyline
+                coordinates={routeCoordinates}
+                strokeColor="#2563EB"
+                strokeWidth={5}
+                lineCap="round"
+                lineJoin="round"
+              />
+            )}
+
             {evacuationCenters.map((center) => (
               <Marker
                 key={center.id}
@@ -334,7 +420,8 @@ const panelPanResponder = useRef(
             <View style={styles.panelHandle} />
 
             <Text style={styles.panelToggleText}>
-Swipe up to shrink map · Swipe down to expand            </Text>
+              Swipe up to shrink map · Swipe down to expand
+            </Text>
           </View>
 
           <ScrollView
@@ -377,6 +464,48 @@ Swipe up to shrink map · Swipe down to expand            </Text>
                 ? 'Sorted from nearest to farthest by straight-line distance.'
                 : 'Enable location access to calculate distances. Centers are shown below.'}
             </Text>
+
+            {routeLoading && (
+              <View style={styles.routeInfo}>
+                <ActivityIndicator color="#1769AA" />
+                <Text style={styles.locationText}>Calculating route...</Text>
+              </View>
+            )}
+
+            {routeCoordinates.length > 0 && (
+              <View style={styles.routeInfo}>
+                <View style={styles.routeHeader}>
+                  <Text style={styles.routeTitle}>Route to Selected Center</Text>
+                  <Pressable onPress={clearRoute}>
+                    <Text style={styles.clearRouteText}>Clear</Text>
+                  </Pressable>
+                </View>
+
+                <View style={styles.routeDetails}>
+                  <View>
+                    <Text style={styles.routeValue}>
+                      {routeDistance !== null
+                        ? `${routeDistance.toFixed(2)} km`
+                        : '--'}
+                    </Text>
+                    <Text style={styles.routeLabel}>Road distance</Text>
+                  </View>
+
+                  <View>
+                    <Text style={styles.routeValue}>
+                      {routeDuration !== null
+                        ? `${Math.ceil(routeDuration)} min`
+                        : '--'}
+                    </Text>
+                    <Text style={styles.routeLabel}>Estimated driving time</Text>
+                  </View>
+                </View>
+
+                <Text style={styles.routeDisclaimer}>
+                  Driving estimate only. Actual travel time and road accessibility may vary.
+                </Text>
+              </View>
+            )}
 
             {centersToDisplay.map((center, index) => {
               const distance = userLocation
@@ -516,13 +645,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
   },
-panelToggle: {
-  alignItems: 'center',
-  justifyContent: 'center',
-  paddingVertical: 16,
-  gap: 6,
-  minHeight: 60,
-},
+  panelToggle: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    gap: 6,
+    minHeight: 60,
+  },
   panelHandle: {
     width: 44,
     height: 5,
@@ -635,6 +764,52 @@ panelToggle: {
     color: '#1769AA',
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  routeInfo: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 12,
+    padding: 14,
+    marginTop: 8,
+    marginBottom: 4,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+  },
+  routeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  routeTitle: {
+    color: '#123B5D',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  clearRouteText: {
+    color: '#DC2626',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  routeDetails: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 6,
+  },
+  routeValue: {
+    color: '#1769AA',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  routeLabel: {
+    color: '#64748B',
+    fontSize: 11,
+    marginTop: 3,
+  },
+  routeDisclaimer: {
+    color: '#64748B',
+    fontSize: 10,
+    lineHeight: 15,
   },
   disclaimer: {
     color: '#92400E',
